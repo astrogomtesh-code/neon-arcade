@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cyber Snake - Neon Retro Arcade</title>
+    <link rel="stylesheet" href="/neon-arcade.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px 10px;
+            background-color: #030308;
+            color: #00f3ff;
+            font-family: var(--na-font-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        nav {
+            background: rgba(5, 5, 16, 0.95);
+            border-bottom: 2px solid #00f3ff;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            margin: -20px -10px 20px -10px;
+        }
+        nav a {
+            color: #00f3ff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: var(--na-font-display);
+        }
+        nav a:hover {
+            color: #ff003c;
+            text-shadow: 0 0 8px #ff003c;
+        }
+
+        /* Container & Fullscreen Styles */
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            background: #050510;
+            border: 2px solid #00f3ff;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(0, 243, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        #game-container:fullscreen,
+        #game-container.pseudo-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            max-width: none;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: unset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #050510;
+            border: none;
+            border-radius: 0;
+        }
+
+        #game-container:fullscreen canvas,
+        #game-container.pseudo-fullscreen canvas {
+            width: auto;
+            height: auto;
+            max-width: 100vw;
+            max-height: 100vh;
+            aspect-ratio: 16 / 9;
+        }
+
+        /* Maximize Button Styles */
+        #maximize-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 20;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: rgba(5, 5, 16, 0.75);
+            border: 2px solid #00f3ff;
+            border-radius: 4px;
+            color: #00f3ff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #maximize-btn:hover {
+            background: #00f3ff;
+            color: #050510;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        #maximize-btn svg { 
+            width: 18px; 
+            height: 18px; 
+        }
+
+        /* Audio Toggle Button */
+        #audio-btn {
+            position: absolute;
+            top: 10px;
+            right: 56px;
+            z-index: 20;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: rgba(5, 5, 16, 0.75);
+            border: 2px solid #00f3ff;
+            border-radius: 4px;
+            color: #00f3ff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #audio-btn:hover {
+            background: #00f3ff;
+            color: #050510;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        /* Canvas Wrapper & Scanlines Effect */
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            max-width: 860px;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            background: #020208;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* CRT Scanline Effect */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            z-index: 5;
+            border-radius: 4px;
+        }
+
+        .cyber-font {
+            font-family: var(--na-font-display);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-cyber {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid #00f3ff;
+            color: #00f3ff;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+            touch-action: none;
+        }
+
+        .btn-cyber:active, .btn-cyber.active {
+            background: #00f3ff;
+            color: #050510;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        /* Touch Pad Layout for Mobile */
+        .touch-pad {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+            margin-top: 10px;
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            .touch-pad {
+                display: grid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
+
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <!-- Audio Mute Toggle Button -->
+        <button id="audio-btn" title="Toggle Sound" onclick="toggleAudio()">
+            <svg id="audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+        </button>
+
+        <!-- Maximize Fullscreen Button -->
+        <button id="maximize-btn" title="Toggle Fullscreen" onclick="toggleFullscreen()">
+            <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+        </button>
+
+        <!-- Canvas Game Screen with CRT Scanline overlay -->
+        <div class="canvas-wrapper">
+            <canvas id="snake-canvas" width="960" height="540"></canvas>
+            <div class="scanlines"></div>
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div class="touch-pad">
+            <button class="btn-cyber cyber-font" id="btn-left">◀ TURN L</button>
+            <button class="btn-cyber cyber-font" id="btn-right">TURN R ▶</button>
+            <button class="btn-cyber cyber-font" id="btn-boost">⚡ BOOST</button>
+            <button class="btn-cyber cyber-font" id="btn-emp">🛡 EMP</button>
+        </div>
+    </div>
+
+    <!-- Information, Controls, Strategy & Lore Section -->
+    <div class="game-info-panel">
+        
+        <!-- HOW TO PLAY & CONTROLS -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
+                HOW TO PLAY & CONTROLS
+            </h2>
+            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
+                Cyber Snake is a high-velocity 360° directional survival system. Navigate the digital grid, collect energy nodes, and evolve your neon trail without severing your core program:
+            </p>
+            <ul class="space-y-2 text-sm md:text-base leading-relaxed">
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Keyboard Steering:</strong> Press <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">A</code> / <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">◀</code> to rotate left and <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">D</code> / <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">▶</code> to rotate right. Hold <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">W</code> or <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SHIFT</code> for Overdrive Turbo, and press <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SPACE</code> to trigger an EMP shockwave when charged.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Mouse & Touch Steering:</strong> Move your cursor or drag on the game canvas to steer directly toward your finger/pointer, or tap the interactive touch pad beneath the screen.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Power-Ups & Core Upgrades:</strong> Absorb Cyan Data Nodes to grow, collect Yellow Overdrive Orbs for speed multipliers, and grab Magenta Shield Cores to withstand lethal collisions.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- STRATEGY GUIDE & TIPS -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
+                STRATEGY GUIDE & TIPS
+            </h2>
+            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
+                Mastering the digital grid requires fluid arc movement, rapid power-up acquisition, and perimeter management:
+            </p>
+            <ul class="space-y-2 text-sm md:text-base leading-relaxed">
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Build Your Combo Multiplier:</strong> Ingest energy nodes in rapid succession before the temporal combo bar depletes to stack score multipliers up to 5X.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Coil & Loop Tactics:</strong> Use smooth 360-degree turning to loop back into open space. Avoid boxing yourself into tight corners as your glowing tail trail lengthens.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Deploy EMP Blast Wisely:</strong> Reserve your EMP shockwave charge (<code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SPACE</code>) for emergency escapes when trapped near moving firewall mines or your own tail.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- THE CYBER SNAKE PROTOCOL (LORE) -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
+                THE CYBER SNAKE PROTOCOL (LORE)
+            </h2>
+            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
+                Deep within the mainframe, autonomous data-harvesting vectors known as Cyber Snakes navigate endless streams of light memory. As security protocols intensify, corrupted firewall hazards drift into the sector to purge non-registered programs.
+            </p>
+            <p class="text-sm md:text-base text-gray-400 leading-relaxed">
+                Equipped with custom steering thrusters, EMP shock emitters, and shield modulators, your mission is to absorb high-density data payloads without collapsing into your own lingering energy tail. Accelerate, overcome the system firewalls, and achieve digital transcendence!
+            </p>
+        </section>
+    </div>
+
+    <script>
+        // Fullscreen Toggle functionality with permissions handling & pseudo-fullscreen fallback
+        const gameContainer = document.getElementById('game-container');
+        const maximizeBtn = document.getElementById('maximize-btn');
+        const maxIcon = document.getElementById('max-icon');
+
+        async function toggleFullscreen() {
+            const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
+
+            if (!isFullscreen) {
+                try {
+                    if (gameContainer.requestFullscreen) {
+                        await gameContainer.requestFullscreen();
+                    } else if (gameContainer.webkitRequestFullscreen) {
+                        await gameContainer.webkitRequestFullscreen();
+                    } else if (gameContainer.msRequestFullscreen) {
+                        await gameContainer.msRequestFullscreen();
+                    } else if (gameContainer.mozRequestFullScreen) {
+                        await gameContainer.mozRequestFullScreen();
+                    } else {
+                        gameContainer.classList.add('pseudo-fullscreen');
+                        updateMaximizeIcon(true);
+                    }
+                } catch (err) {
+                    console.warn('Native fullscreen restricted, applying pseudo-fullscreen fallback:', err);
+                    gameContainer.classList.add('pseudo-fullscreen');
+                    updateMaximizeIcon(true);
+                }
+            } else {
+                if (gameContainer.classList.contains('pseudo-fullscreen')) {
+                    gameContainer.classList.remove('pseudo-fullscreen');
+                    updateMaximizeIcon(false);
+                } else {
+                    try {
+                        if (document.exitFullscreen) {
+                            await document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            await document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) {
+                            await document.msExitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            await document.mozCancelFullScreen();
+                        }
+                    } catch (err) {
+                        gameContainer.classList.remove('pseudo-fullscreen');
+                        updateMaximizeIcon(false);
+                    }
+                }
+            }
+            // pseudo-fullscreen doesn't fire fullscreenchange, so force a
+            // recalculation once the layout settles either way
+            setTimeout(() => resizeCanvas(), 60);
+        }
+
+        function updateMaximizeIcon(overrideState) {
+            const isFullscreen = (typeof overrideState === 'boolean') 
+                ? overrideState 
+                : !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
+
+            if (isFullscreen) {
+                maxIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
+            } else {
+                maxIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => updateMaximizeIcon());
+        document.addEventListener('webkitfullscreenchange', () => updateMaximizeIcon());
+        document.addEventListener('mozfullscreenchange', () => updateMaximizeIcon());
+        document.addEventListener('MSFullscreenChange', () => updateMaximizeIcon());
+
+        // Cyberpunk Web Audio Sound Synthesizer Engine
+        class CyberAudio {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTone(freq, type, duration, vol = 0.1, rampTo = 0.0001) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(rampTo, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e){}
+            }
+
+            playNodePickup() {
+                if (this.muted || !this.ctx) return;
+                const freqs = [523.25, 659.25, 783.99, 1046.50]; // C Major Arpeggio
+                freqs.forEach((f, i) => {
+                    setTimeout(() => this.playTone(f, 'sine', 0.12, 0.08), i * 35);
+                });
+            }
+
+            playPowerupPickup() {
+                if (this.muted || !this.ctx) return;
+                const freqs = [440, 587.33, 880, 1174.66];
+                freqs.forEach((f, i) => {
+                    setTimeout(() => this.playTone(f, 'triangle', 0.18, 0.1), i * 40);
+                });
+            }
+
+            playEmp() {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.4);
+                } catch(e){}
+            }
+
+            playShieldBreak() {
+                this.playTone(200, 'square', 0.25, 0.15);
+            }
+
+            playCrash() {
+                if (this.muted || !this.ctx) return;
+                [180, 140, 100, 60].forEach((f, i) => {
+                    setTimeout(() => this.playTone(f, 'sawtooth', 0.25, 0.15), i * 80);
+                });
+            }
+        }
+
+        const sound = new CyberAudio();
+        function toggleAudio() {
+            sound.muted = !sound.muted;
+            const audioIcon = document.getElementById('audio-icon');
+            if (sound.muted) {
+                audioIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>`;
+            } else {
+                audioIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>`;
+            }
+        }
+
+        const canvas = document.getElementById('snake-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const WIDTH = canvas.width;
+        const HEIGHT = canvas.height;
+        const PLAY_PADDING = 30;
+
+        // Proper devicePixelRatio scaling: the backing store is sized to the
+        // canvas's actual on-screen CSS size × devicePixelRatio, while the
+        // context is scaled so all existing drawing code (which works in the
+        // fixed WIDTH x HEIGHT logical space) renders crisply at any zoom,
+        // screen density, or fullscreen size without touching game logic.
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.scale(rect.width / WIDTH, rect.height / HEIGHT);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        document.addEventListener('fullscreenchange', resizeCanvas);
+        document.addEventListener('webkitfullscreenchange', resizeCanvas);
+        document.addEventListener('mozfullscreenchange', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+        resizeCanvas();
+
+        // Game State Variables
+        let gameStarted = false;
+        let gameOver = false;
+        let gamePaused = false;
+        let pausedByBackground = false;
+        let score = 0;
+        let highScore = localStorage.getItem('cyber_snake_hi') || 0;
+        let combo = 1;
+        let comboTimer = 0;
+        const MAX_COMBO_TIME = 180; // frames (~3s)
+
+        // Snake parameters
+        let snake = {
+            x: WIDTH / 2,
+            y: HEIGHT / 2,
+            angle: 0, // In Radians
+            speed: 3.2,
+            baseSpeed: 3.2,
+            turnSpeed: 0.065,
+            radius: 8,
+            length: 30, // Target number of trail points
+            trail: [], // Array of {x, y}
+            shield: false,
+            empCharges: 1,
+            overdriveTimer: 0
+        };
+
+        // Items & Collectibles
+        let items = []; // {x, y, type, radius, angle, pulse}
+        let hazards = []; // Moving firewall mines {x, y, vx, vy, radius, angle}
+        let particles = [];
+        let shockwaves = [];
+
+        // Input controls state
+        let keys = {
+            left: false,
+            right: false,
+            boost: false
+        };
+
+        let pointerTarget = null; // Mouse/touch coordinate target if active
+
+        function initGame() {
+            gameStarted = true;
+            gameOver = false;
+            gamePaused = false;
+            pausedByBackground = false;
+            score = 0;
+            combo = 1;
+            comboTimer = 0;
+
+            snake = {
+                x: WIDTH / 2,
+                y: HEIGHT / 2,
+                angle: -Math.PI / 2,
+                speed: 3.2,
+                baseSpeed: 3.2,
+                turnSpeed: 0.068,
+                radius: 8,
+                length: 35,
+                trail: [],
+                shield: false,
+                empCharges: 1,
+                overdriveTimer: 0
+            };
+
+            // Initialize trail behind head
+            for (let i = 0; i < snake.length; i++) {
+                snake.trail.push({
+                    x: snake.x,
+                    y: snake.y + i * (snake.speed * 0.8)
+                });
+            }
+
+            items = [];
+            hazards = [];
+            particles = [];
+            shockwaves = [];
+
+            // Spawn initial data nodes and power-ups
+            spawnDataNode();
+            spawnDataNode();
+            spawnPowerUp();
+            spawnHazard();
+        }
+
+        function spawnDataNode() {
+            items.push({
+                x: PLAY_PADDING + Math.random() * (WIDTH - PLAY_PADDING * 2),
+                y: PLAY_PADDING + Math.random() * (HEIGHT - PLAY_PADDING * 2),
+                type: 'NODE', // Standard Data Node
+                radius: 10,
+                pulse: Math.random() * Math.PI * 2
+            });
+        }
+
+        function spawnPowerUp() {
+            const types = ['OVERDRIVE', 'SHIELD', 'EMP'];
+            const chosenType = types[Math.floor(Math.random() * types.length)];
+            items.push({
+                x: PLAY_PADDING + Math.random() * (WIDTH - PLAY_PADDING * 2),
+                y: PLAY_PADDING + Math.random() * (HEIGHT - PLAY_PADDING * 2),
+                type: chosenType,
+                radius: 12,
+                pulse: Math.random() * Math.PI * 2
+            });
+        }
+
+        function spawnHazard() {
+            if (hazards.length >= 5) return;
+            const angle = Math.random() * Math.PI * 2;
+            hazards.push({
+                x: PLAY_PADDING + Math.random() * (WIDTH - PLAY_PADDING * 2),
+                y: PLAY_PADDING + Math.random() * (HEIGHT - PLAY_PADDING * 2),
+                vx: Math.cos(angle) * (1.2 + Math.random() * 0.8),
+                vy: Math.sin(angle) * (1.2 + Math.random() * 0.8),
+                radius: 14,
+                rot: 0
+            });
+        }
+
+        function createParticles(x, y, color, count = 12) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 1;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: color,
+                    size: Math.random() * 4 + 2,
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+
+        function triggerEmpBlast() {
+            if (snake.empCharges <= 0 || !gameStarted || gameOver || gamePaused) return;
+            sound.init();
+            sound.playEmp();
+            snake.empCharges--;
+
+            shockwaves.push({
+                x: snake.x,
+                y: snake.y,
+                radius: 10,
+                maxRadius: 220,
+                alpha: 1
+            });
+
+            // Destroy hazards and items within blast radius
+            hazards = hazards.filter(h => {
+                const dist = Math.hypot(h.x - snake.x, h.y - snake.y);
+                if (dist < 220) {
+                    createParticles(h.x, h.y, '#ff0055', 16);
+                    return false;
+                }
+                return true;
+            });
+
+            createParticles(snake.x, snake.y, '#ffee00', 25);
+        }
+
+        function update() {
+            if (!gameStarted || gameOver || gamePaused) return;
+
+            // Handle Overdrive speed
+            if (snake.overdriveTimer > 0) {
+                snake.overdriveTimer--;
+                snake.speed = snake.baseSpeed * 1.6;
+            } else if (keys.boost) {
+                snake.speed = snake.baseSpeed * 1.35;
+            } else {
+                snake.speed = snake.baseSpeed;
+            }
+
+            // Handle Turning Controls
+            if (pointerTarget) {
+                // Smooth steering towards touch/pointer coordinate
+                const dx = pointerTarget.x - snake.x;
+                const dy = pointerTarget.y - snake.y;
+                const targetAngle = Math.atan2(dy, dx);
+                let diff = targetAngle - snake.angle;
+                
+                // Normalize angle diff [-PI, PI]
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+
+                if (Math.abs(diff) > 0.05) {
+                    snake.angle += Math.sign(diff) * Math.min(Math.abs(diff), snake.turnSpeed * 1.2);
+                }
+            } else {
+                if (keys.left) snake.angle -= snake.turnSpeed;
+                if (keys.right) snake.angle += snake.turnSpeed;
+            }
+
+            // Forward Velocity update
+            snake.x += Math.cos(snake.angle) * snake.speed;
+            snake.y += Math.sin(snake.angle) * snake.speed;
+
+            // Update Trail History
+            snake.trail.unshift({ x: snake.x, y: snake.y });
+            while (snake.trail.length > snake.length) {
+                snake.trail.pop();
+            }
+
+            // Combo Timer Countdown
+            if (comboTimer > 0) {
+                comboTimer--;
+                if (comboTimer === 0) combo = 1;
+            }
+
+            // Boundary Collision Check
+            if (
+                snake.x < PLAY_PADDING || 
+                snake.x > WIDTH - PLAY_PADDING || 
+                snake.y < PLAY_PADDING || 
+                snake.y > HEIGHT - PLAY_PADDING
+            ) {
+                if (snake.shield) {
+                    snake.shield = false;
+                    sound.playShieldBreak();
+                    createParticles(snake.x, snake.y, '#00f3ff', 20);
+                    // Bounce back into bounds
+                    snake.x = Math.max(PLAY_PADDING + 5, Math.min(WIDTH - PLAY_PADDING - 5, snake.x));
+                    snake.y = Math.max(PLAY_PADDING + 5, Math.min(HEIGHT - PLAY_PADDING - 5, snake.y));
+                    snake.angle += Math.PI;
+                } else {
+                    triggerGameOver();
+                    return;
+                }
+            }
+
+            // Self Trail Collision Check (skip immediate neck segments)
+            const minSkipSegments = 16;
+            for (let i = minSkipSegments; i < snake.trail.length; i++) {
+                const pt = snake.trail[i];
+                const dist = Math.hypot(snake.x - pt.x, snake.y - pt.y);
+                if (dist < snake.radius * 0.85) {
+                    if (snake.shield) {
+                        snake.shield = false;
+                        sound.playShieldBreak();
+                        createParticles(snake.x, snake.y, '#cc00ff', 20);
+                        // Truncate trail past collision
+                        snake.trail = snake.trail.slice(0, i);
+                        snake.length = snake.trail.length;
+                        break;
+                    } else {
+                        triggerGameOver();
+                        return;
+                    }
+                }
+            }
+
+            // Collectible Items Collision Check
+            items.forEach((item, index) => {
+                item.pulse += 0.05;
+                const dist = Math.hypot(snake.x - item.x, snake.y - item.y);
+                if (dist < snake.radius + item.radius) {
+                    // Ingested item
+                    if (item.type === 'NODE') {
+                        sound.playNodePickup();
+                        score += 100 * combo;
+                        snake.length += 6;
+                        combo = Math.min(combo + 1, 5);
+                        comboTimer = MAX_COMBO_TIME;
+                        createParticles(item.x, item.y, '#00f3ff', 12);
+                        spawnDataNode();
+                        if (Math.random() < 0.35) spawnPowerUp();
+                    } else if (item.type === 'OVERDRIVE') {
+                        sound.playPowerupPickup();
+                        score += 250;
+                        snake.overdriveTimer = 300; // ~5 seconds overdrive turbo
+                        createParticles(item.x, item.y, '#ffee00', 18);
+                    } else if (item.type === 'SHIELD') {
+                        sound.playPowerupPickup();
+                        score += 200;
+                        snake.shield = true;
+                        createParticles(item.x, item.y, '#ff0055', 18);
+                    } else if (item.type === 'EMP') {
+                        sound.playPowerupPickup();
+                        score += 150;
+                        snake.empCharges = Math.min(snake.empCharges + 1, 3);
+                        createParticles(item.x, item.y, '#cc00ff', 18);
+                    }
+                    items.splice(index, 1);
+                }
+            });
+
+            // Update Moving Hazards
+            hazards.forEach(h => {
+                h.x += h.vx;
+                h.y += h.vy;
+                h.rot += 0.04;
+
+                // Bounce off play boundaries
+                if (h.x < PLAY_PADDING + h.radius || h.x > WIDTH - PLAY_PADDING - h.radius) h.vx *= -1;
+                if (h.y < PLAY_PADDING + h.radius || h.y > HEIGHT - PLAY_PADDING - h.radius) h.vy *= -1;
+
+                // Hazard Collision with Snake
+                const dist = Math.hypot(snake.x - h.x, snake.y - h.y);
+                if (dist < snake.radius + h.radius) {
+                    if (snake.shield) {
+                        snake.shield = false;
+                        sound.playShieldBreak();
+                        createParticles(h.x, h.y, '#ff0055', 20);
+                        // Bounce hazard away
+                        h.vx *= -1.5;
+                        h.vy *= -1.5;
+                    } else {
+                        triggerGameOver();
+                    }
+                }
+            });
+
+            // Slowly spawn new hazards as score increases
+            if (hazards.length < Math.min(2 + Math.floor(score / 1500), 6) && Math.random() < 0.005) {
+                spawnHazard();
+            }
+
+            // Update Shockwaves
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                const sw = shockwaves[i];
+                sw.radius += 8;
+                sw.alpha -= 0.03;
+                if (sw.alpha <= 0) shockwaves.splice(i, 1);
+            }
+
+            // Update Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function triggerGameOver() {
+            gameOver = true;
+            sound.playCrash();
+            createParticles(snake.x, snake.y, '#ff0055', 35);
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('cyber_snake_hi', highScore);
+            }
+        }
+
+        function render() {
+            // Background Fill
+            ctx.fillStyle = '#020208';
+            ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            // Draw Cyber Grid Lines
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.06)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < WIDTH; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, HEIGHT);
+                ctx.stroke();
+            }
+            for (let y = 0; y < HEIGHT; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(WIDTH, y);
+                ctx.stroke();
+            }
+
+            // Draw Perimeter Boundary Line
+            ctx.save();
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 10;
+            ctx.strokeRect(PLAY_PADDING, PLAY_PADDING, WIDTH - PLAY_PADDING * 2, HEIGHT - PLAY_PADDING * 2);
+            ctx.restore();
+
+            // Draw Shockwaves
+            shockwaves.forEach(sw => {
+                ctx.save();
+                ctx.strokeStyle = `rgba(0, 243, 255, ${sw.alpha})`;
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // Draw Collectible Items
+            items.forEach(item => {
+                ctx.save();
+                const pulseScale = Math.sin(item.pulse) * 2;
+                const r = item.radius + pulseScale;
+
+                if (item.type === 'NODE') {
+                    ctx.shadowColor = '#00f3ff';
+                    ctx.shadowBlur = 12;
+                    ctx.fillStyle = '#00f3ff';
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Rotating outer ring
+                    ctx.strokeStyle = '#ffee00';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, r + 4, item.pulse, item.pulse + Math.PI * 1.5);
+                    ctx.stroke();
+                } else if (item.type === 'OVERDRIVE') {
+                    ctx.shadowColor = '#ffee00';
+                    ctx.shadowBlur = 14;
+                    ctx.fillStyle = '#ffee00';
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#050510';
+                    ctx.font = 'bold 10px Orbitron';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('⚡', item.x, item.y);
+                } else if (item.type === 'SHIELD') {
+                    ctx.shadowColor = '#ff0055';
+                    ctx.shadowBlur = 14;
+                    ctx.fillStyle = '#ff0055';
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 10px Orbitron';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('🛡', item.x, item.y);
+                } else if (item.type === 'EMP') {
+                    ctx.shadowColor = '#cc00ff';
+                    ctx.shadowBlur = 14;
+                    ctx.fillStyle = '#cc00ff';
+                    ctx.beginPath();
+                    ctx.arc(item.x, item.y, r, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 10px Orbitron';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('💥', item.x, item.y);
+                }
+                ctx.restore();
+            });
+
+            // Draw Moving Firewall Hazard Mines
+            hazards.forEach(h => {
+                ctx.save();
+                ctx.translate(h.x, h.y);
+                ctx.rotate(h.rot);
+                ctx.shadowColor = '#ff0055';
+                ctx.shadowBlur = 12;
+                ctx.strokeStyle = '#ff0055';
+                ctx.lineWidth = 2.5;
+
+                // Draw hazard mine cross star
+                ctx.beginPath();
+                ctx.moveTo(-h.radius, 0); ctx.lineTo(h.radius, 0);
+                ctx.moveTo(0, -h.radius); ctx.lineTo(0, h.radius);
+                ctx.stroke();
+
+                ctx.fillStyle = 'rgba(255, 0, 85, 0.4)';
+                ctx.beginPath();
+                ctx.arc(0, 0, h.radius * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Draw Snake Glowing Neon Tail
+            if (snake.trail.length > 1) {
+                ctx.save();
+                for (let i = snake.trail.length - 1; i >= 0; i--) {
+                    const pt = snake.trail[i];
+                    const ratio = 1 - (i / snake.trail.length);
+                    const nodeRadius = Math.max(3, snake.radius * ratio);
+
+                    ctx.shadowColor = snake.overdriveTimer > 0 ? '#ffee00' : '#00f3ff';
+                    ctx.shadowBlur = 8 * ratio;
+
+                    // Neon gradient hue from cyan to magenta
+                    const color = snake.overdriveTimer > 0 
+                        ? `rgba(255, 238, 0, ${0.3 + ratio * 0.7})`
+                        : `rgba(${Math.floor(204 * (1 - ratio))}, ${Math.floor(243 * ratio)}, 255, ${0.2 + ratio * 0.8})`;
+
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, nodeRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            // Draw Snake Head & Active Shield
+            if (gameStarted) {
+                ctx.save();
+                ctx.translate(snake.x, snake.y);
+                ctx.rotate(snake.angle);
+
+                // Shield Aura
+                if (snake.shield) {
+                    ctx.strokeStyle = '#ff0055';
+                    ctx.lineWidth = 2;
+                    ctx.shadowColor = '#ff0055';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, snake.radius + 6, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Head Pointer Triangle
+                ctx.shadowColor = snake.overdriveTimer > 0 ? '#ffee00' : '#00f3ff';
+                ctx.shadowBlur = 14;
+                ctx.fillStyle = snake.overdriveTimer > 0 ? '#ffee00' : '#00f3ff';
+
+                ctx.beginPath();
+                ctx.moveTo(snake.radius + 4, 0);
+                ctx.lineTo(-snake.radius, -snake.radius * 0.85);
+                ctx.lineTo(-snake.radius * 0.5, 0);
+                ctx.lineTo(-snake.radius, snake.radius * 0.85);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            // Draw Particles
+            particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 6;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                ctx.restore();
+            });
+
+            // Render Cyber HUD
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = '14px "Orbitron", sans-serif';
+
+            // Top Left HUD: Score & High Score
+            ctx.fillText(`SCORE: ${score.toString().padStart(6, '0')}`, PLAY_PADDING + 10, PLAY_PADDING + 24);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText(`HI-SCORE: ${highScore.toString().padStart(6, '0')}`, PLAY_PADDING + 220, PLAY_PADDING + 24);
+
+            // Combo Multiplier & Progress Bar
+            if (combo > 1) {
+                ctx.fillStyle = '#ffee00';
+                ctx.font = 'bold 16px "Orbitron", sans-serif';
+                ctx.fillText(`COMBO ${combo}X!`, PLAY_PADDING + 450, PLAY_PADDING + 24);
+
+                // Combo Timer Bar
+                ctx.fillStyle = 'rgba(255, 238, 0, 0.3)';
+                ctx.fillRect(PLAY_PADDING + 570, PLAY_PADDING + 12, 80, 10);
+                ctx.fillStyle = '#ffee00';
+                ctx.fillRect(PLAY_PADDING + 570, PLAY_PADDING + 12, (comboTimer / MAX_COMBO_TIME) * 80, 10);
+            }
+
+            // Top Right Status Indicators: Overdrive, Shield & EMP
+            const rightHUDX = WIDTH - PLAY_PADDING - 210;
+            ctx.font = '12px "Orbitron", sans-serif';
+
+            // EMP Charges
+            ctx.fillStyle = '#cc00ff';
+            ctx.fillText(`EMP: ${'💥'.repeat(snake.empCharges)}`, rightHUDX, PLAY_PADDING + 24);
+
+            // Shield status
+            ctx.fillStyle = snake.shield ? '#ff0055' : 'rgba(255, 0, 85, 0.4)';
+            ctx.fillText(`SHIELD: ${snake.shield ? 'ONLINE' : 'OFFLINE'}`, rightHUDX + 90, PLAY_PADDING + 24);
+
+            // Overlay Screen Messages
+            if (!gameStarted) {
+                drawOverlay('CYBER SNAKE', 'PRESS SPACE OR CLICK TO INITIATE RUN');
+            } else if (gameOver) {
+                drawOverlay('SYSTEM PURGED', 'CORE CRASH - PRESS SPACE TO REBOOT');
+            } else if (gamePaused) {
+                drawOverlay('SYSTEM PAUSED', 'PRESS P OR CLICK TO RESUME');
+            }
+        }
+
+        function drawOverlay(title, subtitle) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(3, 3, 10, 0.85)';
+            ctx.fillRect(WIDTH / 2 - 200, HEIGHT / 2 - 80, 400, 160);
+
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(WIDTH / 2 - 200, HEIGHT / 2 - 80, 400, 160);
+
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = '22px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, WIDTH / 2, HEIGHT / 2 - 20);
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px "Orbitron", sans-serif';
+            ctx.fillText(subtitle, WIDTH / 2, HEIGHT / 2 + 25);
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Keyboard Input Event Listeners
+        const SNAKE_GAME_KEYS = ['Space', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+        document.addEventListener('keydown', event => {
+            sound.init();
+
+            // Stop Space/Arrow keys from scrolling the page — otherwise the
+            // browser's default scroll fires alongside the game input and it
+            // looks like the game isn't responding.
+            if (SNAKE_GAME_KEYS.includes(event.code)) {
+                event.preventDefault();
+            }
+
+            if (event.code === 'KeyP') {
+                if (gameStarted && !gameOver) gamePaused = !gamePaused;
+                return;
+            }
+
+            if (!gameStarted || gameOver) {
+                if (event.code === 'Space' || event.code === 'Enter') {
+                    initGame();
+                }
+                return;
+            }
+
+            if (gamePaused) return;
+
+            switch (event.code) {
+                case 'ArrowLeft':
+                case 'KeyA':
+                    keys.left = true;
+                    pointerTarget = null;
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    keys.right = true;
+                    pointerTarget = null;
+                    break;
+                case 'ArrowUp':
+                case 'KeyW':
+                case 'ShiftLeft':
+                case 'ShiftRight':
+                    keys.boost = true;
+                    break;
+                case 'Space':
+                    triggerEmpBlast();
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', event => {
+            switch (event.code) {
+                case 'ArrowLeft':
+                case 'KeyA':
+                    keys.left = false;
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    keys.right = false;
+                    break;
+                case 'ArrowUp':
+                case 'KeyW':
+                case 'ShiftLeft':
+                case 'ShiftRight':
+                    keys.boost = false;
+                    break;
+            }
+        });
+
+        function pauseForBackground() {
+            if (gameStarted && !gameOver && !gamePaused) {
+                gamePaused = true;
+                pausedByBackground = true;
+                keys.left = false;
+                keys.right = false;
+                keys.boost = false;
+                pointerTarget = null;
+            }
+        }
+
+        function resumeFromBackground() {
+            if (pausedByBackground) {
+                gamePaused = false;
+                pausedByBackground = false;
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) pauseForBackground();
+            else resumeFromBackground();
+        });
+        window.addEventListener('blur', pauseForBackground);
+        window.addEventListener('focus', () => {
+            if (!document.hidden) resumeFromBackground();
+        });
+
+        // Touch Pad Button Listeners for Mobile
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const btnBoost = document.getElementById('btn-boost');
+        const btnEmp = document.getElementById('btn-emp');
+
+        const bindTouchButton = (btn, onPress, onRelease) => {
+            btn.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                if (gamePaused) return;
+                sound.init();
+                btn.classList.add('active');
+                onPress();
+            });
+            btn.addEventListener('pointerup', (e) => {
+                e.preventDefault();
+                btn.classList.remove('active');
+                onRelease();
+            });
+            btn.addEventListener('pointerleave', () => {
+                btn.classList.remove('active');
+                onRelease();
+            });
+        };
+
+        bindTouchButton(btnLeft, () => { keys.left = true; pointerTarget = null; }, () => { keys.left = false; });
+        bindTouchButton(btnRight, () => { keys.right = true; pointerTarget = null; }, () => { keys.right = false; });
+        bindTouchButton(btnBoost, () => { keys.boost = true; }, () => { keys.boost = false; });
+        bindTouchButton(btnEmp, () => { triggerEmpBlast(); }, () => {});
+
+        // Mouse & Direct Touch Canvas Steering
+        function updatePointerPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = WIDTH / rect.width;
+            const scaleY = HEIGHT / rect.height;
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            pointerTarget = {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (e.buttons === 1) updatePointerPosition(e);
+        });
+
+        canvas.addEventListener('pointerdown', (e) => {
+            sound.init();
+            if (!gameStarted || gameOver) {
+                initGame();
+            } else if (gamePaused) {
+                gamePaused = false;
+            } else {
+                updatePointerPosition(e);
+            }
+        });
+
+        // Start animation loop on window load
+        window.onload = function() {
+            requestAnimationFrame(gameLoop);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Retro Cyberpunk Gaming Hub | Neon Arcade</title>
+    <meta name="description" content="Learn more about Neon Arcade, a curated collection of high-octane retro-futuristic browser survival games designed with HTML5 canvas and zero dependencies.">
+    <link rel="canonical" href="https://your-domain.vercel.app/about">
+    <meta property="og:title" content="About Us - Retro Cyberpunk Gaming Hub | Neon Arcade">
+    <meta property="og:description" content="Learn more about Neon Arcade, a curated collection of high-octane retro-futuristic browser survival games designed with HTML5 canvas and zero dependencies.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.vercel.app/about">
+    <link rel="stylesheet" href="/neon-arcade.css">
+    <style>
+        :root {
+            --c-bg: #050510;
+            --c-primary: #00f3ff;
+            --c-secondary: #fcee0a;
+            --c-text: #ffffff;
+        }
+        body {
+            background-color: var(--c-bg);
+            color: var(--c-text);
+            font-family: var(--na-font-body);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* CRT Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::after { animation: none; opacity: 0.4; }
+        }
+        nav {
+            background: rgba(5, 5, 16, 0.9);
+            border-bottom: 2px solid var(--c-primary);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            width: 100%;
+        }
+        nav a {
+            color: var(--c-primary);
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        nav a:hover {
+            color: #ff003c;
+            text-shadow: 0 0 5px #ff003c;
+        }
+        main {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+        }
+        h1 { color: var(--c-primary); text-shadow: 0 0 10px var(--c-primary); margin-bottom: 30px; }
+        p { margin-bottom: 20px; font-size: 1.1rem; color: #ccc; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: auto; font-size: 0.8rem; color: #555; width: 100%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
+    <main>
+        <h1>ABOUT NEON ARCADE</h1>
+        <p>Neon Arcade is a curated collection of high-octane, retro-futuristic survival games designed for the modern web.</p>
+        <p>Built with lightweight web standards and externally hosted display fonts, our hub delivers lightning-fast performance and a seamless cyberpunk aesthetic across all devices.</p>
+    </main>
+    <footer>
+        <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

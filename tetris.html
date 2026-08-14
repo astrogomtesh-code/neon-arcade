@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cyberpunk Tetris</title>
+    <link rel="stylesheet" href="/neon-arcade.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px 10px;
+            background-color: #030308;
+            color: #00f3ff;
+            font-family: var(--na-font-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        nav {
+            background: rgba(5, 5, 16, 0.95);
+            border-bottom: 2px solid #00f3ff;
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            margin: -20px -10px 20px -10px;
+        }
+        nav a {
+            color: #00f3ff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: var(--na-font-display);
+        }
+        nav a:hover {
+            color: #ff003c;
+            text-shadow: 0 0 8px #ff003c;
+        }
+
+        /* User Specified Container & Fullscreen Styles */
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            background: #050510;
+            border: 2px solid #00f3ff;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(0, 243, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        #game-container:fullscreen,
+        #game-container.pseudo-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            max-width: none;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: unset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #050510;
+            border: none;
+            border-radius: 0;
+        }
+
+        #game-container:fullscreen canvas,
+        #game-container.pseudo-fullscreen canvas {
+            width: auto;
+            height: auto;
+            max-width: 100vw;
+            max-height: 100vh;
+            aspect-ratio: 16 / 9;
+        }
+
+        /* User Specified Maximize Button Styles */
+        #maximize-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 20;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: rgba(5, 5, 16, 0.7);
+            border: 2px solid #00f3ff;
+            border-radius: 4px;
+            color: #00f3ff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #maximize-btn:hover {
+            background: #00f3ff;
+            color: #050510;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        #maximize-btn svg { 
+            width: 18px; 
+            height: 18px; 
+        }
+
+        /* Canvas Wrapper & Scanlines Effect */
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            max-width: 860px;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            background: #020208;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Overlay CRT Scanline Effect */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            z-index: 5;
+            border-radius: 4px;
+        }
+
+        /* Cyberpunk UI Elements & Typography */
+        .cyber-font {
+            font-family: var(--na-font-display);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 8px #00f3ff, 0 0 16px rgba(0, 243, 255, 0.6);
+        }
+
+        .btn-cyber {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid #00f3ff;
+            color: #00f3ff;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+        }
+
+        .btn-cyber:hover, .btn-cyber:active {
+            background: #00f3ff;
+            color: #050510;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        /* Mobile Touch Pad Layout */
+        .touch-pad {
+            display: none;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            width: 100%;
+            margin-top: 10px;
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            .touch-pad {
+                display: grid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
+
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <!-- Maximize Fullscreen Button -->
+        <button id="maximize-btn" title="Toggle Fullscreen" onclick="toggleFullscreen()">
+            <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+        </button>
+
+        <!-- Canvas Game Screen with CRT Scanline overlay -->
+        <div class="canvas-wrapper">
+            <canvas id="tetris-canvas" width="960" height="540"></canvas>
+            <div class="scanlines"></div>
+        </div>
+
+        <!-- Touch Controls Overlay for Mobile Devices -->
+        <div class="touch-pad">
+            <button class="btn-cyber" id="btn-left">◀ LEFT</button>
+            <button class="btn-cyber" id="btn-rotate">↻ ROT</button>
+            <button class="btn-cyber" id="btn-drop">⚡ DROP</button>
+            <button class="btn-cyber" id="btn-down">▼ DOWN</button>
+            <button class="btn-cyber" id="btn-right">RIGHT ▶</button>
+        </div>
+    </div>
+
+    <!-- Information, Controls, Strategy & Lore Section -->
+    <div class="game-info-panel">
+        
+        <!-- HOW TO PLAY & CONTROLS -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
+                HOW TO PLAY & CONTROLS
+            </h2>
+            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
+                Cyberpunk Tetris is a high-speed matrix alignment survival system. Test your reaction times on the digital grid with these control systems:
+            </p>
+            <ul class="space-y-2 text-sm md:text-base leading-relaxed">
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Keyboard Controls:</strong> Use the <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">A</code> / <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">◀</code> or <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">D</code> / <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">▶</code> keys to shift left and right. Press <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">▲</code> or <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">X</code> to rotate, <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">▼</code> for soft drop, and <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SPACE</code> for instant hard drop.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Touch Controls:</strong> Tap the interactive control pad buttons situated below the grid to shift, rotate, or drop active blocks.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Game Mechanics:</strong> Form unbroken horizontal rows across the 10x20 matrix grid. Clearing multiple lines simultaneously grants massive exponential score bonuses.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- STRATEGY GUIDE & TIPS -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
+                STRATEGY GUIDE & TIPS
+            </h2>
+            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
+                Surviving terminal velocity requires predicting piece transitions early and moving smoothly. Review these pro tips:
+            </p>
+            <ul class="space-y-2 text-sm md:text-base leading-relaxed">
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Keep Your Focus Ahead:</strong> Do not just look at your falling block. Watch the NEXT panel on the right where incoming blocks spawn so you can plan path transitions early.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Smooth Transits:</strong> Avoid panic double-shifting. Map out paths that require minimal switching to avoid being trapped on the outer boundaries.</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-[#00f3ff] mr-2">•</span>
+                    <span><strong class="text-white">Maintain Streak Multiplier:</strong> Utilize the HOLD feature (<code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">C</code> or <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SHIFT</code>) to save long pieces for quadruple-line clear 'Tetris' streaks to maximize your score output.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- THE TETRIS PROTOCOL (LORE) -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
+                THE TETRIS PROTOCOL (LORE)
+            </h2>
+            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
+                The virtual grid is shifting, the lanes are narrowing, and your reflexes are the only thing keeping your program online. In the virtual space of the Tetris Protocol, runners are thrust into a high-octane data alignment path. As you accelerate, the central firewall drops purging block patterns in unpredictable arrays, demanding instant transitions.
+            </p>
+            <p class="text-sm md:text-base text-gray-400 leading-relaxed">
+                The engine constantly accelerates, pushing your nervous system to the absolute limit. Will you conquer the terminal velocity, or will you end up as another fragmented packet in the digital abyss? Stay alert, switch fast, and survive!
+            </p>
+        </section>
+    </div>
+
+    <script>
+        // Fullscreen Toggle functionality with permissions error handling & pseudo-fullscreen fallback
+        const gameContainer = document.getElementById('game-container');
+        const maximizeBtn = document.getElementById('maximize-btn');
+        const maxIcon = document.getElementById('max-icon');
+
+        async function toggleFullscreen() {
+            const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
+
+            if (!isFullscreen) {
+                try {
+                    if (gameContainer.requestFullscreen) {
+                        await gameContainer.requestFullscreen();
+                    } else if (gameContainer.webkitRequestFullscreen) {
+                        await gameContainer.webkitRequestFullscreen();
+                    } else if (gameContainer.msRequestFullscreen) {
+                        await gameContainer.msRequestFullscreen();
+                    } else if (gameContainer.mozRequestFullScreen) {
+                        await gameContainer.mozRequestFullScreen();
+                    } else {
+                        gameContainer.classList.add('pseudo-fullscreen');
+                        updateMaximizeIcon(true);
+                    }
+                } catch (err) {
+                    // Fallback to pseudo-fullscreen if native fullscreen is restricted by iframe permissions policy
+                    console.warn('Native fullscreen blocked, applying pseudo-fullscreen mode instead:', err);
+                    gameContainer.classList.add('pseudo-fullscreen');
+                    updateMaximizeIcon(true);
+                }
+            } else {
+                if (gameContainer.classList.contains('pseudo-fullscreen')) {
+                    gameContainer.classList.remove('pseudo-fullscreen');
+                    updateMaximizeIcon(false);
+                } else {
+                    try {
+                        if (document.exitFullscreen) {
+                            await document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            await document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) {
+                            await document.msExitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            await document.mozCancelFullScreen();
+                        }
+                    } catch (err) {
+                        gameContainer.classList.remove('pseudo-fullscreen');
+                        updateMaximizeIcon(false);
+                    }
+                }
+            }
+            // pseudo-fullscreen doesn't fire fullscreenchange, so force a
+            // recalculation once the layout settles either way
+            setTimeout(() => resizeCanvas(), 60);
+        }
+
+        function updateMaximizeIcon(overrideState) {
+            const isFullscreen = (typeof overrideState === 'boolean') 
+                ? overrideState 
+                : !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
+
+            if (isFullscreen) {
+                maxIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
+            } else {
+                maxIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => updateMaximizeIcon());
+        document.addEventListener('webkitfullscreenchange', () => updateMaximizeIcon());
+        document.addEventListener('mozfullscreenchange', () => updateMaximizeIcon());
+        document.addEventListener('MSFullscreenChange', () => updateMaximizeIcon());
+
+        // Cyberpunk Web Audio Sound Engine
+        class CyberAudio {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTone(freq, type, duration, vol = 0.1) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e){}
+            }
+
+            playMove() { this.playTone(320, 'sine', 0.05, 0.05); }
+            playRotate() { this.playTone(480, 'triangle', 0.08, 0.08); }
+            playDrop() { this.playTone(180, 'sawtooth', 0.12, 0.12); }
+            
+            playClear(lines) {
+                if (this.muted || !this.ctx) return;
+                const freqs = lines === 4 ? [440, 554, 659, 880] : [330, 392, 493];
+                freqs.forEach((f, i) => {
+                    setTimeout(() => this.playTone(f, 'square', 0.25, 0.12), i * 60);
+                });
+            }
+
+            playGameOver() {
+                if (this.muted || !this.ctx) return;
+                [220, 196, 164, 130, 98].forEach((f, i) => {
+                    setTimeout(() => this.playTone(f, 'sawtooth', 0.2, 0.15), i * 90);
+                });
+            }
+        }
+
+        const sound = new CyberAudio();
+
+        const canvas = document.getElementById('tetris-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Fixed logical resolution the game is designed and laid out in.
+        // Captured before any DPR backing-store resize below so board
+        // centering, grid lines, and text positions stay in this space
+        // regardless of the canvas's actual backing-store pixel size.
+        const LOGICAL_WIDTH = canvas.width;
+        const LOGICAL_HEIGHT = canvas.height;
+
+        // Board dimensions
+        const COLS = 10;
+        const ROWS = 20;
+        const BLOCK_SIZE = 24; // 240px wide x 480px high
+        const BOARD_X = (LOGICAL_WIDTH - COLS * BLOCK_SIZE) / 2; // Centered
+        const BOARD_Y = (LOGICAL_HEIGHT - ROWS * BLOCK_SIZE) / 2;
+
+        // Proper devicePixelRatio scaling: backing store matches the
+        // canvas's real on-screen CSS size x DPR, context is scaled back
+        // down so all drawing (which works in LOGICAL_WIDTH x LOGICAL_HEIGHT
+        // space above) renders crisply at any zoom, density, or fullscreen
+        // size without touching board/game logic.
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.scale(rect.width / LOGICAL_WIDTH, rect.height / LOGICAL_HEIGHT);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        document.addEventListener('fullscreenchange', resizeCanvas);
+        document.addEventListener('webkitfullscreenchange', resizeCanvas);
+        document.addEventListener('mozfullscreenchange', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+        resizeCanvas();
+
+        // Neon Palette for Tetrominoes
+        const PALETTE = {
+            I: { color: '#00f3ff', glow: 'rgba(0, 243, 255, 0.8)' },   // Cyan
+            J: { color: '#0044ff', glow: 'rgba(0, 68, 255, 0.8)' },    // Blue
+            L: { color: '#ffaa00', glow: 'rgba(255, 170, 0, 0.8)' },   // Orange
+            O: { color: '#ffee00', glow: 'rgba(255, 238, 0, 0.8)' },   // Yellow
+            S: { color: '#00ff66', glow: 'rgba(0, 255, 102, 0.8)' },   // Green
+            T: { color: '#cc00ff', glow: 'rgba(204, 0, 255, 0.8)' },   // Purple
+            Z: { color: '#ff0055', glow: 'rgba(255, 0, 85, 0.8)' }     // Red
+        };
+
+        // Tetromino shapes definition
+        const SHAPES = {
+            I: [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]],
+            J: [[1,0,0], [1,1,1], [0,0,0]],
+            L: [[0,0,1], [1,1,1], [0,0,0]],
+            O: [[1,1], [1,1]],
+            S: [[0,1,1], [1,1,0], [0,0,0]],
+            T: [[0,1,0], [1,1,1], [0,0,0]],
+            Z: [[1,1,0], [0,1,1], [0,0,0]]
+        };
+
+        // Game State Variables
+        let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        let score = 0;
+        let lines = 0;
+        let level = 1;
+        let highScore = localStorage.getItem('cyber_tetris_hi') || 0;
+        let gameOver = false;
+        let gamePaused = false;
+        let pausedByBackground = false;
+        let gameStarted = false;
+
+        let pieceBag = [];
+        let currentPiece = null;
+        let nextPieces = [];
+        let holdPiece = null;
+        let canHold = true;
+
+        let lastTime = 0;
+        let dropCounter = 0;
+        let dropInterval = 450; // Accelerated drop speed for faster arcade gameplay
+
+        // Particle System for line clears
+        let particles = [];
+
+        function getRandomPiece() {
+            if (pieceBag.length === 0) {
+                pieceBag = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
+                // Shuffle bag
+                for (let i = pieceBag.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pieceBag[i], pieceBag[j]] = [pieceBag[j], pieceBag[i]];
+                }
+            }
+            const type = pieceBag.pop();
+            const matrix = SHAPES[type].map(row => [...row]);
+            return {
+                type: type,
+                matrix: matrix,
+                x: Math.floor((COLS - matrix[0].length) / 2),
+                y: type === 'I' ? -1 : 0
+            };
+        }
+
+        function initGame() {
+            board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+            score = 0;
+            lines = 0;
+            level = 1;
+            dropInterval = 450; // Fast initial fall speed
+            gameOver = false;
+            gamePaused = false;
+            pausedByBackground = false;
+            gameStarted = true;
+            pieceBag = [];
+            holdPiece = null;
+            canHold = true;
+            particles = [];
+
+            nextPieces = [getRandomPiece(), getRandomPiece(), getRandomPiece()];
+            spawnPiece();
+        }
+
+        function spawnPiece() {
+            currentPiece = nextPieces.shift();
+            nextPieces.push(getRandomPiece());
+            canHold = true;
+
+            if (checkCollision(currentPiece, currentPiece.x, currentPiece.y)) {
+                gameOver = true;
+                sound.playGameOver();
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('cyber_tetris_hi', highScore);
+                }
+            }
+        }
+
+        function checkCollision(piece, offsetX, offsetY) {
+            for (let r = 0; r < piece.matrix.length; r++) {
+                for (let c = 0; c < piece.matrix[r].length; c++) {
+                    if (piece.matrix[r][c]) {
+                        const newX = piece.x + c + offsetX - piece.x;
+                        const newY = piece.y + r + offsetY - piece.y;
+
+                        if (newX < 0 || newX >= COLS || newY >= ROWS) {
+                            return true;
+                        }
+                        if (newY >= 0 && board[newY][newX]) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        function rotateMatrix(matrix) {
+            const N = matrix.length;
+            const result = matrix.map((row, i) =>
+                row.map((val, j) => matrix[N - 1 - j][i])
+            );
+            return result;
+        }
+
+        function playerRotate() {
+            sound.init();
+            if (!currentPiece || gameOver || gamePaused) return;
+            const rotated = rotateMatrix(currentPiece.matrix);
+            const oldMatrix = currentPiece.matrix;
+            currentPiece.matrix = rotated;
+
+            // Simple Wall Kick logic
+            let offset = 1;
+            while (checkCollision(currentPiece, currentPiece.x, currentPiece.y)) {
+                currentPiece.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if (offset > currentPiece.matrix[0].length) {
+                    currentPiece.matrix = oldMatrix; // revert
+                    return;
+                }
+            }
+            sound.playRotate();
+        }
+
+        function playerMove(dir) {
+            sound.init();
+            if (!currentPiece || gameOver || gamePaused) return;
+            if (!checkCollision(currentPiece, currentPiece.x + dir, currentPiece.y)) {
+                currentPiece.x += dir;
+                sound.playMove();
+            }
+        }
+
+        function playerDrop() {
+            sound.init();
+            if (!currentPiece || gameOver || gamePaused) return;
+            if (!checkCollision(currentPiece, currentPiece.x, currentPiece.y + 1)) {
+                currentPiece.y++;
+                score += 1;
+                dropCounter = 0;
+            } else {
+                lockPiece();
+            }
+        }
+
+        function hardDrop() {
+            sound.init();
+            if (!currentPiece || gameOver || gamePaused) return;
+            let dropDist = 0;
+            while (!checkCollision(currentPiece, currentPiece.x, currentPiece.y + 1)) {
+                currentPiece.y++;
+                dropDist++;
+            }
+            score += dropDist * 2;
+            sound.playDrop();
+            lockPiece();
+        }
+
+        function doHoldPiece() {
+            sound.init();
+            if (!currentPiece || !canHold || gameOver || gamePaused) return;
+
+            if (!holdPiece) {
+                holdPiece = {
+                    type: currentPiece.type,
+                    matrix: SHAPES[currentPiece.type].map(row => [...row])
+                };
+                spawnPiece();
+            } else {
+                const tempType = currentPiece.type;
+                currentPiece = {
+                    type: holdPiece.type,
+                    matrix: SHAPES[holdPiece.type].map(row => [...row]),
+                    x: Math.floor((COLS - SHAPES[holdPiece.type][0].length) / 2),
+                    y: holdPiece.type === 'I' ? -1 : 0
+                };
+                holdPiece = {
+                    type: tempType,
+                    matrix: SHAPES[tempType].map(row => [...row])
+                };
+            }
+            canHold = false;
+            sound.playRotate();
+        }
+
+        function lockPiece() {
+            for (let r = 0; r < currentPiece.matrix.length; r++) {
+                for (let c = 0; c < currentPiece.matrix[r].length; c++) {
+                    if (currentPiece.matrix[r][c]) {
+                        const boardY = currentPiece.y + r;
+                        const boardX = currentPiece.x + c;
+                        if (boardY >= 0 && boardY < ROWS) {
+                            board[boardY][boardX] = currentPiece.type;
+                        }
+                    }
+                }
+            }
+
+            clearLines();
+            spawnPiece();
+        }
+
+        function clearLines() {
+            let linesCleared = 0;
+
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (board[r].every(cell => cell !== 0)) {
+                    linesCleared++;
+                    // Spawn explosion particles
+                    for (let c = 0; c < COLS; c++) {
+                        const px = BOARD_X + c * BLOCK_SIZE + BLOCK_SIZE / 2;
+                        const py = BOARD_Y + r * BLOCK_SIZE + BLOCK_SIZE / 2;
+                        createParticles(px, py, PALETTE[board[r][c]] ? PALETTE[board[r][c]].color : '#00f3ff');
+                    }
+                    board.splice(r, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    r++; // Recheck same row index
+                }
+            }
+
+            if (linesCleared > 0) {
+                lines += linesCleared;
+                const points = [0, 100, 300, 500, 800];
+                score += (points[linesCleared] || 1000) * level;
+
+                level = Math.floor(lines / 10) + 1;
+                dropInterval = Math.max(50, 450 - (level - 1) * 35); // Accelerated scaling per level
+
+                sound.playClear(linesCleared);
+            }
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 8; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    size: Math.random() * 4 + 2,
+                    color: color,
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function getGhostY() {
+            if (!currentPiece) return 0;
+            let ghostY = currentPiece.y;
+            while (!checkCollision(currentPiece, currentPiece.x, ghostY + 1)) {
+                ghostY++;
+            }
+            return ghostY;
+        }
+
+        function drawBlock(x, y, type, isGhost = false) {
+            const info = PALETTE[type] || { color: '#00f3ff', glow: 'rgba(0, 243, 255, 0.8)' };
+            
+            ctx.save();
+            if (isGhost) {
+                ctx.strokeStyle = info.color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x + 2, y + 2, BLOCK_SIZE - 4, BLOCK_SIZE - 4);
+                ctx.fillStyle = info.glow.replace('0.8', '0.15');
+                ctx.fillRect(x + 2, y + 2, BLOCK_SIZE - 4, BLOCK_SIZE - 4);
+            } else {
+                ctx.shadowColor = info.glow;
+                ctx.shadowBlur = 8;
+                
+                // Solid fill with subtle inner bevel
+                ctx.fillStyle = info.color;
+                ctx.fillRect(x + 1, y + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(x + 2, y + 2, BLOCK_SIZE - 4, 3);
+                ctx.fillRect(x + 2, y + 2, 3, BLOCK_SIZE - 4);
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.fillRect(x + 2, y + BLOCK_SIZE - 5, BLOCK_SIZE - 4, 3);
+                ctx.fillRect(x + BLOCK_SIZE - 5, y + 2, 3, BLOCK_SIZE - 4);
+            }
+            ctx.restore();
+        }
+
+        function render() {
+            // Clear entire Canvas
+            ctx.fillStyle = '#020208';
+            ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+            // Draw Cyber Grid Lines
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
+            ctx.lineWidth = 1;
+
+            // Background Grid pattern
+            for (let x = 0; x < LOGICAL_WIDTH; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, LOGICAL_HEIGHT);
+                ctx.stroke();
+            }
+            for (let y = 0; y < LOGICAL_HEIGHT; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(LOGICAL_WIDTH, y);
+                ctx.stroke();
+            }
+
+            // Draw Main Game Field Frame
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 10;
+            ctx.strokeRect(BOARD_X - 3, BOARD_Y - 3, COLS * BLOCK_SIZE + 6, ROWS * BLOCK_SIZE + 6);
+            ctx.shadowBlur = 0;
+
+            // Board Internal Grid
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.12)';
+            for (let r = 0; r <= ROWS; r++) {
+                ctx.beginPath();
+                ctx.moveTo(BOARD_X, BOARD_Y + r * BLOCK_SIZE);
+                ctx.lineTo(BOARD_X + COLS * BLOCK_SIZE, BOARD_Y + r * BLOCK_SIZE);
+                ctx.stroke();
+            }
+            for (let c = 0; c <= COLS; c++) {
+                ctx.beginPath();
+                ctx.moveTo(BOARD_X + c * BLOCK_SIZE, BOARD_Y);
+                ctx.lineTo(BOARD_X + c * BLOCK_SIZE, BOARD_Y + ROWS * BLOCK_SIZE);
+                ctx.stroke();
+            }
+
+            // Draw Board Matrix Blocks
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c]) {
+                        drawBlock(BOARD_X + c * BLOCK_SIZE, BOARD_Y + r * BLOCK_SIZE, board[r][c]);
+                    }
+                }
+            }
+
+            // Draw Current Piece & Ghost
+            if (currentPiece && !gameOver) {
+                const ghostY = getGhostY();
+                // Ghost
+                for (let r = 0; r < currentPiece.matrix.length; r++) {
+                    for (let c = 0; c < currentPiece.matrix[r].length; c++) {
+                        if (currentPiece.matrix[r][c]) {
+                            const px = BOARD_X + (currentPiece.x + c) * BLOCK_SIZE;
+                            const py = BOARD_Y + (ghostY + r) * BLOCK_SIZE;
+                            if (ghostY + r >= 0) drawBlock(px, py, currentPiece.type, true);
+                        }
+                    }
+                }
+                // Active Piece
+                for (let r = 0; r < currentPiece.matrix.length; r++) {
+                    for (let c = 0; c < currentPiece.matrix[r].length; c++) {
+                        if (currentPiece.matrix[r][c]) {
+                            const px = BOARD_X + (currentPiece.x + c) * BLOCK_SIZE;
+                            const py = BOARD_Y + (currentPiece.y + r) * BLOCK_SIZE;
+                            if (currentPiece.y + r >= 0) drawBlock(px, py, currentPiece.type);
+                        }
+                    }
+                }
+            }
+
+            // Draw Particles
+            particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 6;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                ctx.restore();
+            });
+
+            // Draw Side Panels (Hold Box & Next Box & Stats)
+            drawHUD();
+        }
+
+        function drawHUD() {
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = '14px "Orbitron", sans-serif';
+
+            // Left Side Panel: HOLD & STATS
+            const leftX = 60;
+            
+            // HOLD BOX
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.4)';
+            ctx.strokeRect(leftX, BOARD_Y, 130, 110);
+            ctx.fillText('HOLD', leftX + 10, BOARD_Y + 24);
+
+            if (holdPiece) {
+                const info = PALETTE[holdPiece.type];
+                const matrix = holdPiece.matrix;
+                const offX = leftX + (130 - matrix[0].length * 18) / 2;
+                const offY = BOARD_Y + 40 + (60 - matrix.length * 18) / 2;
+
+                for (let r = 0; r < matrix.length; r++) {
+                    for (let c = 0; c < matrix[r].length; c++) {
+                        if (matrix[r][c]) {
+                            ctx.fillStyle = info.color;
+                            ctx.fillRect(offX + c * 18, offY + r * 18, 16, 16);
+                        }
+                    }
+                }
+            }
+
+            // STATS DISPLAY
+            const statsY = BOARD_Y + 150;
+            ctx.fillText('SCORE', leftX, statsY);
+            ctx.font = '20px "Share Tech Mono", monospace';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(score.toString().padStart(6, '0'), leftX, statsY + 28);
+
+            ctx.font = '14px "Orbitron", sans-serif';
+            ctx.fillStyle = '#00f3ff';
+            ctx.fillText('HIGH SCORE', leftX, statsY + 70);
+            ctx.font = '20px "Share Tech Mono", monospace';
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText(highScore.toString().padStart(6, '0'), leftX, statsY + 98);
+
+            ctx.font = '14px "Orbitron", sans-serif';
+            ctx.fillStyle = '#00f3ff';
+            ctx.fillText('LEVEL', leftX, statsY + 140);
+            ctx.font = '22px "Share Tech Mono", monospace';
+            ctx.fillStyle = '#00ff66';
+            ctx.fillText(level.toString(), leftX, statsY + 168);
+
+            ctx.font = '14px "Orbitron", sans-serif';
+            ctx.fillStyle = '#00f3ff';
+            ctx.fillText('LINES', leftX, statsY + 210);
+            ctx.font = '22px "Share Tech Mono", monospace';
+            ctx.fillStyle = '#cc00ff';
+            ctx.fillText(lines.toString(), leftX, statsY + 238);
+
+            // Right Side Panel: NEXT PIECES & CONTROLS
+            const rightX = LOGICAL_WIDTH - 190;
+            ctx.font = '14px "Orbitron", sans-serif';
+            ctx.fillStyle = '#00f3ff';
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.4)';
+            ctx.strokeRect(rightX, BOARD_Y, 130, 260);
+            ctx.fillText('NEXT', rightX + 10, BOARD_Y + 24);
+
+            nextPieces.forEach((p, idx) => {
+                const matrix = p.matrix;
+                const info = PALETTE[p.type];
+                const offX = rightX + (130 - matrix[0].length * 16) / 2;
+                const offY = BOARD_Y + 40 + idx * 70 + (50 - matrix.length * 16) / 2;
+
+                for (let r = 0; r < matrix.length; r++) {
+                    for (let c = 0; c < matrix[r].length; c++) {
+                        if (matrix[r][c]) {
+                            ctx.fillStyle = info.color;
+                            ctx.fillRect(offX + c * 16, offY + r * 16, 14, 14);
+                        }
+                    }
+                }
+            });
+
+            // CONTROLS GUIDE
+            const ctrlY = BOARD_Y + 290;
+            ctx.font = '11px "Orbitron", sans-serif';
+            ctx.fillStyle = 'rgba(0, 243, 255, 0.7)';
+            ctx.fillText('CONTROLS:', rightX, ctrlY);
+            ctx.font = '11px "Share Tech Mono", monospace';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('←/→ : Move', rightX, ctrlY + 20);
+            ctx.fillText('↑/X : Rotate', rightX, ctrlY + 38);
+            ctx.fillText('↓   : Soft Drop', rightX, ctrlY + 56);
+            ctx.fillText('SPACE: Hard Drop', rightX, ctrlY + 74);
+            ctx.fillText('C/SHIFT: Hold', rightX, ctrlY + 92);
+            ctx.fillText('P   : Pause', rightX, ctrlY + 110);
+
+            // OVERLAY MESSAGES (Start / Pause / Game Over)
+            if (!gameStarted) {
+                drawOverlay('CYBERPUNK TETRIS', 'PRESS SPACE OR CLICK TO START');
+            } else if (gameOver) {
+                drawOverlay('SYSTEM CRASH', 'GAME OVER - PRESS SPACE TO RESTART');
+            } else if (gamePaused) {
+                drawOverlay('SYSTEM PAUSED', 'PRESS P OR CLICK TO RESUME');
+            }
+        }
+
+        function drawOverlay(title, subtitle) {
+            ctx.fillStyle = 'rgba(3, 3, 10, 0.85)';
+            ctx.fillRect(BOARD_X - 20, BOARD_Y + 100, COLS * BLOCK_SIZE + 40, 200);
+
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(BOARD_X - 20, BOARD_Y + 100, COLS * BLOCK_SIZE + 40, 200);
+
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = '22px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, LOGICAL_WIDTH / 2, BOARD_Y + 170);
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px "Orbitron", sans-serif';
+            ctx.fillText(subtitle, LOGICAL_WIDTH / 2, BOARD_Y + 220);
+            ctx.textAlign = 'left';
+        }
+
+        function gameLoop(time = 0) {
+            const deltaTime = time - lastTime;
+            lastTime = time;
+
+            if (gameStarted && !gameOver && !gamePaused) {
+                dropCounter += deltaTime;
+                if (dropCounter > dropInterval) {
+                    playerDrop();
+                }
+            }
+
+            if (!gamePaused) updateParticles();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Keyboard Event Listener
+        const TETRIS_GAME_KEYS = ['Space', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+        document.addEventListener('keydown', event => {
+            sound.init();
+
+            // Stop Space/Arrow keys from scrolling the page — otherwise the
+            // browser's default scroll fires alongside the game input and it
+            // looks like the game isn't responding.
+            if (TETRIS_GAME_KEYS.includes(event.code)) {
+                event.preventDefault();
+            }
+
+            if (event.code === 'KeyP') {
+                if (gameStarted && !gameOver) gamePaused = !gamePaused;
+                return;
+            }
+
+            if (!gameStarted || gameOver) {
+                if (event.code === 'Space' || event.code === 'Enter') {
+                    initGame();
+                }
+                return;
+            }
+
+            if (gamePaused) return;
+
+            switch (event.code) {
+                case 'ArrowLeft':
+                case 'KeyA':
+                    playerMove(-1);
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    playerMove(1);
+                    break;
+                case 'ArrowDown':
+                case 'KeyS':
+                    playerDrop();
+                    break;
+                case 'ArrowUp':
+                case 'KeyW':
+                case 'KeyX':
+                    playerRotate();
+                    break;
+                case 'Space':
+                    hardDrop();
+                    break;
+                case 'KeyC':
+                case 'ShiftLeft':
+                case 'ShiftRight':
+                    doHoldPiece();
+                    break;
+            }
+        });
+
+        function pauseForBackground() {
+            if (gameStarted && !gameOver && !gamePaused) {
+                gamePaused = true;
+                pausedByBackground = true;
+            }
+        }
+
+        function resumeFromBackground() {
+            if (pausedByBackground) {
+                gamePaused = false;
+                pausedByBackground = false;
+                lastTime = performance.now();
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) pauseForBackground();
+            else resumeFromBackground();
+        });
+        window.addEventListener('blur', pauseForBackground);
+        window.addEventListener('focus', () => {
+            if (!document.hidden) resumeFromBackground();
+        });
+
+        // Touch Control Buttons Listeners
+        document.getElementById('btn-left').addEventListener('click', () => playerMove(-1));
+        document.getElementById('btn-right').addEventListener('click', () => playerMove(1));
+        document.getElementById('btn-rotate').addEventListener('click', () => playerRotate());
+        document.getElementById('btn-down').addEventListener('click', () => playerDrop());
+        document.getElementById('btn-drop').addEventListener('click', () => hardDrop());
+
+        // Click to start / resume
+        canvas.addEventListener('click', () => {
+            sound.init();
+            if (!gameStarted || gameOver) {
+                initGame();
+            } else if (gamePaused) {
+                gamePaused = false;
+            }
+        });
+
+        // Start animation loop on window load
+        window.onload = function() {
+            requestAnimationFrame(gameLoop);
+        };
+    </script>
+</body>
+</html>

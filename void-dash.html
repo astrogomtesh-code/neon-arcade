@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void Dash - High-Speed Cyberpunk Runner | Neon Arcade</title>
+    <meta name="description" content="Outrun the collapsing field in Void Dash, a high-speed survival gauntlet. Dash through obstacles, build your multiplier streak, and master the digital grid.">
+    <link rel="canonical" href="https://your-domain.vercel.app/void-dash">
+    <meta property="og:title" content="Void Dash - High-Speed Cyberpunk Runner | Neon Arcade">
+    <meta property="og:description" content="Outrun the collapsing field in Void Dash, a high-speed survival gauntlet. Dash through obstacles, build your multiplier streak, and master the digital grid.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.vercel.app/void-dash">
+    <link rel="stylesheet" href="/neon-arcade.css">
+    <style>
+        :root {
+            --c-bg: #050510;
+            --c-primary: #00f3ff;   /* neon cyan */
+            --c-secondary: #fcee0a; /* neon yellow */
+            --c-danger: #ff003c;    /* neon magenta */
+            --c-text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--c-bg);
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-family: var(--na-font-body);
+            color: var(--c-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Nav Bar */
+        nav {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(5, 5, 16, 0.95);
+            border-bottom: 2px solid var(--c-primary);
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            z-index: 1000;
+        }
+        nav a {
+            color: var(--c-primary);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        nav a:hover {
+            color: var(--c-danger);
+            text-shadow: 0 0 5px var(--c-danger);
+        }
+
+        /* CRT Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body::after {
+                animation: none !important;
+                opacity: 0.4 !important;
+            }
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            height: min(80vh, 600px);
+            margin: 40px auto 20px auto;
+            border: 2px solid var(--c-primary);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #game-container:fullscreen,
+        #game-container.pseudo-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            max-width: none;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            background: var(--c-bg);
+        }
+
+        #maximize-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 20;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: rgba(5, 5, 16, 0.7);
+            border: 2px solid var(--c-primary);
+            border-radius: 4px;
+            color: var(--c-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #maximize-btn:hover {
+            background: var(--c-primary);
+            color: var(--c-bg);
+            box-shadow: 0 0 15px var(--c-primary);
+        }
+        #maximize-btn svg { width: 18px; height: 18px; }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            box-shadow: 0 0 60px rgba(0, 243, 255, 0.1);
+            background: radial-gradient(ellipse at 50% 20%, #0c0a20 0%, #050510 70%);
+        }
+
+        #ui-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px 20px 20px 20px; /* Top padding for nav */
+            z-index: 20;
+        }
+
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-shadow: 0 0 10px var(--c-primary);
+        }
+
+        #score { font-size: 2.5rem; font-weight: 900; color: var(--c-primary); }
+        #high-score { font-size: 1rem; color: var(--c-secondary); opacity: 0.85; }
+        #streak { font-size: 0.9rem; color: #9be8b0; opacity: 0; transition: opacity 0.2s; margin-top: 4px; }
+        #streak.show { opacity: 1; }
+
+        .controls-hint {
+            text-align: right;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.45);
+            line-height: 1.4;
+        }
+        .key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        #dash-meter-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #dash-bar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--c-secondary), #ff7847);
+            transform-origin: left;
+            transition: width 0.1s linear;
+        }
+
+        .modal-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: auto;
+            background: rgba(5, 5, 16, 0.95);
+            padding: 40px;
+            border: 2px solid var(--c-primary);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);
+            z-index: 30;
+            min-width: 300px;
+            transition: opacity 0.3s;
+        }
+
+        .hidden { opacity: 0; pointer-events: none; }
+
+        h1 {
+            font-size: 2.8rem;
+            margin: 0 0 6px 0;
+            color: var(--c-primary);
+            text-shadow: 0 0 10px var(--c-primary);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .sub {
+            color: #9aa4c7;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .tap-hint {
+            margin-top: 18px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.55);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+        button {
+            background: transparent;
+            color: var(--c-primary);
+            font-family: var(--na-font-body);
+            font-size: 1.1rem;
+            padding: 14px 30px;
+            border: 2px solid var(--c-primary);
+            margin-top: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: var(--c-primary);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
+        }
+
+        #game-over-screen button { border-color: var(--c-secondary); color: var(--c-secondary); }
+        #game-over-screen button:hover { background: var(--c-secondary); box-shadow: 0 0 25px rgba(252, 238, 10, 0.7); }
+
+        #death-line { color: var(--c-danger); font-size: 0.85rem; margin-top: -4px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        #best-line { color: #9be8b0; font-size: 0.8rem; margin-top: 6px; height: 1em; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .controls-hint { display: none; }
+        }
+
+        .flash {
+            position: absolute;
+            inset: 0;
+            background: var(--c-danger);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 40;
+        }
+        .flash.active { animation: flashOut 0.35s ease-out; }
+        @keyframes flashOut { 0% { opacity: 0.35; } 100% { opacity: 0; } }
+
+        /* SEO Content Styling */
+        .seo-content {
+            max-width: 1000px;
+            width: 100%;
+            margin: 20px auto 40px auto;
+            padding: 30px;
+            background: rgba(10, 10, 30, 0.5);
+            border-left: 3px solid var(--c-primary);
+            border-radius: 4px;
+        }
+        .seo-content h2 {
+            color: var(--c-secondary);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .seo-content h2:first-of-type {
+            margin-top: 0;
+        }
+        .seo-content p, .seo-content ul {
+            margin-bottom: 15px;
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .seo-content ul {
+            padding-left: 20px;
+        }
+        .seo-content li {
+            margin-bottom: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            font-size: 0.8rem;
+            color: #555;
+            border-top: 1px solid #111;
+            margin-top: auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/">Hub</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+</nav>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    <div class="flash" id="flash"></div>
+    <button id="maximize-btn" aria-label="Toggle fullscreen" title="Fullscreen">
+        <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+            <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+            <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+            <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+        </svg>
+    </button>
+
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div>
+                <div id="score">00000</div>
+                <div id="high-score">BEST: 00000</div>
+                <div id="streak">STREAK x0</div>
+            </div>
+            <div class="controls-hint">
+                JUMP: SPACE / W / TAP LEFT<br>
+                DASH: SHIFT / D / TAP RIGHT
+            </div>
+        </div>
+        <div id="dash-meter-container">
+            <div id="dash-bar"></div>
+        </div>
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="modal-screen">
+        <h1>VOID DASH</h1>
+        <p class="sub">Outrun the collapsing field. One hit ends the run.</p>
+        <button id="start-btn">LAUNCH</button>
+        <div class="tap-hint">or press SPACE / TAP</div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="game-over-screen" class="modal-screen hidden">
+        <h1>SIGNAL LOST</h1>
+        <div id="death-line">HIT: —</div>
+        <p id="final-score" style="font-size: 1.5rem; color: #fff; margin: 0;">SCORE: 0</p>
+        <div id="best-line"></div>
+        <button id="restart-btn">RELAUNCH</button>
+        <div class="tap-hint">or press SPACE / TAP to retry</div>
+    </div>
+</div>
+
+<!-- INDEXABLE TEXT FOR GOOGLE ADSENSE BOT -->
+<section class="seo-content">
+    <h2>How to Play &amp; Controls</h2>
+    <p>Mastering the high-speed cyber runner requires quick finger coordination and timing. Use the following control methods:</p>
+    <ul>
+        <li><strong>Keyboard Controls:</strong> Use the <span class="key">Space</span>, <span class="key">W</span> or <span class="key">Up Arrow</span> to jump. Press <span class="key">Shift</span>, <span class="key">D</span> or <span class="key">Right Arrow</span> to dash forward when your power bar is filled.</li>
+        <li><strong>Touch Controls:</strong> Tap the left side of the screen to jump, or the right side to dash.</li>
+        <li><strong>Double Jumping:</strong> Press jump again in mid-air to perform a double jump and reach higher platforms.</li>
+        <li><strong>Dashing:</strong> Dashing grants temporary invincibility and allows you to shatter incoming obstacles for bonus points.</li>
+    </ul>
+
+    <h2>Strategy Guide &amp; Tips</h2>
+    <p>Survival in the grid requires more than just raw speed. Review these advanced strategies to achieve your best possible scores:</p>
+    <ul>
+        <li><strong>Precision Dashing:</strong> Wait until you are extremely close to an obstacle before activating your dash. Shattering an obstacle directly increases your streak multiplier, propelling your scores to record heights.</li>
+        <li><strong>Conserve Your Energy:</strong> Do not spam your dash as soon as it becomes available. Keep it ready for tight situations, especially when multiple high obstacles spawn back-to-back.</li>
+        <li><strong>Stay Low:</strong> Double jumping is useful, but it keeps you in the air longer, making you vulnerable to fast-moving sentinel drones. Stay grounded as much as possible to react quickly.</li>
+    </ul>
+
+    <h2>Sector 7: Void Chronicles (Lore)</h2>
+    <p>In the deep grid of Sector 7, the digital horizon is collapsing. You are a rogue cyber-runner navigating the terminal high-speed data stream. The void fields are closing in, throwing obstacles in your path to purge any unauthorized entities. In this high-octane cyberpunk gauntlet, your survival depends on quick reactions and split-second dashes.</p>
+    <p>The digital grid is beautiful but deadly; every megabyte you travel brings you closer to the absolute edge of terminal velocity. Outrun the purge protocol, break the barrier, and preserve your data trail before the signal is permanently lost.</p>
+</section>
+
+<footer>
+    <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p>
+</footer>
+
+<script>
+/**
+ * CONFIGURATION & TUNING
+ */
+const CONFIG = {
+    PHYSICS: {
+        GRAVITY: 1900,
+        JUMP_FORCE: -680,
+        MOVE_SPEED: 380,
+        SPEED_ACCEL: 6.5,     // faster ramp than before -> more addictive difficulty curve
+        MAX_SPEED: 1450,      // raised cap so the ramp keeps escalating for ~3min instead of plateauing at ~90s
+        GROUND_OFFSET: 150
+    },
+    PLAYER: {
+        WIDTH: 36,
+        HEIGHT: 36,
+        DASH_DURATION: 0.22,
+        DASH_COOLDOWN: 1.35,
+        MAX_JUMPS: 2
+    },
+    PARTICLES: {
+        MAX_COUNT: 110
+    },
+    COLORS: {
+        PRIMARY: '#00f3ff',
+        SECONDARY: '#fcee0a',
+        DANGER: '#ff003c',
+        OBSTACLE: '#b98cff',
+        SENTINEL: '#ffd166',
+        SPIRE: '#ff5cf4'
+    },
+    SPAWN: {
+        INITIAL_RATE: 1.85,
+        MIN_RATE: 0.68
+    }
+};
+
+/**
+ * INPUT MANAGER
+ */
+class InputManager {
+    constructor() {
+        this.actions = { JUMP: false, DASH: false };
+        this.pressed = { JUMP: false, DASH: false };
+        this.anyPressed = false; // consumed by menu/gameover screens for instant restart
+        this.blocked = false;
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        window.addEventListener('keydown', (e) => this.handleKey(e, true));
+        window.addEventListener('keyup', (e) => this.handleKey(e, false));
+        window.addEventListener('touchstart', (e) => this.handleTouch(e, true), {passive: false});
+        window.addEventListener('touchend', (e) => this.handleTouch(e, false));
+    }
+
+    handleKey(e, isDown) {
+        if (this.blocked || document.hidden) return;
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+            e.preventDefault();
+            this.setRx('JUMP', isDown);
+        }
+        if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'ArrowRight' || e.code === 'KeyD') {
+            this.setRx('DASH', isDown);
+        }
+    }
+
+    handleTouch(e, isDown) {
+        if (this.blocked || document.hidden) return;
+        if (e.target.closest && e.target.closest('button, a')) return;
+        if (isDown) e.preventDefault();
+        const canvas = document.getElementById('gameCanvas');
+        let boundaryX = window.innerWidth / 2;
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            boundaryX = rect.left + rect.width / 2;
+        }
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const t = e.changedTouches[i];
+            if (t.clientX > boundaryX) this.setRx('DASH', isDown);
+            else this.setRx('JUMP', isDown);
+        }
+    }
+
+    setRx(action, active) {
+        if (active && !this.actions[action]) {
+            this.pressed[action] = true;
+            this.anyPressed = true;
+        }
+        this.actions[action] = active;
+    }
+
+    isPressed(action) {
+        return this.actions[action];
+    }
+
+    consumePressed(action) {
+        if (this.pressed[action]) {
+            this.pressed[action] = false;
+            return true;
+        }
+        return false;
+    }
+
+    consumeAnyPressed() {
+        if (this.anyPressed) {
+            this.anyPressed = false;
+            return true;
+        }
+        return false;
+    }
+
+    clear() {
+        this.actions.JUMP = false;
+        this.actions.DASH = false;
+        this.pressed.JUMP = false;
+        this.pressed.DASH = false;
+        this.anyPressed = false;
+    }
+}
+
+/**
+ * AUDIO SYSTEM
+ */
+const AudioSys = {
+    ctx: null,
+    init() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+    },
+    playTone(freq, type, duration, vol = 0.1) {
+        if (!this.ctx) return;
+        try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+    },
+    sfxJump() { this.playTone(320, 'square', 0.12, 0.05); },
+    sfxDoubleJump() { this.playTone(480, 'square', 0.15, 0.05); },
+    sfxDash() { this.playTone(180, 'sawtooth', 0.22, 0.08); },
+    sfxCrash() { this.playTone(80, 'triangle', 0.45, 0.15); },
+    sfxShatter() { this.playTone(900, 'square', 0.08, 0.04); }
+};
+
+/**
+ * STARFIELD BACKGROUND
+ */
+class Starfield {
+    constructor() {
+        this.layers = [
+            { speed: 20, size: 1, color: '#444466', stars: [] },
+            { speed: 60, size: 1.5, color: '#666699', stars: [] },
+            { speed: 120, size: 2, color: '#8888cc', stars: [] }
+        ];
+        this.populate();
+    }
+
+    populate() {
+        const canvas = document.getElementById('gameCanvas');
+        const w = canvas ? canvas.clientWidth : window.innerWidth;
+        const h = canvas ? canvas.clientHeight : window.innerHeight;
+        this.layers.forEach(layer => {
+            layer.stars = [];
+            const count = Math.floor((w * h) / 9000);
+            for (let i = 0; i < count; i++) {
+                layer.stars.push({ x: Math.random() * w, y: Math.random() * h });
+            }
+        });
+    }
+
+    update(dt, speedMult) {
+        const canvas = document.getElementById('gameCanvas');
+        const w = canvas ? canvas.clientWidth : window.innerWidth;
+        const h = canvas ? canvas.clientHeight : window.innerHeight;
+        this.layers.forEach(layer => {
+            layer.stars.forEach(s => {
+                s.x -= layer.speed * speedMult * dt;
+                if (s.x < 0) { s.x = w; s.y = Math.random() * h; }
+            });
+        });
+    }
+
+    draw(ctx) {
+        ctx.save();
+        this.layers.forEach(layer => {
+            ctx.fillStyle = layer.color;
+            layer.stars.forEach(s => {
+                ctx.fillRect(s.x, s.y, layer.size, layer.size);
+            });
+        });
+        ctx.restore();
+    }
+}
+
+/**
+ * PARTICLE SYSTEM
+ */
+class ParticleSystem {
+    constructor(ctx) {
+        this.ctx = ctx;
+        this.particles = [];
+    }
+
+    spawn(x, y, color, count = 10, speedMax = 180) {
+        for (let i = 0; i < count; i++) {
+            if (this.particles.length >= CONFIG.PARTICLES.MAX_COUNT) {
+                this.particles.shift();
+            }
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = (0.3 + Math.random() * 0.7) * speedMax;
+            this.particles.push({
+                x,
+                y,
+                vx: Math.cos(angle) * velocity,
+                vy: Math.sin(angle) * velocity,
+                life: 0.4 + Math.random() * 0.4,
+                maxLife: 0.8,
+                color,
+                size: 2 + Math.random() * 3
+            });
+        }
+    }
+
+    update(dt) {
+        this.particles.forEach((p, idx) => {
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.life -= dt;
+            if (p.life <= 0) this.particles.splice(idx, 1);
+        });
+    }
+
+    draw() {
+        this.ctx.save();
+        this.particles.forEach(p => {
+            const alpha = Math.max(0, p.life / p.maxLife);
+            this.ctx.fillStyle = p.color;
+            this.ctx.globalAlpha = alpha;
+            this.ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        this.ctx.restore();
+    }
+
+    clear() {
+        this.particles = [];
+    }
+}
+
+/**
+ * PLAYER ENTITY
+ */
+class Player {
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
+        this.x = 80;
+        this.y = 0;
+        this.vy = 0;
+        this.w = CONFIG.PLAYER.WIDTH;
+        this.h = CONFIG.PLAYER.HEIGHT;
+        this.jumps = 0;
+        this.isGrounded = false;
+        this.dashTimer = 0;
+        this.dashCooldown = 0;
+        this.color = CONFIG.COLORS.PRIMARY;
+        this.trail = [];
+    }
+
+    getHitbox() {
+        return {
+            x: this.x + 4,
+            y: this.y + 2,
+            w: this.w - 8,
+            h: this.h - 4,
+            isInvincible: this.dashTimer > 0
+        };
+    }
+
+    update(dt, input, groundY, particles) {
+        if (this.dashCooldown > 0) this.dashCooldown -= dt;
+
+        // Handle dash initiation regardless of grounded state
+        if (this.dashTimer <= 0 && input.consumePressed('DASH') && this.dashCooldown <= 0) {
+            this.dashTimer = CONFIG.PLAYER.DASH_DURATION;
+            this.dashCooldown = CONFIG.PLAYER.DASH_COOLDOWN;
+            AudioSys.sfxDash();
+            particles.spawn(this.x, this.y + this.h / 2, CONFIG.COLORS.SECONDARY, 22, 210);
+        }
+
+        if (this.dashTimer > 0) {
+            this.dashTimer -= dt;
+            this.vy = 0; // stop gravity during dash
+            this.y = Math.max(groundY - this.h, this.y); // lock player to ground or keep current height
+            
+            // Spawn continuous cyberpunk dash particles
+            if (Math.random() < 0.55) {
+                particles.spawn(this.x, this.y + this.h / 2, CONFIG.COLORS.SECONDARY, 2, 80);
+            }
+        } else {
+            if (this.isGrounded) this.jumps = 0;
+
+            // Handle Jump input
+            if (input.consumePressed('JUMP') && this.jumps < CONFIG.PLAYER.MAX_JUMPS) {
+                this.vy = CONFIG.PHYSICS.JUMP_FORCE;
+                this.jumps++;
+                this.isGrounded = false;
+                if (this.jumps === 1) {
+                    AudioSys.sfxJump();
+                    particles.spawn(this.x + this.w / 2, this.y + this.h, CONFIG.COLORS.PRIMARY, 5, 40);
+                } else {
+                    AudioSys.sfxDoubleJump();
+                    particles.spawn(this.x + this.w / 2, this.y + this.h, CONFIG.COLORS.PRIMARY, 6, 55);
+                }
+            }
+
+            // Apply gravity and movement if not grounded (prevents immediate re-grounding)
+            if (!this.isGrounded) {
+                this.vy += CONFIG.PHYSICS.GRAVITY * dt;
+                this.y += this.vy * dt;
+            }
+        }
+
+        // Keep player in bounds and handle landing
+        const playerBottom = this.y + this.h;
+        if (playerBottom >= groundY) {
+            this.y = groundY - this.h;
+            this.vy = 0;
+            this.isGrounded = true;
+        } else {
+            this.isGrounded = false;
+        }
+
+        // Capture motion trail
+        this.trail.push({ x: this.x, y: this.y });
+        if (this.trail.length > 5) this.trail.shift();
+    }
+
+    draw(ctx) {
+        ctx.save();
+        
+        // Draw motion trail
+        this.trail.forEach((pos, i) => {
+            const alpha = 0.08 * (i + 1);
+            ctx.fillStyle = this.dashTimer > 0 ? CONFIG.COLORS.SECONDARY : CONFIG.COLORS.PRIMARY;
+            ctx.globalAlpha = alpha;
+            ctx.fillRect(pos.x, pos.y, this.w, this.h);
+        });
+
+        // Draw Player with glow
+        ctx.globalAlpha = 1.0;
+        ctx.shadowBlur = this.dashTimer > 0 ? 15 : 6;
+        ctx.shadowColor = this.dashTimer > 0 ? CONFIG.COLORS.SECONDARY : CONFIG.COLORS.PRIMARY;
+        ctx.fillStyle = this.dashTimer > 0 ? CONFIG.COLORS.SECONDARY : CONFIG.COLORS.PRIMARY;
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+
+        // Core details
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#050510';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(this.x + 3, this.y + 3, this.w - 6, this.h - 6);
+
+        ctx.restore();
+    }
+}
+
+/**
+ * OBSTACLE MANAGER & ENTITIES
+ */
+const DEATH_LABELS = {
+    GRID: 'GRID DEFENSE SYSTEM',
+    ASTEROID: 'DEBRIS DEVIATION',
+    SENTINEL: 'SENTINEL DRONE'
+};
+
+class ObstacleManager {
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
+        this.obstacles = [];
+        this.spawnTimer = 0.5; // initial wait
+    }
+
+    update(dt, speed, groundY, score) {
+        // Handle spawning based on difficulty curve
+        this.spawnTimer -= dt;
+        if (this.spawnTimer <= 0) {
+            const currentRate = Math.max(
+                CONFIG.SPAWN.MIN_RATE,
+                CONFIG.SPAWN.INITIAL_RATE - (speed / CONFIG.PHYSICS.MAX_SPEED) * 1.15
+            );
+            this.spawnTimer = currentRate + Math.random() * 0.45;
+
+            // Difficulty tier (0-1) climbs with score, independent of the
+            // speed cap, so the obstacle *mix* keeps getting meaner even
+            // after top speed is reached, not just the raw scroll rate.
+            const tier = Math.min(1, (score || 0) / 4500);
+
+            // Choose obstacle types dynamically, shifting weight away from
+            // the easy GRID barrier and toward ASTEROID/SENTINEL/SPIRE as
+            // the tier climbs.
+            const roll = Math.random();
+            if (roll < 0.42 - tier * 0.14) {
+                this.spawn('GRID', groundY);
+            } else if (roll < 0.72 - tier * 0.06) {
+                this.spawn('ASTEROID', groundY);
+            } else if (roll < 0.93 - tier * 0.02) {
+                this.spawn('SENTINEL', groundY);
+            } else {
+                // SPIRE: too tall to jump, only survivable by dashing
+                // through it (which already shatters obstacles for bonus
+                // score) - rare, and only starts appearing once the tier
+                // has climbed a bit so early runs aren't blindsided.
+                this.spawn(tier > 0.15 ? 'SPIRE' : 'SENTINEL', groundY);
+            }
+        }
+
+        // Update active obstacles
+        for (let i = this.obstacles.length - 1; i >= 0; i--) {
+            const obs = this.obstacles[i];
+            obs.x -= speed * dt;
+            if (obs.x + obs.w < -100) this.obstacles.splice(i, 1);
+        }
+    }
+
+    spawn(type, groundY) {
+        const canvas = document.getElementById('gameCanvas');
+        const w = canvas ? canvas.clientWidth : window.innerWidth;
+        let obs = { type, x: w + 50, passed: false };
+
+        if (type === 'ASTEROID') {
+            // Randomized chunky rock size, still shatterable by dash
+            const size = 34 + Math.random() * 20; // 34-54
+            obs.w = size; obs.h = size;
+            obs.y = groundY - obs.h;
+            obs.color = CONFIG.COLORS.DANGER;
+        } else if (type === 'SENTINEL') {
+            const size = 22 + Math.random() * 14; // 22-36
+            obs.w = size; obs.h = size;
+            // Spawns elevated, height varies more now so jump timing isn't
+            // the same read every time - forces double jump or dash
+            obs.y = groundY - (65 + Math.random() * 100);
+            obs.color = CONFIG.COLORS.SENTINEL;
+        } else if (type === 'SPIRE') {
+            // Full-height barrier, deliberately too tall for a double jump
+            // to clear (max jump apex is well under 130px) - the only way
+            // through is dashing, which shatters it for a streak + bonus.
+            obs.w = 20 + Math.random() * 8;   // 20-28, narrow
+            obs.h = 130 + Math.random() * 35; // 130-165, unjumpable
+            obs.y = groundY - obs.h;
+            obs.color = CONFIG.COLORS.SPIRE;
+        } else {
+            // GRID BARRIER - randomized width/height within safely
+            // single-jump-clearable range, so it stays varied without
+            // becoming unfair
+            obs.w = 24 + Math.random() * 18; // 24-42
+            obs.h = 46 + Math.random() * 28; // 46-74
+            obs.y = groundY - obs.h;
+            obs.color = CONFIG.COLORS.OBSTACLE;
+        }
+
+        this.obstacles.push(obs);
+    }
+
+    remove(obstacle) {
+        const idx = this.obstacles.indexOf(obstacle);
+        if (idx !== -1) this.obstacles.splice(idx, 1);
+    }
+
+    checkCollisions(playerBox) {
+        for (let i = 0; i < this.obstacles.length; i++) {
+            const o = this.obstacles[i];
+            // Standard AABB Collision check
+            if (playerBox.x < o.x + o.w &&
+                playerBox.x + playerBox.w > o.x &&
+                playerBox.y < o.y + o.h &&
+                playerBox.y + playerBox.h > o.y) {
+                return o;
+            }
+        }
+        return null;
+    }
+
+    draw(ctx) {
+        ctx.save();
+        this.obstacles.forEach(o => {
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = o.color;
+            ctx.fillStyle = o.color;
+            
+            if (o.type === 'SENTINEL') {
+                // Drone style diamond shape
+                ctx.beginPath();
+                ctx.moveTo(o.x + o.w / 2, o.y);
+                ctx.lineTo(o.x + o.w, o.y + o.h / 2);
+                ctx.lineTo(o.x + o.w / 2, o.y + o.h);
+                ctx.lineTo(o.x, o.y + o.h / 2);
+                ctx.closePath();
+                ctx.fill();
+            } else if (o.type === 'ASTEROID') {
+                // Polygon asteroid look
+                ctx.beginPath();
+                ctx.moveTo(o.x + 8, o.y);
+                ctx.lineTo(o.x + o.w - 4, o.y + 4);
+                ctx.lineTo(o.x + o.w, o.y + o.h - 10);
+                ctx.lineTo(o.x + o.w - 12, o.y + o.h);
+                ctx.lineTo(o.x, o.y + o.h - 6);
+                ctx.closePath();
+                ctx.fill();
+            } else if (o.type === 'SPIRE') {
+                // Tall hazard pillar with diagonal warning stripes to read
+                // clearly as "too tall to jump, dash through instead"
+                ctx.fillRect(o.x, o.y, o.w, o.h);
+                ctx.shadowBlur = 0;
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(o.x, o.y, o.w, o.h);
+                ctx.clip();
+                ctx.strokeStyle = 'rgba(5, 5, 16, 0.65)';
+                ctx.lineWidth = 5;
+                for (let sx = -o.h; sx < o.w + o.h; sx += 14) {
+                    ctx.beginPath();
+                    ctx.moveTo(o.x + sx, o.y + o.h);
+                    ctx.lineTo(o.x + sx + o.h, o.y);
+                    ctx.stroke();
+                }
+                ctx.restore();
+                ctx.shadowBlur = 10;
+                ctx.strokeStyle = o.color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(o.x, o.y, o.w, o.h);
+            } else {
+                // Clean Cyber block grid barrier
+                ctx.fillRect(o.x, o.y, o.w, o.h);
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#050510';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(o.x + 3, o.y + 3, o.w - 6, o.h - 6);
+            }
+        });
+        ctx.restore();
+    }
+}
+
+/**
+ * GAME CORE
+ */
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+
+        this.input = new InputManager();
+        this.particles = new ParticleSystem(this.ctx);
+        this.player = new Player();
+        this.obstacles = new ObstacleManager();
+        this.stars = new Starfield();
+
+        this.state = 'MENU'; // MENU, PLAYING, PAUSED, GAMEOVER
+        this.pausedByBackground = false;
+        this.score = 0;
+        this.highScore = parseInt(localStorage.getItem('voidDash_HS') || '0', 10);
+
+        this.shake = 0;
+        this.lastTime = 0;
+
+        // UI Refs
+        this.elScore = document.getElementById('score');
+        this.elHigh = document.getElementById('high-score');
+        this.elStreak = document.getElementById('streak');
+        this.elDashBar = document.getElementById('dash-bar');
+        this.elFlash = document.getElementById('flash');
+        this.elScreens = {
+            start: document.getElementById('start-screen'),
+            over: document.getElementById('game-over-screen')
+        };
+
+        document.getElementById('start-btn').onclick = () => this.start();
+        document.getElementById('restart-btn').onclick = () => this.start();
+        window.addEventListener('keydown', (e) => {
+            if (document.hidden) return;
+            if (e.code === 'KeyP') {
+                e.preventDefault();
+                this.toggleManualPause();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) this.pauseForBackground();
+            else this.resumeFromBackground();
+        });
+        window.addEventListener('blur', () => this.pauseForBackground());
+        window.addEventListener('focus', () => {
+            if (!document.hidden) this.resumeFromBackground();
+        });
+
+        this.updateHighScoreUI();
+        requestAnimationFrame((t) => this.loop(t));
+    }
+
+    resize() {
+        const container = document.getElementById('game-container');
+        const dpr = window.devicePixelRatio || 1;
+        const cssWidth = container.clientWidth || window.innerWidth;
+        const cssHeight = container.clientHeight || window.innerHeight;
+
+        // Backing store is sized in physical pixels (CSS size * DPR) so
+        // rendering stays sharp on high-density screens; the context is
+        // scaled back down so every existing draw call keeps working in
+        // the same CSS-pixel coordinate space it always has. Game logic
+        // reads canvas.clientWidth/clientHeight (unaffected by this) for
+        // its logical bounds, so physics and spawn math are unchanged.
+        this.canvas.width = Math.round(cssWidth * dpr);
+        this.canvas.height = Math.round(cssHeight * dpr);
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        if (this.stars) this.stars.populate();
+    }
+
+    start() {
+        AudioSys.init();
+        this.state = 'PLAYING';
+        this.score = 0;
+        this.streak = 0;
+        this.gameSpeed = CONFIG.PHYSICS.MOVE_SPEED;
+        this.player.reset();
+        this.obstacles.reset();
+        this.particles.clear();
+
+        this.elScreens.start.classList.add('hidden');
+        this.elScreens.over.classList.add('hidden');
+        this.elStreak.classList.remove('show');
+
+        this.lastTime = performance.now();
+        this.pausedByBackground = false;
+        this.input.blocked = false;
+    }
+
+    pauseForBackground() {
+        if (this.state === 'PLAYING') {
+            this.state = 'PAUSED';
+            this.pausedByBackground = true;
+            this.input.blocked = true;
+            this.input.clear();
+        }
+    }
+
+    toggleManualPause() {
+        if (this.state === 'PLAYING') {
+            this.state = 'PAUSED';
+            this.pausedByBackground = false;
+            this.input.blocked = true;
+            this.input.clear();
+        } else if (this.state === 'PAUSED' && !this.pausedByBackground) {
+            this.state = 'PLAYING';
+            this.input.blocked = false;
+            this.lastTime = performance.now();
+        }
+    }
+
+    resumeFromBackground() {
+        if (this.pausedByBackground && this.state === 'PAUSED') {
+            this.state = 'PLAYING';
+            this.pausedByBackground = false;
+            this.input.blocked = false;
+            this.lastTime = performance.now();
+        }
+    }
+
+    gameOver(cause) {
+        this.state = 'GAMEOVER';
+        AudioSys.sfxCrash();
+        this.shake = 12;
+        this.elFlash.classList.remove('active');
+        void this.elFlash.offsetWidth; // restart animation
+        this.elFlash.classList.add('active');
+
+        let isNewBest = false;
+        if (this.score > this.highScore) {
+            this.highScore = Math.floor(this.score);
+            localStorage.setItem('voidDash_HS', this.highScore);
+            this.updateHighScoreUI();
+            isNewBest = true;
+        }
+
+        document.getElementById('death-line').innerText = `HIT: ${DEATH_LABELS[cause] || cause}`;
+        document.getElementById('final-score').innerText = `SCORE: ${Math.floor(this.score)}`;
+        document.getElementById('best-line').innerText = isNewBest ? 'NEW BEST!' : '';
+        this.elScreens.over.classList.remove('hidden');
+    }
+
+    updateHighScoreUI() {
+        this.elHigh.innerText = `BEST: ${String(this.highScore).padStart(5, '0')}`;
+    }
+
+    loop(timestamp) {
+        const dt = (timestamp - this.lastTime) / 1000;
+        this.lastTime = timestamp;
+
+        if (this.state === 'PAUSED') {
+            this.drawPauseOverlay();
+            requestAnimationFrame((t) => this.loop(t));
+            return;
+        }
+
+        if (dt > 0.1) {
+            requestAnimationFrame((t) => this.loop(t));
+            return;
+        }
+
+        // Instant restart, dino-game style: any jump/dash press on menu/gameover starts a run
+        if (this.state !== 'PLAYING' && this.input.consumeAnyPressed()) {
+            this.start();
+        }
+
+        this.ctx.save();
+        this.applyShake(dt);
+        this.ctx.clearRect(-50, -50, this.canvas.clientWidth + 100, this.canvas.clientHeight + 100);
+
+        const speedMult = this.state === 'PLAYING' ? this.gameSpeed / CONFIG.PHYSICS.MOVE_SPEED : 0.3;
+        this.stars.update(dt, speedMult);
+        this.stars.draw(this.ctx);
+        this.drawGroundLine();
+
+        if (this.state === 'PLAYING') {
+            this.update(dt);
+        }
+
+        this.draw();
+        this.ctx.restore();
+
+        requestAnimationFrame((t) => this.loop(t));
+    }
+
+    applyShake(dt) {
+        if (this.shake > 0) {
+            this.shake -= dt * 40;
+            const mag = Math.max(0, this.shake) * 0.5;
+            const dx = (Math.random() - 0.5) * mag;
+            const dy = (Math.random() - 0.5) * mag;
+            this.ctx.translate(dx, dy);
+        }
+    }
+
+    update(dt) {
+        if (this.gameSpeed < CONFIG.PHYSICS.MAX_SPEED) {
+            this.gameSpeed += CONFIG.PHYSICS.SPEED_ACCEL * dt;
+        }
+
+        const scoreRate = 10 + (this.gameSpeed / CONFIG.PHYSICS.MOVE_SPEED) * 5;
+        this.score += scoreRate * dt;
+        this.elScore.innerText = String(Math.floor(this.score)).padStart(5, '0');
+
+        const groundY = this.canvas.clientHeight - CONFIG.PHYSICS.GROUND_OFFSET;
+
+        this.player.update(dt, this.input, groundY, this.particles);
+        this.obstacles.update(dt, this.gameSpeed, groundY, this.score);
+        this.particles.update(dt);
+
+        const playerBox = this.player.getHitbox();
+        const hit = this.obstacles.checkCollisions(playerBox);
+
+        if (hit) {
+            if (playerBox.isInvincible) {
+                this.particles.spawn(hit.x + hit.w / 2, hit.y + hit.h / 2, hit.color, 22, 320);
+                this.obstacles.remove(hit);
+                this.score += 50;
+                this.streak++;
+                this.elStreak.innerText = `STREAK x${this.streak}`;
+                this.elStreak.classList.add('show');
+                AudioSys.sfxShatter();
+            } else {
+                this.streak = 0;
+                this.gameOver(hit.type);
+            }
+        }
+
+        const dashPct = Math.max(0, this.player.dashCooldown / CONFIG.PLAYER.DASH_COOLDOWN);
+        this.elDashBar.style.width = `${(1 - dashPct) * 100}%`;
+        this.elDashBar.style.background = dashPct > 0 ? CONFIG.COLORS.SECONDARY : CONFIG.COLORS.PRIMARY;
+    }
+
+    draw() {
+        this.player.draw(this.ctx);
+        this.obstacles.draw(this.ctx);
+        this.particles.draw();
+    }
+
+    drawPauseOverlay() {
+        const ctx = this.ctx;
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        ctx.save();
+        ctx.fillStyle = 'rgba(5, 5, 16, 0.78)';
+        ctx.fillRect(0, 0, width, height);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = CONFIG.COLORS.PRIMARY;
+        ctx.shadowColor = CONFIG.COLORS.PRIMARY;
+        ctx.shadowBlur = 16;
+        ctx.font = `bold ${Math.max(28, width * 0.07)}px Orbitron`;
+        ctx.fillText('SYSTEM PAUSED', width / 2, height * 0.45);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 4;
+        ctx.font = `bold ${Math.max(14, width * 0.025)}px Share Tech Mono`;
+        ctx.fillText(this.pausedByBackground ? 'RETURN TO THE GAME WINDOW TO RESUME' : 'PRESS P TO RESUME', width / 2, height * 0.55);
+        ctx.restore();
+    }
+
+    drawGroundLine() {
+        const ctx = this.ctx;
+        const groundY = this.canvas.clientHeight - CONFIG.PHYSICS.GROUND_OFFSET;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.55)';
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = CONFIG.COLORS.PRIMARY;
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(this.canvas.clientWidth, groundY);
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+// Init
+window.onload = () => {
+    const game = new Game();
+
+    // Fullscreen / maximize toggle, with vendor-prefix and pseudo-fullscreen
+    // fallbacks for mobile browsers (iOS Safari has no Fullscreen API for
+    // arbitrary elements; some Android browsers reject it in-context).
+    const gameContainer = document.getElementById('game-container');
+    const maximizeBtn = document.getElementById('maximize-btn');
+    const maxIcon = document.getElementById('max-icon');
+
+    function updateMaximizeIcon(overrideState) {
+        const isFullscreen = (typeof overrideState === 'boolean')
+            ? overrideState
+            : !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
+
+        if (isFullscreen) {
+            maxIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
+        } else {
+            maxIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
+        }
+    }
+
+    async function toggleFullscreen() {
+        const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
+
+        if (!isFullscreen) {
+            try {
+                if (gameContainer.requestFullscreen) {
+                    await gameContainer.requestFullscreen();
+                } else if (gameContainer.webkitRequestFullscreen) {
+                    await gameContainer.webkitRequestFullscreen();
+                } else if (gameContainer.msRequestFullscreen) {
+                    await gameContainer.msRequestFullscreen();
+                } else if (gameContainer.mozRequestFullScreen) {
+                    await gameContainer.mozRequestFullScreen();
+                } else {
+                    gameContainer.classList.add('pseudo-fullscreen');
+                    updateMaximizeIcon(true);
+                }
+            } catch (err) {
+                // Native fullscreen blocked (common on mobile) -> fall back
+                // to the CSS-only pseudo-fullscreen mode instead.
+                console.warn('Native fullscreen blocked, applying pseudo-fullscreen mode instead:', err);
+                gameContainer.classList.add('pseudo-fullscreen');
+                updateMaximizeIcon(true);
+            }
+        } else {
+            if (gameContainer.classList.contains('pseudo-fullscreen')) {
+                gameContainer.classList.remove('pseudo-fullscreen');
+                updateMaximizeIcon(false);
+            } else {
+                try {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        await document.msExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        await document.mozCancelFullScreen();
+                    }
+                } catch (err) {
+                    gameContainer.classList.remove('pseudo-fullscreen');
+                    updateMaximizeIcon(false);
+                }
+            }
+        }
+        // pseudo-fullscreen doesn't fire fullscreenchange, so force a
+        // recalculation once the layout settles either way
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+    }
+
+    maximizeBtn.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', () => updateMaximizeIcon());
+    document.addEventListener('webkitfullscreenchange', () => updateMaximizeIcon());
+    document.addEventListener('mozfullscreenchange', () => updateMaximizeIcon());
+    document.addEventListener('MSFullscreenChange', () => updateMaximizeIcon());
+
+    // Container size changes on fullscreen enter/exit but the window itself
+    // doesn't resize, so re-fire the existing resize listener manually.
+    document.addEventListener('fullscreenchange', () => {
+        window.dispatchEvent(new Event('resize'));
+    });
+};
+
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Neon Arcade</title>
+    <meta name="description" content="Read our privacy policy to understand how Neon Arcade uses cookies, local storage high scores, and advertising partners like Google AdSense.">
+    <link rel="canonical" href="https://your-domain.vercel.app/privacy">
+    <meta property="og:title" content="Privacy Policy | Neon Arcade">
+    <meta property="og:description" content="Read our privacy policy to understand how Neon Arcade uses cookies, local storage high scores, and advertising partners like Google AdSense.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.vercel.app/privacy">
+    <link rel="stylesheet" href="/neon-arcade.css">
+    <style>
+        :root {
+            --c-bg: #050510;
+            --c-primary: #00f3ff;
+            --c-text: #ffffff;
+        }
+        body {
+            background-color: var(--c-bg);
+            color: var(--c-text);
+            font-family: var(--na-font-body);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* CRT Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::after { animation: none; opacity: 0.4; }
+        }
+        nav {
+            background: rgba(5, 5, 16, 0.9);
+            border-bottom: 2px solid var(--c-primary);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            width: 100%;
+        }
+        nav a {
+            color: var(--c-primary);
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        nav a:hover {
+            color: #ff003c;
+            text-shadow: 0 0 5px #ff003c;
+        }
+        main {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 20px;
+            flex: 1;
+        }
+        h1 { color: var(--c-primary); text-shadow: 0 0 10px var(--c-primary); margin-bottom: 30px; text-align: center; }
+        h2 { color: var(--c-primary); font-size: 1.2rem; margin-top: 30px; text-transform: uppercase; border-left: 3px solid var(--c-primary); padding-left: 10px; }
+        p { margin-bottom: 15px; font-size: 0.9rem; color: #ccc; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: auto; font-size: 0.8rem; color: #555; width: 100%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
+    <main>
+        <h1>PRIVACY POLICY</h1>
+        <p>Last updated: August 2026</p>
+        
+        <h2>INTRODUCTION</h2>
+        <p>At Neon Arcade, we respect your privacy. This policy outlines our practices regarding data collection and use.</p>
+        
+        <h2>COOKIES & ADS</h2>
+        <p>We may use cookies to personalize content and ads, and to analyze our traffic. We also share information about your use of our site with our advertising and analytics partners who may combine it with other information that you’ve provided to them or that they’ve collected from your use of their services.</p>
+        
+        <h2>LOCAL STORAGE</h2>
+        <p>We use browser localStorage specifically to store your game high scores locally on your device. This data is not transmitted to our servers.</p>
+        
+        <h2>THIRD-PARTY SERVICES</h2>
+        <p>We may display advertisements from third-party networks such as Google AdSense. These providers may use cookies and web beacons in the course of ads being served on this website.</p>
+    </main>
+    <footer>
+        <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

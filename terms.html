@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Neon Arcade</title>
+    <meta name="description" content="Terms of service and guidelines for playing the free retro browser games on Neon Arcade.">
+    <link rel="canonical" href="https://your-domain.vercel.app/terms">
+    <meta property="og:title" content="Terms of Service | Neon Arcade">
+    <meta property="og:description" content="Terms of service and guidelines for playing the free retro browser games on Neon Arcade.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.vercel.app/terms">
+    <link rel="stylesheet" href="/neon-arcade.css">
+    <style>
+        :root {
+            --c-bg: #050510;
+            --c-primary: #00f3ff;
+            --c-secondary: #fcee0a;
+            --c-text: #ffffff;
+        }
+        body {
+            position: relative;
+            background-color: var(--c-bg);
+            color: var(--c-text);
+            font-family: var(--na-font-body);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        /* CRT Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::after { animation: none; opacity: 0.4; }
+        }
+        nav {
+            background: rgba(5, 5, 16, 0.9);
+            border-bottom: 2px solid var(--c-primary);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        nav a {
+            color: var(--c-primary);
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        nav a:hover {
+            color: #ff003c;
+            text-shadow: 0 0 5px #ff003c;
+        }
+        main {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+        h1 { color: var(--c-primary); text-shadow: 0 0 10px var(--c-primary); margin-bottom: 30px; text-align: center; }
+        h2 { color: var(--c-primary); font-size: 1.2rem; margin-top: 30px; text-transform: uppercase; border-left: 3px solid var(--c-primary); padding-left: 10px; }
+        p { margin-bottom: 15px; font-size: 0.9rem; color: #ccc; }
+        ul { margin-bottom: 15px; padding-left: 20px; font-size: 0.9rem; color: #ccc; }
+        li { margin-bottom: 8px; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: 60px; font-size: 0.8rem; color: #555; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
+    <main>
+        <h1>TERMS OF SERVICE</h1>
+        <p>Last updated: August 2026</p>
+        
+        <h2>1. ACCEPTANCE OF TERMS</h2>
+        <p>By accessing or playing games on Neon Arcade, you agree to be bound by these Terms of Service. If you do not agree with any of these terms, you are prohibited from using or accessing this site.</p>
+        
+        <h2>2. INTELLECTUAL PROPERTY & USE LICENSE</h2>
+        <p>The software, games, designs, and content hosted on Neon Arcade are protected by copyright and intellectual property laws. Permission is granted to temporarily load and play the games for personal, non-commercial transitory viewing only.</p>
+        <p>Under this license, you may not:</p>
+        <ul>
+            <li>Modify, copy, or redistribute the source code of the games or the hub.</li>
+            <li>Use the materials for any commercial purpose, or for any public display (commercial or non-commercial).</li>
+            <li>Attempt to decompile or reverse engineer any game logic or visual assets.</li>
+            <li>Remove any copyright or other proprietary notations from the materials.</li>
+        </ul>
+
+        <h2>3. DISCLAIMERS & LIMITATION OF LIABILITY</h2>
+        <p>The materials on Neon Arcade are provided on an 'as is' basis. Neon Arcade makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.</p>
+        <p>In no event shall Neon Arcade or its developers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Neon Arcade.</p>
+
+        <h2>4. CONTACT CHANNELS</h2>
+        <p>If you have any questions regarding these Terms of Service, you may contact the system operators at: support@neon-arcade-placeholder-example.com.</p>
+    </main>
+    <footer>
+        <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
