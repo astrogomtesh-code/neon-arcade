@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050510">
     <title>Terms of Service | Neon Arcade</title>
     <meta name="description" content="Terms of service and guidelines for playing the free retro browser games on Neon Arcade.">
     <link rel="canonical" href="https://your-domain.vercel.app/terms">
@@ -26,6 +27,10 @@
             margin: 0;
             padding: 0;
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         /* CRT Effect */
         body::after {
@@ -43,16 +48,20 @@
             body::after { animation: none; opacity: 0.4; }
         }
         nav {
-            background: rgba(5, 5, 16, 0.9);
+            background: rgba(5, 5, 16, 0.95);
             border-bottom: 2px solid var(--c-primary);
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
         }
         nav a {
             color: var(--c-primary);
             text-decoration: none;
-            margin: 0 20px;
+            margin: 0 15px;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -64,13 +73,14 @@
             max-width: 800px;
             margin: 60px auto;
             padding: 20px;
+            flex: 1;
         }
         h1 { color: var(--c-primary); text-shadow: 0 0 10px var(--c-primary); margin-bottom: 30px; text-align: center; }
         h2 { color: var(--c-primary); font-size: 1.2rem; margin-top: 30px; text-transform: uppercase; border-left: 3px solid var(--c-primary); padding-left: 10px; }
         p { margin-bottom: 15px; font-size: 0.9rem; color: #ccc; }
         ul { margin-bottom: 15px; padding-left: 20px; font-size: 0.9rem; color: #ccc; }
         li { margin-bottom: 8px; }
-        footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: 60px; font-size: 0.8rem; color: #555; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: auto; font-size: 0.8rem; color: #555; width: 100%; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -102,7 +112,7 @@
         <p>In no event shall Neon Arcade or its developers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Neon Arcade.</p>
 
         <h2>4. CONTACT CHANNELS</h2>
-        <p>If you have any questions regarding these Terms of Service, you may contact the system operators at: support@neon-arcade-placeholder-example.com.</p>
+        <p>If you have any questions regarding these Terms of Service, you may contact the system operators at: samyakjain3456sj@gmail.com.</p>
     </main>
     <footer>
         <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p>

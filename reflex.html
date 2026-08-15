@@ -3,6 +3,7 @@
 <head>
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050510">
     <title>Reflex - Punishing Lane-Switching Reaction Game | Neon Arcade</title>
     <meta name="description" content="Test your ultimate reaction speed limits in Reflex. Shift lanes, avoid shifting barrier patterns, and survive terminal velocity on the digital highway.">
     <link rel="canonical" href="https://your-domain.vercel.app/reflex">
@@ -192,7 +193,7 @@
 <body>
 
 <nav aria-label="Primary">
-    <a href="/">Hub</a>
+    <a href="/" aria-current="page">Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
@@ -201,7 +202,7 @@
 
 
 <div id="game-container">
-    <canvas id="gameCanvas" role="img" aria-label="Reflex game board" tabindex="0"></canvas>
+    <canvas id="gameCanvas" role="img" aria-label="Reflex game board" width="500" height="700" tabindex="0"></canvas>
     <button id="maximize-btn" aria-label="Toggle fullscreen" title="Fullscreen">
         <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
@@ -553,6 +554,15 @@
             return;
         }
         if (state === STATE_PAUSED) return;
+        const isMoveKey = e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'
+            || e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D';
+        const isRestartKey = state !== STATE_PLAYING
+            && (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowUp'
+                || e.key === 'ArrowDown' || e.key === 'w' || e.key === 'W'
+                || e.key === 's' || e.key === 'S');
+        if (isMoveKey || isRestartKey) {
+            e.preventDefault();
+        }
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
             movePlayer(-1);
         } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
@@ -563,9 +573,10 @@
         }
     });
 
-    window.addEventListener('touchstart', (e) => {
+    document.getElementById('game-container').addEventListener('touchstart', (e) => {
         if (state === STATE_PAUSED || document.hidden) return;
-        if (e.target.tagName === 'A') return;
+        if (e.target.closest && e.target.closest('button, a')) return;
+        e.preventDefault();
         initAudio();
         if (state !== STATE_PLAYING) {
             resetGame();

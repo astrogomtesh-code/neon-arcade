@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050510">
     <title>Privacy Policy | Neon Arcade</title>
     <meta name="description" content="Read our privacy policy to understand how Neon Arcade uses cookies, local storage high scores, and advertising partners like Google AdSense.">
     <link rel="canonical" href="https://your-domain.vercel.app/privacy">
@@ -45,17 +46,20 @@
             body::after { animation: none; opacity: 0.4; }
         }
         nav {
-            background: rgba(5, 5, 16, 0.9);
+            background: rgba(5, 5, 16, 0.95);
             border-bottom: 2px solid var(--c-primary);
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             width: 100%;
         }
         nav a {
             color: var(--c-primary);
             text-decoration: none;
-            margin: 0 20px;
+            margin: 0 15px;
             font-weight: bold;
             text-transform: uppercase;
         }
