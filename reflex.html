@@ -191,7 +191,7 @@
 </head>
 <body>
 
-<nav>
+<nav aria-label="Primary">
     <a href="/">Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
@@ -201,7 +201,7 @@
 
 
 <div id="game-container">
-    <canvas id="gameCanvas"></canvas>
+    <canvas id="gameCanvas" role="img" aria-label="Reflex game board" tabindex="0"></canvas>
     <button id="maximize-btn" aria-label="Toggle fullscreen" title="Fullscreen">
         <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>

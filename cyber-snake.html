@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cyber Snake - Neon Retro Arcade</title>
     <link rel="stylesheet" href="/neon-arcade.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -47,7 +50,6 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-family: var(--na-font-display);
         }
         nav a:hover {
             color: #ff003c;
@@ -201,7 +203,7 @@
         }
 
         .cyber-font {
-            font-family: var(--na-font-display);
+            font-family: var(--na-font-body);
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -236,11 +238,53 @@
                 display: grid;
             }
         }
+
+        /* SEO Content Styling (unified with rest of Neon Arcade) */
+        .seo-content {
+            max-width: 1000px;
+            width: 100%;
+            margin: 20px auto 40px auto;
+            padding: 30px;
+            background: rgba(10, 10, 30, 0.5);
+            border-left: 3px solid #00f3ff;
+            border-radius: 4px;
+        }
+        .seo-content h2 {
+            color: #ffee00;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .seo-content h2:first-of-type {
+            margin-top: 0;
+        }
+        .seo-content p, .seo-content ul {
+            margin-bottom: 15px;
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .seo-content ul {
+            padding-left: 20px;
+        }
+        .seo-content li {
+            margin-bottom: 10px;
+        }
+        .key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <nav>
+    <nav aria-label="Primary">
         <a href="/">Hub</a>
         <a href="/about">About</a>
         <a href="/privacy">Privacy</a>
@@ -250,7 +294,7 @@
     <!-- Main Game Container -->
     <div id="game-container">
         <!-- Audio Mute Toggle Button -->
-        <button id="audio-btn" title="Toggle Sound" onclick="toggleAudio()">
+        <button id="audio-btn" aria-label="Toggle Sound" title="Toggle Sound" onclick="toggleAudio()">
             <svg id="audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
@@ -258,7 +302,7 @@
         </button>
 
         <!-- Maximize Fullscreen Button -->
-        <button id="maximize-btn" title="Toggle Fullscreen" onclick="toggleFullscreen()">
+        <button id="maximize-btn" aria-label="Toggle Fullscreen" title="Toggle Fullscreen" onclick="toggleFullscreen()">
             <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
             </svg>
@@ -266,7 +310,7 @@
 
         <!-- Canvas Game Screen with CRT Scanline overlay -->
         <div class="canvas-wrapper">
-            <canvas id="snake-canvas" width="960" height="540"></canvas>
+            <canvas id="snake-canvas" width="960" height="540" role="img" aria-label="Cyber Snake game board" tabindex="0"></canvas>
             <div class="scanlines"></div>
         </div>
 
@@ -279,70 +323,28 @@
         </div>
     </div>
 
-    <!-- Information, Controls, Strategy & Lore Section -->
-    <div class="game-info-panel">
-        
-        <!-- HOW TO PLAY & CONTROLS -->
-        <section>
-            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
-                HOW TO PLAY & CONTROLS
-            </h2>
-            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
-                Cyber Snake is a high-velocity 360° directional survival system. Navigate the digital grid, collect energy nodes, and evolve your neon trail without severing your core program:
-            </p>
-            <ul class="space-y-2 text-sm md:text-base leading-relaxed">
-                <li class="flex items-start">
-                    <span class="text-[#00f3ff] mr-2">•</span>
-                    <span><strong class="text-white">Keyboard Steering:</strong> Press <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">A</code> / <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">◀</code> to rotate left and <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">D</code> / <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">▶</code> to rotate right. Hold <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">W</code> or <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SHIFT</code> for Overdrive Turbo, and press <code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SPACE</code> to trigger an EMP shockwave when charged.</span>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-[#00f3ff] mr-2">•</span>
-                    <span><strong class="text-white">Mouse & Touch Steering:</strong> Move your cursor or drag on the game canvas to steer directly toward your finger/pointer, or tap the interactive touch pad beneath the screen.</span>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-[#00f3ff] mr-2">•</span>
-                    <span><strong class="text-white">Power-Ups & Core Upgrades:</strong> Absorb Cyan Data Nodes to grow, collect Yellow Overdrive Orbs for speed multipliers, and grab Magenta Shield Cores to withstand lethal collisions.</span>
-                </li>
-            </ul>
-        </section>
+    <!-- INDEXABLE TEXT FOR GOOGLE ADSENSE BOT -->
+    <section class="seo-content">
+        <h2>How to Play &amp; Controls</h2>
+        <p>Cyber Snake is a high-velocity 360&deg; directional survival system. Navigate the digital grid, collect energy nodes, and evolve your neon trail without severing your core program:</p>
+        <ul>
+            <li><strong>Keyboard Steering:</strong> Press <span class="key">A</span> / <span class="key">&#9664;</span> to rotate left and <span class="key">D</span> / <span class="key">&#9654;</span> to rotate right. Hold <span class="key">W</span> or <span class="key">SHIFT</span> for Overdrive Turbo, and press <span class="key">SPACE</span> to trigger an EMP shockwave when charged.</li>
+            <li><strong>Mouse &amp; Touch Steering:</strong> Move your cursor or drag on the game canvas to steer directly toward your finger/pointer, or tap the interactive touch pad beneath the screen.</li>
+            <li><strong>Power-Ups &amp; Core Upgrades:</strong> Absorb Cyan Data Nodes to grow, collect Yellow Overdrive Orbs for speed multipliers, and grab Magenta Shield Cores to withstand lethal collisions.</li>
+        </ul>
 
-        <!-- STRATEGY GUIDE & TIPS -->
-        <section>
-            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
-                STRATEGY GUIDE & TIPS
-            </h2>
-            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
-                Mastering the digital grid requires fluid arc movement, rapid power-up acquisition, and perimeter management:
-            </p>
-            <ul class="space-y-2 text-sm md:text-base leading-relaxed">
-                <li class="flex items-start">
-                    <span class="text-[#00f3ff] mr-2">•</span>
-                    <span><strong class="text-white">Build Your Combo Multiplier:</strong> Ingest energy nodes in rapid succession before the temporal combo bar depletes to stack score multipliers up to 5X.</span>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-[#00f3ff] mr-2">•</span>
-                    <span><strong class="text-white">Coil & Loop Tactics:</strong> Use smooth 360-degree turning to loop back into open space. Avoid boxing yourself into tight corners as your glowing tail trail lengthens.</span>
-                </li>
-                <li class="flex items-start">
-                    <span class="text-[#00f3ff] mr-2">•</span>
-                    <span><strong class="text-white">Deploy EMP Blast Wisely:</strong> Reserve your EMP shockwave charge (<code class="text-[#00f3ff] bg-cyan-950/80 px-1 py-0.5 rounded">SPACE</code>) for emergency escapes when trapped near moving firewall mines or your own tail.</span>
-                </li>
-            </ul>
-        </section>
+        <h2>Strategy Guide &amp; Tips</h2>
+        <p>Mastering the digital grid requires fluid arc movement, rapid power-up acquisition, and perimeter management:</p>
+        <ul>
+            <li><strong>Build Your Combo Multiplier:</strong> Ingest energy nodes in rapid succession before the temporal combo bar depletes to stack score multipliers up to 5X.</li>
+            <li><strong>Coil &amp; Loop Tactics:</strong> Use smooth 360-degree turning to loop back into open space. Avoid boxing yourself into tight corners as your glowing tail trail lengthens.</li>
+            <li><strong>Deploy EMP Blast Wisely:</strong> Reserve your EMP shockwave charge (<span class="key">SPACE</span>) for emergency escapes when trapped near moving firewall mines or your own tail.</li>
+        </ul>
 
-        <!-- THE CYBER SNAKE PROTOCOL (LORE) -->
-        <section>
-            <h2 class="text-xl md:text-2xl font-bold text-[#ffee00] tracking-wider mb-3 cyber-font">
-                THE CYBER SNAKE PROTOCOL (LORE)
-            </h2>
-            <p class="mb-3 text-sm md:text-base text-gray-400 leading-relaxed">
-                Deep within the mainframe, autonomous data-harvesting vectors known as Cyber Snakes navigate endless streams of light memory. As security protocols intensify, corrupted firewall hazards drift into the sector to purge non-registered programs.
-            </p>
-            <p class="text-sm md:text-base text-gray-400 leading-relaxed">
-                Equipped with custom steering thrusters, EMP shock emitters, and shield modulators, your mission is to absorb high-density data payloads without collapsing into your own lingering energy tail. Accelerate, overcome the system firewalls, and achieve digital transcendence!
-            </p>
-        </section>
-    </div>
+        <h2>The Cyber Snake Protocol (Lore)</h2>
+        <p>Deep within the mainframe, autonomous data-harvesting vectors known as Cyber Snakes navigate endless streams of light memory. As security protocols intensify, corrupted firewall hazards drift into the sector to purge non-registered programs.</p>
+        <p>Equipped with custom steering thrusters, EMP shock emitters, and shield modulators, your mission is to absorb high-density data payloads without collapsing into your own lingering energy tail. Accelerate, overcome the system firewalls, and achieve digital transcendence!</p>
+    </section>
 
     <script>
         // Fullscreen Toggle functionality with permissions handling & pseudo-fullscreen fallback

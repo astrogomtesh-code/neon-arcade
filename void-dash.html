@@ -336,7 +336,7 @@
 </head>
 <body>
 
-<nav>
+<nav aria-label="Primary">
     <a href="/">Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
@@ -344,7 +344,7 @@
 </nav>
 
 <div id="game-container">
-    <canvas id="gameCanvas"></canvas>
+    <canvas id="gameCanvas" role="img" aria-label="Void Dash game board" tabindex="0"></canvas>
     <div class="flash" id="flash"></div>
     <button id="maximize-btn" aria-label="Toggle fullscreen" title="Fullscreen">
         <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

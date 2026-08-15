@@ -97,9 +97,15 @@ footer {
 }
 
 :focus-visible {
-    outline: 2px solid var(--na-yellow);
+    outline: 3px solid var(--na-yellow);
     outline-offset: 3px;
-    box-shadow: 0 0 0 4px rgba(252, 238, 10, 0.22);
+    box-shadow: 0 0 0 6px rgba(252, 238, 10, 0.3), 0 0 15px var(--na-yellow);
+}
+
+/* Ensure canvas and other potentially focusable game elements have visible focus if they become focused */
+canvas:focus-visible {
+    outline: 3px solid var(--na-cyan);
+    outline-offset: 2px;
 }
 
 @media (max-width: 640px) {
