@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#050510">
-    <title>Cyber Snake - Retro Snake Survival Game | Neon Arcade</title>
-    <meta name="description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed neon snake survival game in your browser.">
+    <meta name="theme-color" content="#05050e">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <title>Cyber Snake - Retro Snake Survival Game | EUXODES</title>
+    <meta name="description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed snake survival game in your browser.">
     <link rel="canonical" href="https://your-domain.vercel.app/cyber-snake">
-    <meta property="og:title" content="Cyber Snake - Retro Snake Survival Game | Neon Arcade">
-    <meta property="og:description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed neon snake survival game in your browser.">
+    <meta property="og:title" content="Cyber Snake - Retro Snake Survival Game | EUXODES">
+    <meta property="og:description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed snake survival game in your browser.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/cyber-snake">
-    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Cyber Snake - Retro Snake Survival Game | Neon Arcade">
-    <meta name="twitter:description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed neon snake survival game in your browser.">
-    <link rel="stylesheet" href="neon-arcade.css">
+    <meta name="twitter:title" content="Cyber Snake - Retro Snake Survival Game | EUXODES">
+    <meta name="twitter:description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed snake survival game in your browser.">
+    <link rel="stylesheet" href="/euxodes.css">
     <style>
         * {
             box-sizing: border-box;
@@ -199,7 +200,11 @@
 </head>
 <body>
 
-    <nav aria-label="Primary">
+    <nav class="brand-nav" aria-label="Primary">
+        <a href="/" class="brand-link" aria-label="EUXODES Home">
+            <img src="assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
+            <span class="brand-word">EUXODES</span>
+        </a>
         <a href="/">Hub</a>
         <a href="/about">About</a>
         <a href="/privacy">Privacy</a>
@@ -1177,5 +1182,20 @@
             requestAnimationFrame(gameLoop);
         };
     </script>
+
+    <footer class="site-footer">
+        <a href="/" class="footer-brand" aria-label="EUXODES Home">
+            <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20">
+            <span class="brand-word">EUXODES</span>
+        </a>
+        <p class="footer-desc">Five browser arcade games. Free to play, no account needed.</p>
+        <div class="footer-links">
+            <a href="/">Hub</a>
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 EUXODES. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>

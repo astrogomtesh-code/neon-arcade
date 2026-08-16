@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#050510">
-    <title>Privacy Policy | Neon Arcade</title>
-    <meta name="description" content="Neon Arcade stores only game high scores in your browser's local storage. The site does not use cookies, ads, or third-party analytics.">
+    <meta name="theme-color" content="#05050e">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <title>Privacy Policy | EUXODES</title>
+    <meta name="description" content="EUXODES stores only game high scores in your browser's local storage. The site does not use cookies, ads, or third-party analytics.">
     <link rel="canonical" href="https://your-domain.vercel.app/privacy">
-    <meta property="og:title" content="Privacy Policy | Neon Arcade">
-    <meta property="og:description" content="Neon Arcade stores only game high scores in your browser's local storage. The site does not use cookies, ads, or third-party analytics.">
+    <meta property="og:title" content="Privacy Policy | EUXODES">
+    <meta property="og:description" content="EUXODES stores only game high scores in your browser's local storage. The site does not use cookies, ads, or third-party analytics.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/privacy">
-    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Privacy Policy | Neon Arcade">
-    <meta name="twitter:description" content="Neon Arcade stores only game high scores in your browser's local storage. The site does not use cookies, ads, or third-party analytics.">
-    <link rel="stylesheet" href="neon-arcade.css">
+    <meta name="twitter:title" content="Privacy Policy | EUXODES">
+    <meta name="twitter:description" content="EUXODES stores only game high scores in your browser's local storage. The site does not use cookies, ads, or third-party analytics.">
+    <link rel="stylesheet" href="/euxodes.css">
     <style>
         body {
             background-color: var(--na-bg);
@@ -31,11 +32,11 @@
             align-items: center;
         }
         nav {
-            background: rgba(5, 5, 16, 0.95);
+            background: rgba(5, 5, 14, 0.95);
             border-bottom: 2px solid var(--na-cyan);
             display: flex;
             justify-content: center;
-            padding: 15px;
+            padding: 15px 20px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -59,36 +60,51 @@
             flex: 1;
         }
         h1 { color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); margin-bottom: 30px; text-align: center; }
-        h2 { color: var(--na-cyan); font-size: 1.2rem; margin-top: 30px; text-transform: uppercase; border-left: 3px solid var(--na-cyan); padding-left: 10px; }
+        h2 { color: var(--euxodes-cyan); font-size: 1.2rem; margin-top: 30px; text-transform: uppercase; border-left: 3px solid var(--euxodes-cyan); padding-left: 10px; font-family: var(--na-font-display); letter-spacing: 1px; }
         p { margin-bottom: 15px; font-size: 0.9rem; color: #ccc; }
         footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: auto; font-size: 0.8rem; color: #555; width: 100%; box-sizing: border-box; }
     </style>
 </head>
 <body class="crt">
-    <nav aria-label="Primary">
+    <nav class="brand-nav" aria-label="Primary">
+        <a href="/" class="brand-link" aria-label="EUXODES Home">
+            <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
+            <span class="brand-word">EUXODES</span>
+        </a>
         <a href="/">Hub</a>
         <a href="/about">About</a>
         <a href="/privacy" aria-current="page">Privacy</a>
         <a href="/terms">Terms</a>
     </nav>
     <main>
-        <h1>PRIVACY POLICY</h1>
+        <h1 class="page-title">PRIVACY POLICY</h1>
         <p>Last updated: August 2026</p>
         
         <h2>INTRODUCTION</h2>
-        <p>At Neon Arcade, we respect your privacy. This policy outlines our practices regarding data collection and use.</p>
+        <p>At EUXODES, we respect your privacy. This policy outlines our practices regarding data collection and use.</p>
         
         <h2>COOKIES & TRACKING</h2>
-        <p>Neon Arcade does not currently use cookies, show advertisements, or run third-party analytics or tracking scripts. No advertising or analytics partners collect or receive information about your use of this site.</p>
+        <p>EUXODES does not currently use cookies, show advertisements, or run third-party analytics or tracking scripts. No advertising or analytics partners collect or receive information about your use of this site.</p>
         
         <h2>LOCAL STORAGE</h2>
         <p>We use browser localStorage specifically to store your game high scores locally on your device. This data never leaves your device, is not transmitted to our servers, and can be removed at any time by clearing your browser's data for this site.</p>
         
         <h2>THIRD-PARTY SERVICES</h2>
-        <p>Neon Arcade does not currently load any third-party ad networks, analytics tools, or tracking services. The site is hosted by Vercel, which delivers the pages you request, but the site itself does not collect any visitor data.</p>
+        <p>EUXODES does not currently load any third-party ad networks, analytics tools, or tracking services. The site is hosted by Vercel, which delivers the pages you request, but the site itself does not collect any visitor data.</p>
     </main>
-    <footer>
-        <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p>
+    <footer class="site-footer">
+        <a href="/" class="footer-brand" aria-label="EUXODES Home">
+            <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20">
+            <span class="brand-word">EUXODES</span>
+        </a>
+        <p class="footer-desc">Five browser arcade games. Free to play, no account needed.</p>
+        <div class="footer-links">
+            <a href="/">Hub</a>
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 EUXODES. All Rights Reserved.</p>
     </footer>
 </body>
 </html>

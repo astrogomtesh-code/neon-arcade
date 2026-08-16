@@ -3,20 +3,21 @@
 <head> 
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <meta name="theme-color" content="#050510"> 
-    <title>Neon Arcade - Play Free Retro Cyberpunk Browser Games</title> 
+    <meta name="theme-color" content="#05050e"> 
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <title>EUXODES - Five Free Retro Browser Arcade Games</title> 
     <meta name="description" content="Play five free browser arcade games: Cyber Snake, Cyberpunk Tetris, Comet Belt, Void Dash, and Reflex. No download or account needed - high scores are saved in your browser."> 
     <link rel="canonical" href="https://your-domain.vercel.app/"> 
-    <meta property="og:title" content="Neon Arcade - Play Free Retro Cyberpunk Browser Games">
+    <meta property="og:title" content="EUXODES - Five Free Retro Browser Arcade Games">
     <meta property="og:description" content="Play five free browser arcade games: Cyber Snake, Cyberpunk Tetris, Comet Belt, Void Dash, and Reflex. No download or account needed - high scores are saved in your browser.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/">
-    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Neon Arcade - Play Free Retro Cyberpunk Browser Games">
+    <meta name="twitter:title" content="EUXODES - Five Free Retro Browser Arcade Games">
     <meta name="twitter:description" content="Play five free browser arcade games: Cyber Snake, Cyberpunk Tetris, Comet Belt, Void Dash, and Reflex. No download or account needed - high scores are saved in your browser.">
-    <link rel="stylesheet" href="neon-arcade.css">
+    <link rel="stylesheet" href="/euxodes.css">
     <style> 
         * { box-sizing: border-box; margin: 0; padding: 0; } 
         body { 
@@ -30,13 +31,13 @@
             flex-direction: column;
             overflow-x: hidden;
         } 
-
+ 
         nav { 
-            background: rgba(5, 5, 16, 0.95); 
+            background: rgba(5, 5, 14, 0.95); 
             border-bottom: 2px solid var(--na-cyan); 
             display: flex; 
             justify-content: center; 
-            padding: 15px; 
+            padding: 14px 20px; 
             position: sticky; 
             top: 0; 
             z-index: 100; 
@@ -53,8 +54,6 @@
             color: var(--na-magenta);
             text-shadow: 0 0 8px var(--na-magenta);
         }
-        header { text-align: center; padding: 40px 20px; } 
-        h1 { font-size: 3rem; color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); letter-spacing: 5px; } 
         main { max-width: 1000px; margin: 0 auto; padding: 20px; width: 100%; } 
         .game-grid {
             display: flex;
@@ -64,21 +63,35 @@
             margin-bottom: 40px;
         }
         .game-card { 
-            background: rgba(10, 10, 30, 0.5); 
-            border: 2px solid var(--na-cyan); 
+            background: var(--na-surface); 
+            border: 2px solid rgba(0, 243, 255, 0.4); 
             padding: 30px; 
             border-radius: 4px; 
             text-align: center; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: transform 0.3s, box-shadow 0.3s;
+            justify-content: space-between;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
             flex: 1 1 280px;
             max-width: 320px;
         } 
         .game-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            border-color: var(--euxodes-violet);
+            box-shadow: 0 0 24px rgba(139, 92, 246, 0.28);
+        }
+        .game-card h2 { 
+            color: var(--euxodes-cyan);
+            font-family: var(--na-font-display);
+            letter-spacing: 1.5px;
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+        }
+        .game-card p { 
+            color: var(--na-muted);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
         }
         .play-btn { 
             display: inline-block; 
@@ -104,55 +117,70 @@
             text-transform: uppercase;
             font-size: 0.9rem;
         }
-        .content-section { margin-top: 40px; background: rgba(10, 10, 30, 0.4); padding: 30px; border-left: 3px solid var(--na-cyan); } 
-        .content-section h2 { color: var(--na-cyan); margin-bottom: 15px; margin-top: 15px; } 
-        .content-section p { margin-bottom: 15px; color: #ccc; } 
-        footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: auto; font-size: 0.8rem; color: #555; } 
+        .content-section { margin-top: 40px; background: var(--na-surface); padding: 30px; border-left: 3px solid var(--euxodes-cyan); } 
+        .content-section h2 { color: var(--euxodes-cyan); margin-bottom: 15px; margin-top: 15px; font-family: var(--na-font-display); text-transform: uppercase; letter-spacing: 1px; font-size: 1.15rem; } 
+        .content-section h2:first-child { margin-top: 0; }
+        .content-section p { margin-bottom: 15px; color: var(--na-muted); } 
     </style> 
 </head> 
 <body class="crt"> 
  
-<nav aria-label="Primary"> 
+<nav class="brand-nav" aria-label="Primary"> 
+    <a href="/" class="brand-link" aria-label="EUXODES Home"> 
+        <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22"> 
+        <span class="brand-word">EUXODES</span> 
+    </a> 
     <a href="/" aria-current="page">Hub</a> 
     <a href="/about">About</a> 
     <a href="/privacy">Privacy</a> 
     <a href="/terms">Terms</a> 
 </nav> 
  
-<header> 
-    <h1>NEON ARCADE</h1> 
-    <p style="color: var(--na-yellow); text-transform: uppercase; letter-spacing: 2px;">Five Browser Arcade Games</p> 
+<header class="hub-brand"> 
+    <img src="/assets/euxodes-symbol.svg" alt="EUXODES symbol" class="brand-symbol" width="92" height="92"> 
+    <h1 class="brand-name">EUXODES</h1> 
+    <p class="hub-tagline">Five Browser Arcade Games</p> 
 </header> 
  
 <main> 
     <div class="game-grid"> 
         <div class="game-card"> 
-            <h2 style="color: var(--na-cyan);">VOID DASH</h2> 
-            <p>Outrun the collapsing field in a speed gauntlet.</p> 
+            <div>
+                <h2>VOID DASH</h2> 
+                <p>Outrun the collapsing field in a speed gauntlet.</p> 
+            </div>
             <div class="best-score">Your best: <span id="hs-void-dash">0</span></div>
             <a href="/void-dash" class="play-btn">PLAY NOW</a> 
         </div> 
         <div class="game-card"> 
-            <h2 style="color: var(--na-cyan);">COMET BELT</h2> 
-            <p>Dodge asteroids and build clutch near-miss streaks.</p> 
+            <div>
+                <h2>COMET BELT</h2> 
+                <p>Dodge asteroids and build clutch near-miss streaks.</p> 
+            </div>
             <div class="best-score">Your best: <span id="hs-comet-belt">0</span></div>
             <a href="/comet-belt" class="play-btn">PLAY NOW</a> 
         </div> 
         <div class="game-card"> 
-            <h2 style="color: var(--na-cyan);">REFLEX</h2> 
-            <p>Test your reaction limits in lane-switching action.</p> 
+            <div>
+                <h2>REFLEX</h2> 
+                <p>Test your reaction limits in lane-switching action.</p> 
+            </div>
             <div class="best-score">Your best: <span id="hs-reflex">0</span></div>
             <a href="/reflex" class="play-btn">PLAY NOW</a> 
         </div> 
         <div class="game-card"> 
-            <h2 style="color: var(--na-cyan);">CYBERPUNK TETRIS</h2> 
-            <p>Stack the matrix and chase quadruple-line clears.</p> 
+            <div>
+                <h2>CYBERPUNK TETRIS</h2> 
+                <p>Stack the matrix and chase quadruple-line clears.</p> 
+            </div>
             <div class="best-score">Your best: <span id="hs-tetris">0</span></div>
             <a href="/tetris" class="play-btn">PLAY NOW</a> 
         </div> 
         <div class="game-card"> 
-            <h2 style="color: var(--na-cyan);">CYBER SNAKE</h2> 
-            <p>Coil through the grid, harvest data, dodge firewalls.</p> 
+            <div>
+                <h2>CYBER SNAKE</h2> 
+                <p>Coil through the grid, harvest data, dodge firewalls.</p> 
+            </div>
             <div class="best-score">Your best: <span id="hs-cyber-snake">0</span></div>
             <a href="/cyber-snake" class="play-btn">PLAY NOW</a> 
         </div> 
@@ -160,18 +188,29 @@
  
     <section class="content-section"> 
         <h2>Five Browser Arcade Games</h2> 
-        <p>Neon Arcade is a small collection of browser games built with HTML5 Canvas. There is nothing to download and no account to create - each game opens in your browser and saves your high score locally on your device.</p> 
-
+        <p>EUXODES is a small collection of browser games built with HTML5 Canvas. There is nothing to download and no account to create - each game opens in your browser and saves your high score locally on your device.</p> 
+ 
         <h2>About the Games</h2> 
         <p><strong>Cyber Snake</strong> is a snake survival game where you steer through the grid, harvest data nodes, and dodge firewall mines. <strong>Cyberpunk Tetris</strong> is a block-stacking game where you clear rows while the fall speed keeps increasing. <strong>Comet Belt</strong> has you flying a comet across five lanes, dodging waves of asteroids. <strong>Void Dash</strong> is an auto-runner where you jump and dash through obstacles. <strong>Reflex</strong> tests your reaction time as you dodge falling blocks across five lanes.</p> 
         <p>All five games get faster as you survive, and your best score for each game is stored in your browser.</p> 
     </section> 
 </main> 
  
-<footer> 
-    <p>&copy; 2026 NEON ARCADE. All Rights Reserved.</p> 
+<footer class="site-footer"> 
+    <a href="/" class="footer-brand" aria-label="EUXODES Home"> 
+        <img src="assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20"> 
+        <span class="brand-word">EUXODES</span> 
+    </a> 
+    <p class="footer-desc">Five browser arcade games. Free to play, no account needed.</p> 
+    <div class="footer-links"> 
+        <a href="/">Hub</a> 
+        <a href="/about">About</a> 
+        <a href="/privacy">Privacy</a> 
+        <a href="/terms">Terms</a> 
+    </div> 
+    <p class="footer-copy">&copy; 2026 EUXODES. All Rights Reserved.</p> 
 </footer> 
-
+ 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const hsVoidDash = localStorage.getItem('voidDash_HS') || '0';
@@ -179,7 +218,7 @@
         const hsReflex = localStorage.getItem('reflex_HS') || '0';
         const hsTetris = localStorage.getItem('cyber_tetris_hi') || '0';
         const hsCyberSnake = localStorage.getItem('cyber_snake_hi') || '0';
-
+ 
         document.getElementById('hs-void-dash').textContent = hsVoidDash;
         document.getElementById('hs-comet-belt').textContent = hsCometBelt;
         document.getElementById('hs-reflex').textContent = hsReflex;
@@ -190,3 +229,4 @@
  
 </body> 
 </html>
+ 
