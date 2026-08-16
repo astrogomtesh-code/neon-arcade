@@ -11,7 +11,12 @@
     <meta property="og:description" content="Stack the matrix and chase quadruple-line clears in Cyberpunk Tetris. A neon-themed block-stacking arcade game with dynamic difficulty in your browser.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/tetris">
-    <link rel="stylesheet" href="/neon-arcade.css">
+    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Cyberpunk Tetris - Retro Block-Stacking Game | Neon Arcade">
+    <meta name="twitter:description" content="Stack the matrix and chase quadruple-line clears in Cyberpunk Tetris. A neon-themed block-stacking arcade game with dynamic difficulty in your browser.">
+    <link rel="stylesheet" href="neon-arcade.css">
     <style>
         * {
             box-sizing: border-box;
@@ -24,7 +29,7 @@
             margin: 0;
             padding: 20px 10px;
             background-color: #030308;
-            color: #00f3ff;
+            color: var(--na-cyan);
             font-family: var(--na-font-body);
             min-height: 100vh;
             display: flex;
@@ -37,7 +42,7 @@
 
         nav {
             background: rgba(5, 5, 16, 0.95);
-            border-bottom: 2px solid #00f3ff;
+            border-bottom: 2px solid var(--na-cyan);
             display: flex;
             justify-content: center;
             padding: 15px;
@@ -48,7 +53,7 @@
             margin: -20px -10px 20px -10px;
         }
         nav a {
-            color: #00f3ff;
+            color: var(--na-cyan);
             text-decoration: none;
             margin: 0 15px;
             font-weight: bold;
@@ -56,8 +61,8 @@
             letter-spacing: 2px;
         }
         nav a:hover {
-            color: #ff003c;
-            text-shadow: 0 0 8px #ff003c;
+            color: var(--na-magenta);
+            text-shadow: 0 0 8px var(--na-magenta);
         }
 
         /* User Specified Container & Fullscreen Styles */
@@ -65,8 +70,8 @@
             position: relative;
             width: 100%;
             max-width: 900px;
-            background: #050510;
-            border: 2px solid #00f3ff;
+            background: var(--na-bg);
+            border: 2px solid var(--na-cyan);
             border-radius: 8px;
             box-shadow: 0 0 25px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(0, 243, 255, 0.1);
             overflow: hidden;
@@ -92,7 +97,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #050510;
+            background: var(--na-bg);
             border: none;
             border-radius: 0;
         }
@@ -106,46 +111,7 @@
             aspect-ratio: 16 / 9;
         }
 
-        /* User Specified Maximize Button Styles */
-        #maximize-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 20;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            background: rgba(5, 5, 16, 0.7);
-            border: 2px solid #00f3ff;
-            border-radius: 4px;
-            color: #00f3ff;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        #maximize-btn:hover {
-            background: #00f3ff;
-            color: #050510;
-            box-shadow: 0 0 15px #00f3ff;
-        }
-
-        #maximize-btn svg { 
-            width: 18px; 
-            height: 18px; 
-        }
-
-        /* Canvas Wrapper & Scanlines Effect */
-        .canvas-wrapper {
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        /* Canvas & Scanlines Effect */
         canvas {
             display: block;
             width: 100%;
@@ -158,51 +124,11 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         }
 
-        /* Overlay CRT Scanline Effect */
-        .scanlines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.03),
-                rgba(0, 255, 0, 0.01),
-                rgba(0, 0, 255, 0.03)
-            );
-            background-size: 100% 4px, 6px 100%;
-            z-index: 5;
-            border-radius: 4px;
-        }
-
         /* Cyberpunk UI Elements & Typography */
-        .cyber-font {
-            font-family: var(--na-font-body);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .neon-glow {
-            text-shadow: 0 0 8px #00f3ff, 0 0 16px rgba(0, 243, 255, 0.6);
-        }
-
-        .btn-cyber {
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid #00f3ff;
-            color: #00f3ff;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
-        }
-
         .btn-cyber:hover, .btn-cyber:active {
-            background: #00f3ff;
-            color: #050510;
-            box-shadow: 0 0 15px #00f3ff;
+            background: var(--na-cyan);
+            color: var(--na-bg);
+            box-shadow: 0 0 15px var(--na-cyan);
         }
 
         /* Mobile Touch Pad Layout */
@@ -221,38 +147,9 @@
             }
         }
 
-        /* SEO Content Styling (unified with rest of Neon Arcade) */
-        .seo-content {
-            max-width: 1000px;
-            width: 100%;
-            margin: 20px auto 40px auto;
-            padding: 30px;
-            background: rgba(10, 10, 30, 0.5);
-            border-left: 3px solid #00f3ff;
-            border-radius: 4px;
-        }
+        /* SEO Content H2 Color Override */
         .seo-content h2 {
             color: #ffee00;
-            margin-top: 25px;
-            margin-bottom: 15px;
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .seo-content h2:first-of-type {
-            margin-top: 0;
-        }
-        .seo-content p, .seo-content ul {
-            margin-bottom: 15px;
-            color: #ccc;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        .seo-content ul {
-            padding-left: 20px;
-        }
-        .seo-content li {
-            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -313,77 +210,10 @@
         <p>The engine constantly accelerates, pushing your nervous system to the absolute limit. Will you conquer the terminal velocity, or will you end up as another fragmented packet in the digital abyss? Stay alert, switch fast, and survive!</p>
     </section>
 
+    <script src="js/na-fullscreen.js"></script>
     <script>
-        // Fullscreen Toggle functionality with permissions error handling & pseudo-fullscreen fallback
-        const gameContainer = document.getElementById('game-container');
-        const maximizeBtn = document.getElementById('maximize-btn');
-        const maxIcon = document.getElementById('max-icon');
-
-        async function toggleFullscreen() {
-            const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
-
-            if (!isFullscreen) {
-                try {
-                    if (gameContainer.requestFullscreen) {
-                        await gameContainer.requestFullscreen();
-                    } else if (gameContainer.webkitRequestFullscreen) {
-                        await gameContainer.webkitRequestFullscreen();
-                    } else if (gameContainer.msRequestFullscreen) {
-                        await gameContainer.msRequestFullscreen();
-                    } else if (gameContainer.mozRequestFullScreen) {
-                        await gameContainer.mozRequestFullScreen();
-                    } else {
-                        gameContainer.classList.add('pseudo-fullscreen');
-                        updateMaximizeIcon(true);
-                    }
-                } catch (err) {
-                    // Fallback to pseudo-fullscreen if native fullscreen is restricted by iframe permissions policy
-                    console.warn('Native fullscreen blocked, applying pseudo-fullscreen mode instead:', err);
-                    gameContainer.classList.add('pseudo-fullscreen');
-                    updateMaximizeIcon(true);
-                }
-            } else {
-                if (gameContainer.classList.contains('pseudo-fullscreen')) {
-                    gameContainer.classList.remove('pseudo-fullscreen');
-                    updateMaximizeIcon(false);
-                } else {
-                    try {
-                        if (document.exitFullscreen) {
-                            await document.exitFullscreen();
-                        } else if (document.webkitExitFullscreen) {
-                            await document.webkitExitFullscreen();
-                        } else if (document.msExitFullscreen) {
-                            await document.msExitFullscreen();
-                        } else if (document.mozCancelFullScreen) {
-                            await document.mozCancelFullScreen();
-                        }
-                    } catch (err) {
-                        gameContainer.classList.remove('pseudo-fullscreen');
-                        updateMaximizeIcon(false);
-                    }
-                }
-            }
-            // pseudo-fullscreen doesn't fire fullscreenchange, so force a
-            // recalculation once the layout settles either way
-            setTimeout(() => resizeCanvas(), 60);
-        }
-
-        function updateMaximizeIcon(overrideState) {
-            const isFullscreen = (typeof overrideState === 'boolean') 
-                ? overrideState 
-                : !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
-
-            if (isFullscreen) {
-                maxIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
-            } else {
-                maxIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
-            }
-        }
-
-        document.addEventListener('fullscreenchange', () => updateMaximizeIcon());
-        document.addEventListener('webkitfullscreenchange', () => updateMaximizeIcon());
-        document.addEventListener('mozfullscreenchange', () => updateMaximizeIcon());
-        document.addEventListener('MSFullscreenChange', () => updateMaximizeIcon());
+        // Fullscreen handled by shared js/na-fullscreen.js helper
+        naInitFullscreen({ onAfterToggle: () => resizeCanvas() });
 
         // Cyberpunk Web Audio Sound Engine
         class CyberAudio {

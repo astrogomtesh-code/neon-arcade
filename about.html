@@ -11,17 +11,16 @@
     <meta property="og:description" content="Learn more about Neon Arcade, a curated collection of high-octane retro-futuristic browser survival games designed with HTML5 canvas and zero dependencies.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/about">
-    <link rel="stylesheet" href="/neon-arcade.css">
+    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="About Us - Retro Cyberpunk Gaming Hub | Neon Arcade">
+    <meta name="twitter:description" content="Learn more about Neon Arcade, a curated collection of high-octane retro-futuristic browser survival games designed with HTML5 canvas and zero dependencies.">
+    <link rel="stylesheet" href="neon-arcade.css">
     <style>
-        :root {
-            --c-bg: #050510;
-            --c-primary: #00f3ff;
-            --c-secondary: #fcee0a;
-            --c-text: #ffffff;
-        }
         body {
-            background-color: var(--c-bg);
-            color: var(--c-text);
+            background-color: var(--na-bg);
+            color: var(--na-text);
             font-family: var(--na-font-body);
             margin: 0;
             padding: 0;
@@ -31,24 +30,9 @@
             flex-direction: column;
             align-items: center;
         }
-        /* CRT Effect */
-        body::after {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 4px, 6px 100%;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0.4;
-        }
-        @media (prefers-reduced-motion: reduce) {
-            body::after { animation: none; opacity: 0.4; }
-        }
         nav {
             background: rgba(5, 5, 16, 0.95);
-            border-bottom: 2px solid var(--c-primary);
+            border-bottom: 2px solid var(--na-cyan);
             display: flex;
             justify-content: center;
             padding: 15px;
@@ -58,15 +42,15 @@
             width: 100%;
         }
         nav a {
-            color: var(--c-primary);
+            color: var(--na-cyan);
             text-decoration: none;
             margin: 0 15px;
             font-weight: bold;
             text-transform: uppercase;
         }
         nav a:hover {
-            color: #ff003c;
-            text-shadow: 0 0 5px #ff003c;
+            color: var(--na-magenta);
+            text-shadow: 0 0 5px var(--na-magenta);
         }
         main {
             max-width: 800px;
@@ -75,12 +59,12 @@
             text-align: center;
             flex: 1;
         }
-        h1 { color: var(--c-primary); text-shadow: 0 0 10px var(--c-primary); margin-bottom: 30px; }
+        h1 { color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); margin-bottom: 30px; }
         p { margin-bottom: 20px; font-size: 1.1rem; color: #ccc; }
         footer { text-align: center; padding: 40px; border-top: 1px solid #111; margin-top: auto; font-size: 0.8rem; color: #555; width: 100%; box-sizing: border-box; }
     </style>
 </head>
-<body>
+<body class="crt">
     <nav aria-label="Primary">
         <a href="/">Hub</a>
         <a href="/about" aria-current="page">About</a>

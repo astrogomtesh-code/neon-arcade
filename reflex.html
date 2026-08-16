@@ -11,17 +11,13 @@
     <meta property="og:description" content="Test your ultimate reaction speed limits in Reflex. Shift lanes, avoid shifting barrier patterns, and survive terminal velocity on the digital highway.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/reflex">
-    <link rel="stylesheet" href="/neon-arcade.css">
+    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Reflex - Punishing Lane-Switching Reaction Game | Neon Arcade">
+    <meta name="twitter:description" content="Test your ultimate reaction speed limits in Reflex. Shift lanes, avoid shifting barrier patterns, and survive terminal velocity on the digital highway.">
+    <link rel="stylesheet" href="neon-arcade.css">
     <style>
-        :root {
-            --bg-color: #050510;
-            --lane-color: #1a1a3a;
-            --neon-cyan: #00f3ff;
-            --neon-magenta: #ff003c;
-            --neon-yellow: #fcee0a;
-            --text-color: #ffffff;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -31,8 +27,8 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--na-bg);
+            color: var(--na-text);
             font-family: var(--na-font-body);
             overflow-x: hidden;
             overflow-y: auto;
@@ -51,14 +47,14 @@
             left: 0;
             width: 100%;
             background: rgba(5, 5, 16, 0.9);
-            border-bottom: 2px solid var(--neon-cyan);
+            border-bottom: 2px solid var(--na-cyan);
             display: flex;
             justify-content: center;
             padding: 15px;
             z-index: 1000;
         }
         nav a {
-            color: var(--neon-cyan);
+            color: var(--na-cyan);
             text-decoration: none;
             margin: 0 15px;
             font-weight: bold;
@@ -67,8 +63,8 @@
             letter-spacing: 2px;
         }
         nav a:hover {
-            color: var(--neon-magenta);
-            text-shadow: 0 0 5px var(--neon-magenta);
+            color: var(--na-magenta);
+            text-shadow: 0 0 5px var(--na-magenta);
         }
 
         #game-container {
@@ -76,7 +72,7 @@
             width: 100%;
             max-width: 500px;
             height: min(80vh, 700px);
-            background: var(--bg-color);
+            background: var(--na-bg);
             box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
             margin: 40px auto 20px auto;
             touch-action: none;
@@ -100,33 +96,8 @@
             width: 100vw;
             height: 100vh;
             margin: 0;
-            background: var(--bg-color);
+            background: var(--na-bg);
         }
-
-        #maximize-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 20;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            background: rgba(5, 5, 16, 0.7);
-            border: 2px solid var(--neon-cyan);
-            border-radius: 4px;
-            color: var(--neon-cyan);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        #maximize-btn:hover {
-            background: var(--neon-cyan);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px var(--neon-cyan);
-        }
-        #maximize-btn svg { width: 18px; height: 18px; }
 
         /* Scanline effect */
         #game-container::after {
@@ -137,47 +108,13 @@
             left: 0;
             bottom: 0;
             right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 4px, 3px 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 5;
+            background-size: 100% 4px, 6px 100%;
+            border-radius: 4px;
             pointer-events: none;
         }
 
-        
-    
-        /* SEO Content Styling */
-        .seo-content {
-            max-width: 1000px;
-            width: 100%;
-            margin: 20px auto 40px auto;
-            padding: 30px;
-            background: rgba(10, 10, 30, 0.5);
-            border-left: 3px solid var(--neon-cyan);
-            border-radius: 4px;
-        }
-        .seo-content h2 {
-            color: var(--neon-yellow);
-            margin-top: 25px;
-            margin-bottom: 15px;
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .seo-content h2:first-of-type {
-            margin-top: 0;
-        }
-        .seo-content p, .seo-content ul {
-            margin-bottom: 15px;
-            color: #ccc;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        .seo-content ul {
-            padding-left: 20px;
-        }
-        .seo-content li {
-            margin-bottom: 10px;
-        }
         footer {
             text-align: center;
             padding: 40px;
@@ -213,6 +150,7 @@
     </button>
 </div>
 
+<script src="js/na-fullscreen.js"></script>
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -344,79 +282,10 @@
     resize();
     setTimeout(resize, 100);
 
-    // Fullscreen / maximize toggle, with vendor-prefix and
-    // pseudo-fullscreen fallbacks for mobile browsers (iOS Safari has no
-    // Fullscreen API for arbitrary elements; some Android browsers reject
-    // it in-context).
-    const gameContainer = document.getElementById('game-container');
+    // Fullscreen handled by shared js/na-fullscreen.js helper
+    naInitFullscreen({ onAfterToggle: () => resize() });
     const maximizeBtn = document.getElementById('maximize-btn');
-    const maxIcon = document.getElementById('max-icon');
-
-    function updateMaximizeIcon(overrideState) {
-        const isFullscreen = (typeof overrideState === 'boolean')
-            ? overrideState
-            : !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
-
-        if (isFullscreen) {
-            maxIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
-        } else {
-            maxIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
-        }
-    }
-
-    async function toggleFullscreen() {
-        const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
-
-        if (!isFullscreen) {
-            try {
-                if (gameContainer.requestFullscreen) {
-                    await gameContainer.requestFullscreen();
-                } else if (gameContainer.webkitRequestFullscreen) {
-                    await gameContainer.webkitRequestFullscreen();
-                } else if (gameContainer.msRequestFullscreen) {
-                    await gameContainer.msRequestFullscreen();
-                } else if (gameContainer.mozRequestFullScreen) {
-                    await gameContainer.mozRequestFullScreen();
-                } else {
-                    gameContainer.classList.add('pseudo-fullscreen');
-                    updateMaximizeIcon(true);
-                }
-            } catch (err) {
-                console.warn('Native fullscreen blocked, applying pseudo-fullscreen mode instead:', err);
-                gameContainer.classList.add('pseudo-fullscreen');
-                updateMaximizeIcon(true);
-            }
-        } else {
-            if (gameContainer.classList.contains('pseudo-fullscreen')) {
-                gameContainer.classList.remove('pseudo-fullscreen');
-                updateMaximizeIcon(false);
-            } else {
-                try {
-                    if (document.exitFullscreen) {
-                        await document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        await document.webkitExitFullscreen();
-                    } else if (document.msExitFullscreen) {
-                        await document.msExitFullscreen();
-                    } else if (document.mozCancelFullScreen) {
-                        await document.mozCancelFullScreen();
-                    }
-                } catch (err) {
-                    gameContainer.classList.remove('pseudo-fullscreen');
-                    updateMaximizeIcon(false);
-                }
-            }
-        }
-        // pseudo-fullscreen doesn't fire fullscreenchange, so force a
-        // recalculation once the layout settles either way
-        setTimeout(resize, 60);
-    }
-
     maximizeBtn.addEventListener('click', toggleFullscreen);
-    document.addEventListener('fullscreenchange', () => updateMaximizeIcon());
-    document.addEventListener('webkitfullscreenchange', () => updateMaximizeIcon());
-    document.addEventListener('mozfullscreenchange', () => updateMaximizeIcon());
-    document.addEventListener('MSFullscreenChange', () => updateMaximizeIcon());
 
     function pauseForBackground() {
         if (state === STATE_PLAYING) {

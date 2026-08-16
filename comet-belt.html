@@ -11,7 +11,12 @@
     <meta property="og:description" content="Navigate the dense asteroid field in Comet Belt. Dodge high-velocity comets, build clutch near-miss streaks, and survive the retro space simulator.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/comet-belt">
-    <link rel="stylesheet" href="/neon-arcade.css">
+    <meta property="og:site_name" content="Neon Arcade">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Comet Belt - Retro Asteroid Dodge Game | Neon Arcade">
+    <meta name="twitter:description" content="Navigate the dense asteroid field in Comet Belt. Dodge high-velocity comets, build clutch near-miss streaks, and survive the retro space simulator.">
+    <link rel="stylesheet" href="neon-arcade.css">
     <style>
         /* Base reset and layout */
         * {
@@ -25,7 +30,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #050510;
+            background-color: var(--na-bg);
             font-family: var(--na-font-body);
             overflow-x: hidden;
             overflow-y: auto;
@@ -42,14 +47,14 @@
             left: 0;
             width: 100%;
             background: rgba(5, 5, 16, 0.9);
-            border-bottom: 2px solid #00f3ff;
+            border-bottom: 2px solid var(--na-cyan);
             display: flex;
             justify-content: center;
             padding: 15px;
             z-index: 1000;
         }
         nav a {
-            color: #00f3ff;
+            color: var(--na-cyan);
             text-decoration: none;
             margin: 0 15px;
             font-weight: bold;
@@ -58,8 +63,8 @@
             letter-spacing: 2px;
         }
         nav a:hover {
-            color: #ff003c;
-            text-shadow: 0 0 5px #ff003c;
+            color: var(--na-magenta);
+            text-shadow: 0 0 5px var(--na-magenta);
         }
 
         /* Container keeping game at 16:9 aspect ratio */
@@ -70,7 +75,7 @@
             height: auto;
             aspect-ratio: 16 / 9;
             box-shadow: 0 0 40px rgba(0, 243, 255, 0.15);
-            border: 2px solid #00f3ff;
+            border: 2px solid var(--na-cyan);
             overflow: hidden;
             margin: 40px auto 20px auto;
         }
@@ -79,7 +84,7 @@
             width: 100%;
             height: 100%;
             display: block;
-            background-color: #050510;
+            background-color: var(--na-bg);
         }
 
         #game-container:fullscreen,
@@ -98,7 +103,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #050510;
+            background: var(--na-bg);
             border: none;
         }
         #game-container:fullscreen canvas,
@@ -108,46 +113,6 @@
             max-width: 100vw;
             max-height: 100vh;
             aspect-ratio: 16 / 9;
-        }
-
-        #maximize-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 20;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            background: rgba(5, 5, 16, 0.7);
-            border: 2px solid #00f3ff;
-            border-radius: 4px;
-            color: #00f3ff;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        #maximize-btn:hover {
-            background: #00f3ff;
-            color: #050510;
-            box-shadow: 0 0 15px #00f3ff;
-        }
-        #maximize-btn svg { width: 18px; height: 18px; }
-
-        /* CRT Scanline Overlay */
-        .crt::after {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: 
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 4px, 6px 100%;
-            z-index: 10;
-            pointer-events: none;
-            opacity: 0.4;
         }
 
         /* Subtle vignette */
@@ -184,46 +149,6 @@
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .crt::after {
-                animation: none !important;
-                opacity: 0.4 !important;
-            }
-        }
-    
-        /* SEO Content Styling */
-        .seo-content {
-            max-width: 1000px;
-            width: 100%;
-            margin: 20px auto 40px auto;
-            padding: 30px;
-            background: rgba(10, 10, 30, 0.5);
-            border-left: 3px solid #00f3ff;
-            border-radius: 4px;
-        }
-        .seo-content h2 {
-            color: #fcee0a;
-            margin-top: 25px;
-            margin-bottom: 15px;
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .seo-content h2:first-of-type {
-            margin-top: 0;
-        }
-        .seo-content p, .seo-content ul {
-            margin-bottom: 15px;
-            color: #ccc;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        .seo-content ul {
-            padding-left: 20px;
-        }
-        .seo-content li {
-            margin-bottom: 10px;
-        }
         footer {
             text-align: center;
             padding: 40px;
@@ -263,6 +188,7 @@
         </button>
     </div>
 
+    <script src="js/na-fullscreen.js"></script>
     <script>
         // Setup canvas and context
         const canvas = document.getElementById('gameCanvas');
@@ -616,85 +542,29 @@
             handleScreenTouch(e.touches[0].clientY);
         }, { passive: false });
 
+        // Mouse support inside the narrow-window overlay zones. These zones
+        // cover the canvas at max-width 900px, so a mouse click never reaches
+        // the canvas listener below. mousedown is safe here: touch continues
+        // to be handled exclusively by the touchstart handlers above.
+        document.getElementById('touch-top').addEventListener('mousedown', (e) => {
+            handleScreenTouch(e.clientY);
+        });
+        document.getElementById('touch-bottom').addEventListener('mousedown', (e) => {
+            handleScreenTouch(e.clientY);
+        });
+
         // Backup mouse click support
         canvas.addEventListener('mousedown', (e) => {
             handleScreenTouch(e.clientY);
         });
 
-        // Fullscreen / maximize toggle, with vendor-prefix and
-        // pseudo-fullscreen fallbacks for mobile browsers (iOS Safari has
-        // no Fullscreen API for arbitrary elements; some Android browsers
-        // reject it in-context).
-        const gameContainer = document.getElementById('game-container');
+        // Fullscreen handled by shared js/na-fullscreen.js helper
+        naInitFullscreen({
+            onToggle: () => sfx.init(),
+            onAfterToggle: () => resize()
+        });
         const maximizeBtn = document.getElementById('maximize-btn');
-        const maxIcon = document.getElementById('max-icon');
-
-        function updateMaximizeIcon(overrideState) {
-            const isFullscreen = (typeof overrideState === 'boolean')
-                ? overrideState
-                : !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
-
-            if (isFullscreen) {
-                maxIcon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
-            } else {
-                maxIcon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
-            }
-        }
-
-        async function toggleFullscreen() {
-            sfx.init();
-            const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement || gameContainer.classList.contains('pseudo-fullscreen'));
-
-            if (!isFullscreen) {
-                try {
-                    if (gameContainer.requestFullscreen) {
-                        await gameContainer.requestFullscreen();
-                    } else if (gameContainer.webkitRequestFullscreen) {
-                        await gameContainer.webkitRequestFullscreen();
-                    } else if (gameContainer.msRequestFullscreen) {
-                        await gameContainer.msRequestFullscreen();
-                    } else if (gameContainer.mozRequestFullScreen) {
-                        await gameContainer.mozRequestFullScreen();
-                    } else {
-                        gameContainer.classList.add('pseudo-fullscreen');
-                        updateMaximizeIcon(true);
-                    }
-                } catch (err) {
-                    console.warn('Native fullscreen blocked, applying pseudo-fullscreen mode instead:', err);
-                    gameContainer.classList.add('pseudo-fullscreen');
-                    updateMaximizeIcon(true);
-                }
-            } else {
-                if (gameContainer.classList.contains('pseudo-fullscreen')) {
-                    gameContainer.classList.remove('pseudo-fullscreen');
-                    updateMaximizeIcon(false);
-                } else {
-                    try {
-                        if (document.exitFullscreen) {
-                            await document.exitFullscreen();
-                        } else if (document.webkitExitFullscreen) {
-                            await document.webkitExitFullscreen();
-                        } else if (document.msExitFullscreen) {
-                            await document.msExitFullscreen();
-                        } else if (document.mozCancelFullScreen) {
-                            await document.mozCancelFullScreen();
-                        }
-                    } catch (err) {
-                        gameContainer.classList.remove('pseudo-fullscreen');
-                        updateMaximizeIcon(false);
-                    }
-                }
-            }
-            // pseudo-fullscreen doesn't fire fullscreenchange, so force a
-            // recalculation once the layout settles either way
-            setTimeout(resize, 60);
-        }
-
         maximizeBtn.addEventListener('click', toggleFullscreen);
-        document.addEventListener('fullscreenchange', () => updateMaximizeIcon());
-        document.addEventListener('webkitfullscreenchange', () => updateMaximizeIcon());
-        document.addEventListener('mozfullscreenchange', () => updateMaximizeIcon());
-        document.addEventListener('MSFullscreenChange', () => updateMaximizeIcon());
 
         function changeLane(direction) {
             const oldLane = player.currentLane;
