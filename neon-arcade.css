@@ -207,9 +207,9 @@ body.crt::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    body.crt::after {
+    .tap-hint,
+    .flash.active {
         animation: none !important;
-        opacity: 0.4 !important;
     }
 }
 

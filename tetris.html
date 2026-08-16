@@ -20,9 +20,13 @@
     <style>
         * {
             box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        #game-container,
+        #game-container * {
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
         }
 
         body {
@@ -156,7 +160,7 @@
 <body>
 
     <nav aria-label="Primary">
-        <a href="/" aria-current="page">Hub</a>
+        <a href="/">Hub</a>
         <a href="/about">About</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
@@ -187,14 +191,14 @@
         </div>
     </div>
 
-    <!-- INDEXABLE TEXT FOR GOOGLE ADSENSE BOT -->
     <section class="seo-content">
+        <h1 style="color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); font-size: 2rem; letter-spacing: 2px;">CYBERPUNK TETRIS</h1>
         <h2>How to Play &amp; Controls</h2>
-        <p>Cyberpunk Tetris is a high-speed matrix alignment survival system. Test your reaction times on the digital grid with these control systems:</p>
+        <p>Cyberpunk Tetris is a block-stacking game on a 10x20 grid. Rotate and drop falling tetromino pieces to complete horizontal rows, and clear as many as you can before the stack reaches the top. The fall speed keeps increasing as you level up.</p>
         <ul>
             <li><strong>Keyboard Controls:</strong> Use the <span class="key">A</span> / <span class="key">&#9664;</span> or <span class="key">D</span> / <span class="key">&#9654;</span> keys to shift left and right. Press <span class="key">&#9650;</span> or <span class="key">X</span> to rotate, <span class="key">&#9660;</span> for soft drop, and <span class="key">SPACE</span> for instant hard drop.</li>
             <li><strong>Touch Controls:</strong> Tap the interactive control pad buttons situated below the grid to shift, rotate, or drop active blocks.</li>
-            <li><strong>Game Mechanics:</strong> Form unbroken horizontal rows across the 10x20 matrix grid. Clearing multiple lines simultaneously grants massive exponential score bonuses.</li>
+            <li><strong>Game Mechanics:</strong> Form unbroken horizontal rows across the 10x20 grid. Clearing one line is worth 100 points, two lines 300, three lines 500, and four lines 800, all multiplied by your current level.</li>
         </ul>
 
         <h2>Strategy Guide &amp; Tips</h2>
@@ -202,7 +206,7 @@
         <ul>
             <li><strong>Keep Your Focus Ahead:</strong> Do not just look at your falling block. Watch the NEXT panel on the right where incoming blocks spawn so you can plan path transitions early.</li>
             <li><strong>Smooth Transits:</strong> Avoid panic double-shifting. Map out paths that require minimal switching to avoid being trapped on the outer boundaries.</li>
-            <li><strong>Maintain Streak Multiplier:</strong> Utilize the HOLD feature (<span class="key">C</span> or <span class="key">SHIFT</span>) to save long pieces for quadruple-line clear 'Tetris' streaks to maximize your score output.</li>
+            <li><strong>Use the Hold Feature:</strong> Utilize the HOLD feature (<span class="key">C</span> or <span class="key">SHIFT</span>) to save a piece for later, so you can set up quadruple-line clears and maximize your score.</li>
         </ul>
 
         <h2>The Tetris Protocol (Lore)</h2>

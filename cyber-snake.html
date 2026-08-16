@@ -20,9 +20,13 @@
     <style>
         * {
             box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        #game-container,
+        #game-container * {
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
         }
 
         body {
@@ -196,7 +200,7 @@
 <body>
 
     <nav aria-label="Primary">
-        <a href="/" aria-current="page">Hub</a>
+        <a href="/">Hub</a>
         <a href="/about">About</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
@@ -234,14 +238,14 @@
         </div>
     </div>
 
-    <!-- INDEXABLE TEXT FOR GOOGLE ADSENSE BOT -->
     <section class="seo-content">
+        <h1 style="color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); font-size: 2rem; letter-spacing: 2px;">CYBER SNAKE</h1>
         <h2>How to Play &amp; Controls</h2>
-        <p>Cyber Snake is a high-velocity 360&deg; directional survival system. Navigate the digital grid, collect energy nodes, and evolve your neon trail without severing your core program:</p>
+        <p>Cyber Snake is a snake survival game on a square grid. You steer a moving snake, collect cyan data nodes to grow, and survive as long as you can. Hitting your own tail, the perimeter walls, or a firewall mine ends the run.</p>
         <ul>
-            <li><strong>Keyboard Steering:</strong> Press <span class="key">A</span> / <span class="key">&#9664;</span> to rotate left and <span class="key">D</span> / <span class="key">&#9654;</span> to rotate right. Hold <span class="key">W</span> or <span class="key">SHIFT</span> for Overdrive Turbo, and press <span class="key">SPACE</span> to trigger an EMP shockwave when charged.</li>
-            <li><strong>Mouse &amp; Touch Steering:</strong> Move your cursor or drag on the game canvas to steer directly toward your finger/pointer, or tap the interactive touch pad beneath the screen.</li>
-            <li><strong>Power-Ups &amp; Core Upgrades:</strong> Absorb Cyan Data Nodes to grow, collect Yellow Overdrive Orbs for speed multipliers, and grab Magenta Shield Cores to withstand lethal collisions.</li>
+            <li><strong>Keyboard Steering:</strong> Press <span class="key">A</span> / <span class="key">&#9664;</span> to rotate left and <span class="key">D</span> / <span class="key">&#9654;</span> to rotate right. Hold <span class="key">W</span> or <span class="key">Shift</span> to speed up, and press <span class="key">SPACE</span> to fire an EMP shockwave when you have a charge.</li>
+            <li><strong>Mouse &amp; Touch Steering:</strong> Click and drag on the game canvas to steer directly toward your pointer. On touch screens, drag on the canvas or use the touch pad beneath the screen.</li>
+            <li><strong>Power-Ups &amp; Core Upgrades:</strong> Absorb cyan Data Nodes to grow, collect yellow Overdrive orbs for a temporary speed burst, grab magenta Shield Cores to survive one hit, and collect EMP pickups to gain extra shockwave charges (up to three).</li>
         </ul>
 
         <h2>Strategy Guide &amp; Tips</h2>

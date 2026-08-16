@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#050510">
     <title>Void Dash - High-Speed Cyberpunk Runner | Neon Arcade</title>
-    <meta name="description" content="Outrun the collapsing field in Void Dash, a high-speed survival gauntlet. Dash through obstacles, build your multiplier streak, and master the digital grid.">
+    <meta name="description" content="Outrun the collapsing field in Void Dash, an auto-runner survival game. Jump and dash through obstacles as the speed keeps rising - one hit ends the run.">
     <link rel="canonical" href="https://your-domain.vercel.app/void-dash">
     <meta property="og:title" content="Void Dash - High-Speed Cyberpunk Runner | Neon Arcade">
-    <meta property="og:description" content="Outrun the collapsing field in Void Dash, a high-speed survival gauntlet. Dash through obstacles, build your multiplier streak, and master the digital grid.">
+    <meta property="og:description" content="Outrun the collapsing field in Void Dash, an auto-runner survival game. Jump and dash through obstacles as the speed keeps rising - one hit ends the run.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/void-dash">
     <meta property="og:site_name" content="Neon Arcade">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Void Dash - High-Speed Cyberpunk Runner | Neon Arcade">
-    <meta name="twitter:description" content="Outrun the collapsing field in Void Dash, a high-speed survival gauntlet. Dash through obstacles, build your multiplier streak, and master the digital grid.">
+    <meta name="twitter:description" content="Outrun the collapsing field in Void Dash, an auto-runner survival game. Jump and dash through obstacles as the speed keeps rising - one hit ends the run.">
     <link rel="stylesheet" href="neon-arcade.css">
     <style>
         * {
@@ -175,6 +175,15 @@
             letter-spacing: 4px;
         }
 
+        .modal-title {
+            font-size: 2.8rem;
+            margin: 0 0 6px 0;
+            color: var(--na-cyan);
+            text-shadow: 0 0 10px var(--na-cyan);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
         .sub {
             color: #9aa4c7;
             font-size: 0.85rem;
@@ -218,6 +227,7 @@
 
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
+            .modal-title { font-size: 2rem; }
             .controls-hint { display: none; }
         }
 
@@ -246,7 +256,7 @@
 <body class="crt">
 
 <nav aria-label="Primary">
-    <a href="/" aria-current="page">Hub</a>
+    <a href="/">Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
@@ -283,7 +293,7 @@
 
     <!-- START SCREEN -->
     <div id="start-screen" class="modal-screen">
-        <h1>VOID DASH</h1>
+        <div class="modal-title">VOID DASH</div>
         <p class="sub">Outrun the collapsing field. One hit ends the run.</p>
         <button id="start-btn">LAUNCH</button>
         <div class="tap-hint">or press SPACE / TAP</div>
@@ -291,7 +301,7 @@
 
     <!-- GAME OVER SCREEN -->
     <div id="game-over-screen" class="modal-screen hidden">
-        <h1>SIGNAL LOST</h1>
+        <div class="modal-title">SIGNAL LOST</div>
         <div id="death-line">HIT: —</div>
         <p id="final-score" style="font-size: 1.5rem; color: #fff; margin: 0;">SCORE: 0</p>
         <div id="best-line"></div>
@@ -300,21 +310,22 @@
     </div>
 </div>
 
-<!-- INDEXABLE TEXT FOR GOOGLE ADSENSE BOT -->
 <section class="seo-content">
+    <h1 style="color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); font-size: 2rem; letter-spacing: 2px;">VOID DASH</h1>
     <h2>How to Play &amp; Controls</h2>
-    <p>Mastering the high-speed cyber runner requires quick finger coordination and timing. Use the following control methods:</p>
+    <p>Void Dash is an auto-runner: the game moves your character forward on its own, and you only control jumping and dashing. Survive as long as you can - one hit ends the run.</p>
     <ul>
-        <li><strong>Keyboard Controls:</strong> Use the <span class="key">Space</span>, <span class="key">W</span> or <span class="key">Up Arrow</span> to jump. Press <span class="key">Shift</span>, <span class="key">D</span> or <span class="key">Right Arrow</span> to dash forward when your power bar is filled.</li>
+        <li><strong>Keyboard Controls:</strong> Use the <span class="key">Space</span>, <span class="key">W</span> or <span class="key">Up Arrow</span> to jump. Press <span class="key">Shift</span>, <span class="key">D</span> or <span class="key">Right Arrow</span> to dash forward when your dash meter is full.</li>
         <li><strong>Touch Controls:</strong> Tap the left side of the screen to jump, or the right side to dash.</li>
-        <li><strong>Double Jumping:</strong> Press jump again in mid-air to perform a double jump and reach higher platforms.</li>
+        <li><strong>Double Jumping:</strong> Press jump again in mid-air to perform a double jump and clear taller obstacles.</li>
         <li><strong>Dashing:</strong> Dashing grants temporary invincibility and allows you to shatter incoming obstacles for bonus points.</li>
+        <li><strong>Obstacles:</strong> Grid barriers and asteroids can be jumped or dashed through. Sentinel drones float at different heights, so a single jump is not always enough. Spire pillars are too tall to jump, so dash straight through them.</li>
     </ul>
 
     <h2>Strategy Guide &amp; Tips</h2>
     <p>Survival in the grid requires more than just raw speed. Review these advanced strategies to achieve your best possible scores:</p>
     <ul>
-        <li><strong>Precision Dashing:</strong> Wait until you are extremely close to an obstacle before activating your dash. Shattering an obstacle directly increases your streak multiplier, propelling your scores to record heights.</li>
+        <li><strong>Precision Dashing:</strong> Wait until you are extremely close to an obstacle before activating your dash. Shattering an obstacle destroys it and earns bonus points, and your streak counter tracks how many you have shattered in a row.</li>
         <li><strong>Conserve Your Energy:</strong> Do not spam your dash as soon as it becomes available. Keep it ready for tight situations, especially when multiple high obstacles spawn back-to-back.</li>
         <li><strong>Stay Low:</strong> Double jumping is useful, but it keeps you in the air longer, making you vulnerable to fast-moving sentinel drones. Stay grounded as much as possible to react quickly.</li>
     </ul>

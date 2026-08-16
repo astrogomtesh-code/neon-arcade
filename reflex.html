@@ -5,23 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#050510">
     <title>Reflex - Punishing Lane-Switching Reaction Game | Neon Arcade</title>
-    <meta name="description" content="Test your ultimate reaction speed limits in Reflex. Shift lanes, avoid shifting barrier patterns, and survive terminal velocity on the digital highway.">
+    <meta name="description" content="Test your reaction speed in Reflex. Dodge red barrier blocks falling across five lanes as the game gets faster, and build a streak multiplier with close dodges.">
     <link rel="canonical" href="https://your-domain.vercel.app/reflex">
     <meta property="og:title" content="Reflex - Punishing Lane-Switching Reaction Game | Neon Arcade">
-    <meta property="og:description" content="Test your ultimate reaction speed limits in Reflex. Shift lanes, avoid shifting barrier patterns, and survive terminal velocity on the digital highway.">
+    <meta property="og:description" content="Test your reaction speed in Reflex. Dodge red barrier blocks falling across five lanes as the game gets faster, and build a streak multiplier with close dodges.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-domain.vercel.app/reflex">
     <meta property="og:site_name" content="Neon Arcade">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Reflex - Punishing Lane-Switching Reaction Game | Neon Arcade">
-    <meta name="twitter:description" content="Test your ultimate reaction speed limits in Reflex. Shift lanes, avoid shifting barrier patterns, and survive terminal velocity on the digital highway.">
+    <meta name="twitter:description" content="Test your reaction speed in Reflex. Dodge red barrier blocks falling across five lanes as the game gets faster, and build a streak multiplier with close dodges.">
     <link rel="stylesheet" href="neon-arcade.css">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        #game-container,
+        #game-container * {
             user-select: none;
             -webkit-user-select: none;
         }
@@ -130,7 +134,7 @@
 <body>
 
 <nav aria-label="Primary">
-    <a href="/" aria-current="page">Hub</a>
+    <a href="/">Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
@@ -708,14 +712,14 @@
     requestAnimationFrame(gameLoop);
 </script>
 
-    <!-- INDEXABLE TEXT FOR GOOGLE ADSENSE BOT -->
     <section class="seo-content">
+        <h1 style="color: var(--na-cyan); text-shadow: 0 0 10px var(--na-cyan); font-size: 2rem; letter-spacing: 2px;">REFLEX</h1>
         <h2>How to Play &amp; Controls</h2>
-        <p>Reflex is a high-speed lane-switching survival game. Test your reaction times on the digital grid with these control systems:</p>
+        <p>Reflex is a lane-switching reaction game. Red barrier blocks fall from the top of the screen and the game keeps getting faster, so you have to read each block and move to the right lane in time.</p>
         <ul>
             <li><strong>Keyboard Controls:</strong> Use the <span class="key">A</span> or <span class="key">Left Arrow</span> key to move one lane left. Use the <span class="key">D</span> or <span class="key">Right Arrow</span> key to move one lane right.</li>
             <li><strong>Touch Controls:</strong> Tap the left side of the game screen to shift left, or the right side of the game screen to shift right.</li>
-            <li><strong>Game Mechanics:</strong> Dodge oncoming red and orange barrier blocks. Each successful dodge increases your dodge streak and score multiplier.</li>
+            <li><strong>Game Mechanics:</strong> Dodge oncoming red barrier blocks. Passing a block in the lane right next to yours builds your dodge streak, which raises your score multiplier. If a block passes two or more lanes away, the streak resets.</li>
         </ul>
 
         <h2>Strategy Guide &amp; Tips</h2>
@@ -723,7 +727,7 @@
         <ul>
             <li><strong>Keep Your Focus Ahead:</strong> Do not just look at your own character. Watch the top of the lanes where new obstacles spawn so you can plan your path transitions early.</li>
             <li><strong>Smooth Transits:</strong> Avoid double shifting lanes in a panic. Map out paths that require minimal switching to avoid being trapped on the outer boundaries.</li>
-            <li><strong>Maintain Streak Multiplier:</strong> Perfect dodges increase your score multiplier. Keep your lane switches clean and stay in the flow state to maximize your score output.</li>
+            <li><strong>Build Your Streak:</strong> Passing a block in the lane right next to yours increases your streak multiplier. Move only when you need to - a block that passes two or more lanes away resets your streak.</li>
         </ul>
 
         <h2>The Reflex Protocol (Lore)</h2>
