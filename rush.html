@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#05050e">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <title>EUXODES RUSH - Fast-Paced Action &amp; Survival Games</title>
+    <meta name="description" content="EUXODES RUSH mode: fast-paced action and survival with Reflex, Comet Belt, Vector Sentinel, and Cyber Snake. High scores saved locally, free to play.">
+    <link rel="canonical" href="https://neon-arcade-sgkj.vercel.app/rush">
+    <meta property="og:title" content="EUXODES RUSH - Fast-Paced Action &amp; Survival Games">
+    <meta property="og:description" content="Play Reflex, Comet Belt, Vector Sentinel, and Cyber Snake in EUXODES RUSH mode. Fast-paced action and survival, free to play.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/rush">
+    <meta property="og:site_name" content="EUXODES">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="EUXODES RUSH - Fast-Paced Action &amp; Survival Games">
+    <meta name="twitter:description" content="Play Reflex, Comet Belt, Vector Sentinel, and Cyber Snake in EUXODES RUSH mode.">
+    <link rel="stylesheet" href="/euxodes.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            position: relative;
+            background-color: var(--na-bg);
+            color: var(--na-text);
+            font-family: var(--na-font-body);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        main { max-width: 1000px; margin: 0 auto; padding: 20px; width: 100%; }
+        .game-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .game-card {
+            background: var(--na-surface);
+            border: 2px solid rgba(139, 92, 246, 0.45);
+            padding: 30px;
+            border-radius: 4px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            flex: 1 1 280px;
+            max-width: 320px;
+        }
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--euxodes-violet);
+            box-shadow: 0 0 24px rgba(139, 92, 246, 0.28);
+        }
+        .game-card h2 {
+            color: var(--euxodes-violet-bright);
+            font-family: var(--na-font-display);
+            letter-spacing: 1.5px;
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+        }
+        .game-card p {
+            color: var(--na-muted);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .play-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 40px;
+            border: 2px solid var(--euxodes-violet);
+            color: var(--euxodes-violet-bright);
+            background: transparent;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .play-btn:hover {
+            background: var(--euxodes-violet);
+            color: #000;
+            box-shadow: 0 0 15px var(--euxodes-violet);
+        }
+        .best-score {
+            font-weight: bold;
+            color: var(--na-yellow);
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .content-section { margin-top: 40px; background: var(--na-surface); padding: 30px; border-left: 3px solid var(--euxodes-violet); }
+        .content-section h2 { color: var(--euxodes-violet-bright); margin-bottom: 15px; margin-top: 15px; font-family: var(--na-font-display); text-transform: uppercase; letter-spacing: 1px; font-size: 1.15rem; }
+        .content-section h2:first-child { margin-top: 0; }
+        .content-section p { margin-bottom: 15px; color: var(--na-muted); }
+    </style>
+</head>
+<body class="crt">
+
+<nav class="brand-nav" aria-label="Primary">
+    <a href="/" class="brand-link" aria-label="EUXODES Home">
+        <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
+        <span class="brand-word">EUXODES</span>
+    </a>
+    <a href="/rush" aria-current="page">Hub</a>
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+</nav>
+
+<header class="hub-brand">
+    <h1 class="brand-name">RUSH</h1>
+    <p class="hub-tagline">EUXODES RUSH - FAST-PACED ACTION AND SURVIVAL</p>
+</header>
+
+<main>
+    <div class="game-grid">
+        <div class="game-card">
+            <div>
+                <h2>REFLEX</h2>
+                <p>Test your reaction limits in lane-switching action.</p>
+            </div>
+            <div class="best-score">Your best: <span id="hs-reflex">0</span></div>
+            <a href="/reflex?from=rush" class="play-btn">PLAY NOW</a>
+        </div>
+        <div class="game-card">
+            <div>
+                <h2>COMET BELT</h2>
+                <p>Dodge asteroids and build clutch near-miss streaks.</p>
+            </div>
+            <div class="best-score">Your best: <span id="hs-comet-belt">0</span></div>
+            <a href="/comet-belt?from=rush" class="play-btn">PLAY NOW</a>
+        </div>
+        <div class="game-card">
+            <div>
+                <h2>VECTOR SENTINEL</h2>
+                <p>Neutralize the grid's enemy nodes in a 360° vector shooter.</p>
+            </div>
+            <div class="best-score">Your best: <span id="hs-vector-sentinel">0</span></div>
+            <a href="/vector-sentinel?from=rush" class="play-btn">PLAY NOW</a>
+        </div>
+        <div class="game-card">
+            <div>
+                <h2>CYBER SNAKE</h2>
+                <p>Coil through the grid, harvest data, dodge firewalls.</p>
+            </div>
+            <div class="best-score">Your best: <span id="hs-cyber-snake">0</span></div>
+            <a href="/cyber-snake?from=rush" class="play-btn">PLAY NOW</a>
+        </div>
+    </div>
+
+    <section class="content-section">
+        <h2>Rush Mode</h2>
+        <p>EUXODES RUSH is the fast-paced action and survival lineup: Reflex, Comet Belt, Vector Sentinel, and Cyber Snake. Quick reactions, escalating threats, and high-velocity chaos with local high scores.</p>
+        <p>All four games get faster as you survive, and your best score for each game is stored in your browser.</p>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <a href="/" class="footer-brand" aria-label="EUXODES Home">
+        <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20">
+        <span class="brand-word">EUXODES</span>
+    </a>
+    <p class="footer-desc">Eight browser arcade games. Two modes: Classic and Rush. Free to play, no account needed.</p>
+    <div class="footer-links">
+        <a href="/">Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 EUXODES. All Rights Reserved.</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const hsReflex = localStorage.getItem('reflex_HS') || '0';
+        const hsCometBelt = localStorage.getItem('cometbelt_highscore') || '0';
+        const hsVectorSentinel = localStorage.getItem('vector_sentinel_hi') || '0';
+        const hsCyberSnake = localStorage.getItem('cyber_snake_hi') || '0';
+
+        document.getElementById('hs-reflex').textContent = hsReflex;
+        document.getElementById('hs-comet-belt').textContent = hsCometBelt;
+        document.getElementById('hs-vector-sentinel').textContent = hsVectorSentinel;
+        document.getElementById('hs-cyber-snake').textContent = hsCyberSnake;
+    });
+</script>
+<script src="/js/na-nav.js"></script>
+
+</body>
+</html>

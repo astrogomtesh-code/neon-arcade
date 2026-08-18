@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#05050e">
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-    <title>EUXODES MAIN - Retro Browser Arcade Games | 2 Modes, 8 Games</title>
-    <meta name="description" content="EUXODES MAIN. Choose your mode: CLASSIC for traditional arcade gameplay (Cyberpunk Tetris, Neon Breakout, Void Dash, Neon Tomb) or RUSH for fast-paced action and survival (Reflex, Comet Belt, Vector Sentinel, Cyber Snake). Eight free browser games, no account needed.">
-    <link rel="canonical" href="https://neon-arcade-sgkj.vercel.app/">
-    <meta property="og:title" content="EUXODES MAIN - Retro Browser Arcade Games">
-    <meta property="og:description" content="Choose your mode: CLASSIC for traditional arcade gameplay or RUSH for fast-paced action and survival. Eight free browser games, high scores saved locally.">
+    <title>EUXODES CLASSIC - Traditional Arcade Games</title>
+    <meta name="description" content="EUXODES CLASSIC mode: traditional arcade gameplay with Cyberpunk Tetris, Neon Breakout, Void Dash, and Neon Tomb. High scores saved locally, free to play.">
+    <link rel="canonical" href="https://neon-arcade-sgkj.vercel.app/classic">
+    <meta property="og:title" content="EUXODES CLASSIC - Traditional Arcade Games">
+    <meta property="og:description" content="Play Cyberpunk Tetris, Neon Breakout, Void Dash, and Neon Tomb in EUXODES CLASSIC mode. Traditional arcade gameplay, free to play.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/">
+    <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/classic">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="EUXODES MAIN - Retro Browser Arcade Games">
-    <meta name="twitter:description" content="Choose your mode: CLASSIC for traditional arcade gameplay or RUSH for fast-paced action and survival. Eight free browser games.">
+    <meta name="twitter:title" content="EUXODES CLASSIC - Traditional Arcade Games">
+    <meta name="twitter:description" content="Play Cyberpunk Tetris, Neon Breakout, Void Dash, and Neon Tomb in EUXODES CLASSIC mode.">
     <link rel="stylesheet" href="/euxodes.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,20 +31,18 @@
             flex-direction: column;
             overflow-x: hidden;
         }
-
         main { max-width: 1000px; margin: 0 auto; padding: 20px; width: 100%; }
-
-        .mode-grid {
+        .game-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
             margin-bottom: 40px;
         }
-        .mode-card {
+        .game-card {
             background: var(--na-surface);
             border: 2px solid rgba(0, 243, 255, 0.4);
-            padding: 36px 30px;
+            padding: 30px;
             border-radius: 4px;
             text-align: center;
             display: flex;
@@ -52,44 +50,36 @@
             align-items: center;
             justify-content: space-between;
             transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-            flex: 1 1 300px;
-            max-width: 360px;
+            flex: 1 1 280px;
+            max-width: 320px;
         }
-        .mode-card:hover {
+        .game-card:hover {
             transform: translateY(-10px);
             border-color: var(--euxodes-violet);
             box-shadow: 0 0 24px rgba(139, 92, 246, 0.28);
         }
-        .mode-card h2 {
+        .game-card h2 {
             color: var(--euxodes-cyan);
             font-family: var(--na-font-display);
-            letter-spacing: 4px;
-            font-size: 1.6rem;
-            margin-bottom: 12px;
-        }
-        .mode-card .mode-games {
-            color: var(--na-yellow);
-            font-size: 0.8rem;
-            text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-bottom: 14px;
+            font-size: 1.15rem;
+            margin-bottom: 10px;
         }
-        .mode-card p {
+        .game-card p {
             color: var(--na-muted);
             font-size: 0.95rem;
             margin-bottom: 6px;
         }
         .play-btn {
             display: inline-block;
-            margin-top: 18px;
-            padding: 14px 44px;
+            margin-top: 15px;
+            padding: 12px 40px;
             border: 2px solid var(--na-cyan);
             color: var(--na-cyan);
             background: transparent;
             text-decoration: none;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 2px;
             transition: all 0.2s;
         }
         .play-btn:hover {
@@ -97,14 +87,12 @@
             color: #000;
             box-shadow: 0 0 15px var(--na-cyan);
         }
-        .mode-card:nth-child(2) .play-btn {
-            border-color: var(--euxodes-violet);
-            color: var(--euxodes-violet-bright);
-        }
-        .mode-card:nth-child(2) .play-btn:hover {
-            background: var(--euxodes-violet);
-            color: #000;
-            box-shadow: 0 0 15px var(--euxodes-violet);
+        .best-score {
+            font-weight: bold;
+            color: var(--na-yellow);
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
         .content-section { margin-top: 40px; background: var(--na-surface); padding: 30px; border-left: 3px solid var(--euxodes-cyan); }
         .content-section h2 { color: var(--euxodes-cyan); margin-bottom: 15px; margin-top: 15px; font-family: var(--na-font-display); text-transform: uppercase; letter-spacing: 1px; font-size: 1.15rem; }
@@ -119,43 +107,57 @@
         <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
         <span class="brand-word">EUXODES</span>
     </a>
-    <a href="/" aria-current="page">Hub</a>
+    <a href="/classic" aria-current="page">Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
 </nav>
 
 <header class="hub-brand">
-    <img src="/assets/euxodes-symbol.svg" alt="EUXODES symbol" class="brand-symbol" width="92" height="92">
-    <h1 class="brand-name">EUXODES</h1>
-    <p class="hub-tagline">EUXODES MAIN - CHOOSE YOUR MODE</p>
+    <h1 class="brand-name">CLASSIC</h1>
+    <p class="hub-tagline">EUXODES CLASSIC - TRADITIONAL ARCADE GAMEPLAY</p>
 </header>
 
 <main>
-    <div class="mode-grid">
-        <div class="mode-card">
+    <div class="game-grid">
+        <div class="game-card">
             <div>
-                <h2>CLASSIC</h2>
-                <p class="mode-games">Cyberpunk Tetris &middot; Neon Breakout &middot; Void Dash &middot; Neon Tomb</p>
-                <p>Traditional arcade gameplay. Steady pace, clear goals, the games that started the arcade era.</p>
+                <h2>CYBERPUNK TETRIS</h2>
+                <p>Stack the matrix and chase quadruple-line clears.</p>
             </div>
-            <a href="/classic" class="play-btn">ENTER CLASSIC</a>
+            <div class="best-score">Your best: <span id="hs-tetris">0</span></div>
+            <a href="/tetris?from=classic" class="play-btn">PLAY NOW</a>
         </div>
-        <div class="mode-card">
+        <div class="game-card">
             <div>
-                <h2>RUSH</h2>
-                <p class="mode-games">Reflex &middot; Comet Belt &middot; Vector Sentinel &middot; Cyber Snake</p>
-                <p>Fast-paced action and survival. Quick reactions, escalating threats, and high-velocity chaos.</p>
+                <h2>NEON BREAKOUT</h2>
+                <p>Breach the firewall matrix one neon block at a time.</p>
             </div>
-            <a href="/rush" class="play-btn">ENTER RUSH</a>
+            <div class="best-score">Your best: <span id="hs-neon-breakout">0</span></div>
+            <a href="/neon-breakout?from=classic" class="play-btn">PLAY NOW</a>
+        </div>
+        <div class="game-card">
+            <div>
+                <h2>VOID DASH</h2>
+                <p>Outrun the collapsing field in a speed gauntlet.</p>
+            </div>
+            <div class="best-score">Your best: <span id="hs-void-dash">0</span></div>
+            <a href="/void-dash?from=classic" class="play-btn">PLAY NOW</a>
+        </div>
+        <div class="game-card">
+            <div>
+                <h2>NEON TOMB</h2>
+                <p>Slide through the infinite cyber-crypt and outrun the firewall.</p>
+            </div>
+            <div class="best-score">Your best: <span id="hs-neon-tomb">0m</span></div>
+            <a href="/neon-tomb?from=classic" class="play-btn">PLAY NOW</a>
         </div>
     </div>
 
     <section class="content-section">
-        <h2>Two Modes, Eight Games</h2>
-        <p>EUXODES is a small collection of browser games built with HTML5 Canvas. There is nothing to download and no account to create - each game opens in your browser and saves your high score locally on your device.</p>
-        <p><strong>CLASSIC</strong> brings together traditional arcade gameplay: Cyberpunk Tetris, Neon Breakout, Void Dash, and Neon Tomb. <strong>RUSH</strong> is the fast-paced action and survival lineup: Reflex, Comet Belt, Vector Sentinel, and Cyber Snake.</p>
-        <p>All eight games get faster as you survive, and your best score for each game is stored in your browser.</p>
+        <h2>Classic Mode</h2>
+        <p>EUXODES CLASSIC is the traditional arcade lineup: Cyberpunk Tetris, Neon Breakout, Void Dash, and Neon Tomb. Steady, focused, pick-up-and-play arcade gameplay with local high scores.</p>
+        <p>All four games get faster as you survive, and your best score for each game is stored in your browser.</p>
     </section>
 </main>
 
@@ -173,6 +175,21 @@
     </div>
     <p class="footer-copy">&copy; 2026 EUXODES. All Rights Reserved.</p>
 </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const hsTetris = localStorage.getItem('cyber_tetris_hi') || '0';
+        const hsNeonBreakout = localStorage.getItem('neon_breakout_hi') || '0';
+        const hsVoidDash = localStorage.getItem('voidDash_HS') || '0';
+        const hsNeonTomb = localStorage.getItem('neon_tomb_best_dist') || '0';
+
+        document.getElementById('hs-tetris').textContent = hsTetris;
+        document.getElementById('hs-neon-breakout').textContent = hsNeonBreakout;
+        document.getElementById('hs-void-dash').textContent = hsVoidDash;
+        document.getElementById('hs-neon-tomb').textContent = hsNeonTomb + 'm';
+    });
+</script>
+<script src="/js/na-nav.js"></script>
 
 </body>
 </html>

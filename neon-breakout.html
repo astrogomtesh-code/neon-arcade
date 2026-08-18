@@ -7,11 +7,11 @@
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
     <title>Neon Breakout - Kinetic Breach Protocol | EUXODES</title>
     <meta name="description" content="Breach the firewall matrix in Neon Breakout. Clean block types, catch power-ups, and climb the levels as the kinetic charge accelerates.">
-    <link rel="canonical" href="https://your-domain.vercel.app/neon-breakout">
+    <link rel="canonical" href="https://neon-arcade-sgkj.vercel.app/neon-breakout">
     <meta property="og:title" content="Neon Breakout - Kinetic Breach Protocol | EUXODES">
     <meta property="og:description" content="Breach the firewall matrix in Neon Breakout. Clean block types, catch power-ups, and climb the levels as the kinetic charge accelerates.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-domain.vercel.app/neon-breakout">
+    <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/neon-breakout">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
@@ -285,13 +285,13 @@
         .btn-cyber.nb-btn-sm { padding: 0.6rem 1.3rem; font-size: 0.85rem; }
     </style>
 </head>
-<body class="crt">
+<body class="crt" data-mode="classic">
     <nav class="brand-nav" aria-label="Primary">
         <a href="/" class="brand-link" aria-label="EUXODES Home">
             <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
             <span class="brand-word">EUXODES</span>
         </a>
-        <a href="/">Hub</a>
+        <a href="/classic" data-nav-hub>Hub</a>
         <a href="/about">About</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
@@ -369,9 +369,9 @@
             <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20">
             <span class="brand-word">EUXODES</span>
         </a>
-        <p class="footer-desc">Seven browser arcade games. Free to play, no account needed.</p>
+        <p class="footer-desc">Eight browser arcade games. Two modes: Classic and Rush. Free to play, no account needed.</p>
         <div class="footer-links">
-            <a href="/">Hub</a>
+            <a href="/classic" data-nav-hub>Hub</a>
             <a href="/about">About</a>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
@@ -1440,5 +1440,6 @@ window.onload = function () {
     naInitFullscreen({ onAfterToggle: () => resizeCanvas() });
 };
     </script>
+    <script src="/js/na-nav.js"></script>
 </body>
 </html>

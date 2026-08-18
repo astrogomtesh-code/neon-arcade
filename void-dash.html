@@ -7,11 +7,11 @@
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
     <title>Void Dash - High-Speed Runner | EUXODES</title>
     <meta name="description" content="Outrun the collapsing field in Void Dash, an auto-runner survival game. Jump and dash through obstacles as the speed keeps rising - one hit ends the run.">
-    <link rel="canonical" href="https://your-domain.vercel.app/void-dash">
+    <link rel="canonical" href="https://neon-arcade-sgkj.vercel.app/void-dash">
     <meta property="og:title" content="Void Dash - High-Speed Runner | EUXODES">
     <meta property="og:description" content="Outrun the collapsing field in Void Dash, an auto-runner survival game. Jump and dash through obstacles as the speed keeps rising - one hit ends the run.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-domain.vercel.app/void-dash">
+    <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/void-dash">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary">
@@ -254,14 +254,14 @@
         }
     </style>
 </head>
-<body class="crt">
+<body class="crt" data-mode="classic">
 
 <nav class="brand-nav" aria-label="Primary">
     <a href="/" class="brand-link" aria-label="EUXODES Home">
         <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
         <span class="brand-word">EUXODES</span>
     </a>
-    <a href="/">Hub</a>
+    <a href="/classic" data-nav-hub>Hub</a>
     <a href="/about">About</a>
     <a href="/privacy">Privacy</a>
     <a href="/terms">Terms</a>
@@ -345,9 +345,9 @@
         <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20">
         <span class="brand-word">EUXODES</span>
     </a>
-    <p class="footer-desc">Seven browser arcade games. Free to play, no account needed.</p>
+    <p class="footer-desc">Eight browser arcade games. Two modes: Classic and Rush. Free to play, no account needed.</p>
     <div class="footer-links">
-        <a href="/">Hub</a>
+        <a href="/classic" data-nav-hub>Hub</a>
         <a href="/about">About</a>
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
@@ -1215,5 +1215,6 @@ window.onload = () => {
 };
 
 </script>
+    <script src="/js/na-nav.js"></script>
 </body>
 </html>

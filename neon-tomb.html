@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#05050e">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <title>Neon Tomb - Endless Cyberpunk Maze Runner | EUXODES</title>
+    <meta name="description" content="Dash through infinite procedural cybernetic crypts in Neon Tomb. Master discrete vector sliding physics, dodge laser traps, outrun dynamic enemies, and survive the rising firewall shredder.">
+    <meta name="keywords" content="Neon Tomb, EUXODES, HTML5 Game, Cyberpunk Game, Maze Runner, Infinite Runner, Canvas Game">
+    <link rel="canonical" href="https://neon-arcade-sgkj.vercel.app/neon-tomb">
+
+    <!-- OpenGraph Tags -->
+    <meta property="og:title" content="Neon Tomb - Endless Cyberpunk Maze Runner | EUXODES">
+    <meta property="og:description" content="High-speed procedural maze runner with vector sliding mechanics, retro synthesized Web Audio, and endless scaling difficulty.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/neon-tomb">
+    <meta property="og:site_name" content="EUXODES">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Neon Tomb - Endless Cyberpunk Maze Runner | EUXODES">
+    <meta name="twitter:description" content="High-speed procedural maze runner with vector sliding mechanics and endless scaling difficulty.">
+
+    <!-- Shared EUXODES Stylesheet -->
+    <link rel="stylesheet" href="/euxodes.css">
+
+    <style>
+        .game-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 520px;
+            margin: 15px auto 0;
+            position: relative;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9 / 14;
+            max-height: 75vh;
+            background: var(--na-surface-strong, #050514);
+            border: 2px solid var(--na-cyan);
+            border-radius: 6px;
+            box-shadow: 0 0 22px rgba(0, 243, 255, 0.25);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #game-container:fullscreen,
+        #game-container.pseudo-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            max-width: none;
+            max-height: none;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: unset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--na-bg, #05050e);
+            border: none;
+            border-radius: 0;
+        }
+
+        #game-container:fullscreen canvas,
+        #game-container.pseudo-fullscreen canvas {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            aspect-ratio: auto;
+        }
+
+        .ui-hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: 10;
+            font-family: var(--na-font-display);
+            font-size: 0.9rem;
+            color: var(--na-cyan);
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+            background: linear-gradient(180deg, rgba(5,5,20,0.85) 0%, rgba(5,5,20,0) 100%);
+        }
+
+        .hud-group {
+            display: flex;
+            gap: 14px;
+        }
+
+        .hud-val {
+            color: var(--na-yellow);
+            font-weight: 800;
+        }
+
+        .overlay-card {
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 5, 20, 0.92);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            z-index: 20;
+            box-sizing: border-box;
+        }
+
+        .overlay-card.hidden {
+            display: none;
+        }
+
+        .title-glow {
+            font-size: clamp(2rem, 6vw, 2.6rem);
+            margin-bottom: 8px;
+            background: var(--euxodes-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.6));
+        }
+
+        .sub-text {
+            color: var(--na-muted);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            max-width: 320px;
+            line-height: 1.4;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 260px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--na-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-num {
+            font-family: var(--na-font-display);
+            font-size: 1.2rem;
+            color: var(--na-yellow);
+            font-weight: 700;
+        }
+
+        .btn-action {
+            padding: 12px 32px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--na-bg);
+            background: var(--na-cyan);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 16px var(--na-cyan);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 25px var(--na-cyan);
+            background: #33f6ff;
+        }
+
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+
+        .sector-toast {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--na-font-display);
+            font-size: clamp(1.2rem, 4vw, 1.7rem);
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--na-cyan);
+            text-shadow: 0 0 16px var(--na-cyan), 0 0 32px rgba(0, 243, 255, 0.6);
+            pointer-events: none;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            text-align: center;
+            background: rgba(5, 5, 20, 0.75);
+            border: 2px solid rgba(0, 243, 255, 0.5);
+            border-radius: 6px;
+            padding: 12px 28px;
+            box-shadow: 0 0 24px rgba(0, 243, 255, 0.25);
+        }
+
+        .sector-toast.show {
+            opacity: 1;
+        }
+
+        .sector-toast.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="crt" data-mode="classic">
+    <nav class="brand-nav" aria-label="Primary">
+        <a href="/" class="brand-link" aria-label="EUXODES Home">
+            <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="22" height="22">
+            <span class="brand-word">EUXODES</span>
+        </a>
+        <a href="/classic" data-nav-hub>Hub</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
+
+    <main class="game-layout">
+        <div class="canvas-wrapper" id="game-container">
+            <button id="maximize-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen" onclick="toggleFullscreen()">
+                <svg id="max-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                </svg>
+            </button>
+
+            <div class="scanlines"></div>
+
+            <div class="ui-hud">
+                <div class="hud-group">
+                    <div>DIST: <span id="hudDistance" class="hud-val">0m</span></div>
+                    <div>LVL: <span id="hudLevel" class="hud-val">1</span></div>
+                </div>
+                <div>GEMS: <span id="hudGems" class="hud-val">0</span></div>
+            </div>
+
+            <div id="sectorToast" class="sector-toast hidden">SECTOR CLEAR</div>
+
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Start Modal -->
+            <div id="startModal" class="overlay-card">
+                <h1 class="title-glow">NEON TOMB</h1>
+                <p class="sub-text">Infiltrate the infinite cyber-crypt. Slide at high speeds, outrun the firewall shredder, and survive hostile defense entities.</p>
+                <button id="startBtn" class="btn-action">INITIATE RUN</button>
+            </div>
+
+            <!-- Game Over Modal -->
+            <div id="gameOverModal" class="overlay-card hidden">
+                <h2 class="title-glow" style="color: #ff2a6d;">CRASHED</h2>
+                <p class="sub-text">System purge complete. Your signal was swallowed by the tomb.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Climbed</div>
+                        <div id="finalDistance" class="stat-num">0m</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Gems</div>
+                        <div id="finalGems" class="stat-num">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Total Score</div>
+                        <div id="finalScore" class="stat-num">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Best Meter</div>
+                        <div id="bestDistance" class="stat-num">0m</div>
+                    </div>
+                </div>
+
+                <button id="restartBtn" class="btn-action">RETRY SIGNAL</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Structured Content for SEO & Documentation -->
+    <article class="game-info-panel seo-content">
+        <section>
+            <h2>Lore: The Infinite Cyber-Crypt</h2>
+            <p> Deep within the subterranean layers of the Neon Arcade network lies the <strong>Neon Tomb</strong>—an unmapped digital labyrinth designed to trap rogue AI entities. As an escaped vector probe, your core operating system moves in strict grid steps: each input advances you exactly one cell. Ascend infinitely upward to escape the ascending data shredder before your code is purged.</p>
+        </section>
+
+        <section>
+            <h2>Controls & Movement Mechanics</h2>
+            <ul>
+                <li><span class="bullet">&bull;</span> <strong>Desktop Controls:</strong> Use <code>Arrow Keys</code> or <code>WASD</code> to move one grid cell at a time (Up, Down, Left, Right).</li>
+                <li><span class="bullet">&bull;</span> <strong>Mobile Controls:</strong> Swipe firmly across the screen in any cardinal direction to move one cell.</li>
+                <li><span class="bullet">&bull;</span> <strong>Grid Movement:</strong> Each press advances exactly one cell. If the next cell is a solid wall, you stay in place - you never slide past an opening.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Hazards & Hostile Entities</h2>
+            <ul>
+                <li><span class="bullet">&bull;</span> <strong>Firewall Shredder:</strong> A lethal rising plasma wall climbing from the bottom of the tomb. Halting for too long guarantees deletion.</li>
+                <li><span class="bullet">&bull;</span> <strong>Laser Gates:</strong> High-voltage optical barriers that cycle on and off periodically across corridor intersections.</li>
+                <li><span class="bullet">&bull;</span> <strong>Spike Pits:</strong> Concealed hazard plates that deploy fatal energy spikes when trodden on.</li>
+                <li><span class="bullet">&bull;</span> <strong>Hunter Drones:</strong> Aggressive security units that spawn in unvisited crypt sectors and hunt down your signal along grid axes when within range.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Survival & Escalation Strategies</h2>
+            <p>Every 40 meters ascended, the tomb escalates security parameters: the firewall shredder accelerates, enemy drone reaction times decrease, and trap density tightens. Follow the glowing cyan <strong>EXIT</strong> portal at the top of each sector and step into it to clear that sector and keep climbing.</p>
+        </section>
+    </article>
+
+    <footer class="site-footer">
+        <a href="/" class="footer-brand" aria-label="EUXODES Home">
+            <img src="/assets/euxodes-symbol.svg" alt="" class="brand-symbol" width="20" height="20">
+            <span class="brand-word">EUXODES</span>
+        </a>
+        <p class="footer-desc">Eight browser arcade games. Two modes: Classic and Rush. Free to play, no account needed.</p>
+        <div class="footer-links">
+            <a href="/classic" data-nav-hub>Hub</a>
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 EUXODES. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Shared Fullscreen Helper -->
+    <script src="/js/na-fullscreen.js"></script>
+
+    <!-- Game Engine Script -->
+    <script>
+        (function() {
+            'use strict';
+
+            // --- PROCEDURAL AUDIO ENGINE ---
+            class SoundEngine {
+                constructor() {
+                    this.ctx = null;
+                }
+
+                init() {
+                    if (!this.ctx) {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) {
+                            this.ctx = new AudioContext();
+                        }
+                    }
+                    if (this.ctx && this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                }
+
+                playDash() {
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(780, this.ctx.currentTime + 0.08);
+                    
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+                    
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                }
+
+                playHit() {
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.07);
+                    
+                    gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.07);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.07);
+                }
+
+                playGem() {
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.setValueAtTime(1320, now + 0.05);
+
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(now + 0.15);
+                }
+
+                playTrapAlert() {
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                    osc.frequency.setValueAtTime(300, this.ctx.currentTime + 0.05);
+
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.1);
+                }
+
+                playSpawnHiss() {
+                    if (!this.ctx) return;
+                    const bufferSize = this.ctx.sampleRate * 0.12;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const whiteNoise = this.ctx.createBufferSource();
+                    whiteNoise.buffer = buffer;
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(1200, this.ctx.currentTime);
+                    filter.Q.setValueAtTime(3, this.ctx.currentTime);
+
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+
+                    whiteNoise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    whiteNoise.start();
+                }
+
+                playDeath() {
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(350, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.4);
+
+                    gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.4);
+                }
+
+                playExit() {
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    const notes = [523.25, 659.25, 783.99, 1046.5];
+                    for (let i = 0; i < notes.length; i++) {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(notes[i], now + i * 0.08);
+                        gain.gain.setValueAtTime(0.22, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.18);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.25);
+                    }
+                }
+            }
+
+            const audio = new SoundEngine();
+
+            // --- CONSTANTS & CONFIGURATION ---
+            const COLS = 11;
+            const CELL_SIZE = 36; 
+            const WORLD_WIDTH = COLS * CELL_SIZE; // 396px logical width
+            
+            // Tile Definitions
+            const TILE_EMPTY = 0;
+            const TILE_WALL = 1;
+            const TILE_GEM = 2;
+            const TILE_SPIKE = 3;
+            const TILE_LASER = 4;
+            const TILE_EXIT = 5;
+
+            // DOM Elements
+            const container = document.getElementById('game-container');
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const startModal = document.getElementById('startModal');
+            const gameOverModal = document.getElementById('gameOverModal');
+            const startBtn = document.getElementById('startBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const maximizeBtn = document.getElementById('maximize-btn');
+
+            const hudDistance = document.getElementById('hudDistance');
+            const hudLevel = document.getElementById('hudLevel');
+            const hudGems = document.getElementById('hudGems');
+
+            const finalDistance = document.getElementById('finalDistance');
+            const finalGems = document.getElementById('finalGems');
+            const finalScore = document.getElementById('finalScore');
+            const bestDistance = document.getElementById('bestDistance');
+
+            // Game State
+            let gameState = 'START'; // 'START', 'PLAYING', 'GAMEOVER'
+            let pausedByBackground = false;
+            let dpr = 1;
+            let gameScale = 1; // uniform render scale (logical -> display)
+            let lastTime = 0;
+
+            // Map Data Structure: mapRows[y][x]
+            let mapRows = {};
+            let highestGeneratedRow = 0;
+            let lowestActiveRow = 0;
+            // Exit column of the chunk currently being generated; the next chunk's
+            // entrance is aligned to it so the upward route can never break.
+            let pendingEntryX = null;
+
+            // Progression Data
+            let distanceClimbed = 0; // meters
+            let maxRowClimbed = 0;
+            let gemsCollected = 0;
+            let level = 1;
+
+            // Player State
+            const player = {
+                gx: 5,
+                gy: 2,
+                x: 5 * CELL_SIZE + CELL_SIZE / 2,
+                y: 2 * CELL_SIZE + CELL_SIZE / 2,
+                targetGx: 5,
+                targetGy: 2,
+                isSliding: false,
+                vx: 0,
+                vy: 0,
+                speed: 1050, // px per sec
+                trail: []
+            };
+
+            // Camera Y
+            let cameraY = 0;
+
+            // Hazards & Entities
+            let shredderY = -120; // World Y units (0 is bottom)
+            let shredderBaseSpeed = 38; // px/sec
+            let enemies = [];
+            let laserTimer = 0;
+            let laserActive = true;
+            let particles = [];
+
+            // Input Handling
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            // --- HIGH DPI CANVAS RESIZING ---
+            function resizeCanvas() {
+                dpr = window.devicePixelRatio || 1;
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                // Uniform scale that maps the fixed 396px logical maze width onto the
+                // full container width, so fullscreen uses the whole viewport.
+                gameScale = rect.width / WORLD_WIDTH;
+                ctx.imageSmoothingEnabled = false;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // --- FULLSCREEN TOGGLE (shared js/na-fullscreen.js helper) ---
+            naInitFullscreen({ onAfterToggle: () => resizeCanvas() });
+
+            // --- PROCEDURAL MAZE GENERATOR ---
+            function getRow(y) {
+                if (!mapRows[y]) {
+                    mapRows[y] = new Array(COLS).fill(TILE_WALL);
+                }
+                return mapRows[y];
+            }
+
+            function setCell(x, y, tile) {
+                const r = getRow(y);
+                r[x] = tile;
+            }
+
+            function getCell(x, y) {
+                if (x < 0 || x >= COLS) return TILE_WALL;
+                if (!mapRows[y]) return TILE_WALL;
+                return mapRows[y][x];
+            }
+
+            function isWalkable(x, y) {
+                if (x < 0 || x >= COLS) return false;
+                return getCell(x, y) !== TILE_WALL;
+            }
+
+            // BFS/flood-fill reachability check between two cells within a row band.
+            function bfsReachable(sx, sy, tx, ty, minRow, maxRow) {
+                if (!isWalkable(sx, sy) || !isWalkable(tx, ty)) return false;
+                const visited = {};
+                const queue = [[sx, sy]];
+                visited[sx + ',' + sy] = true;
+                const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+                while (queue.length > 0) {
+                    const cell = queue.shift();
+                    const cx = cell[0];
+                    const cy = cell[1];
+                    if (cx === tx && cy === ty) return true;
+                    for (let i = 0; i < dirs.length; i++) {
+                        const nx = cx + dirs[i][0];
+                        const ny = cy + dirs[i][1];
+                        if (nx < 0 || nx >= COLS || ny < minRow || ny > maxRow) continue;
+                        if (!isWalkable(nx, ny)) continue;
+                        const key = nx + ',' + ny;
+                        if (!visited[key]) {
+                            visited[key] = true;
+                            queue.push([nx, ny]);
+                        }
+                    }
+                }
+                return false;
+            }
+
+            function generateChunk(startRow, numRows) {
+                // Initialize chunk space with solid walls
+                for (let r = startRow; r < startRow + numRows; r++) {
+                    mapRows[r] = new Array(COLS).fill(TILE_WALL);
+                }
+
+                // Entrance into this chunk. Always aligned with the exit column
+                // carved by the previous chunk so the upward route never breaks.
+                let entryX = pendingEntryX;
+                if (entryX === null || entryX === undefined) {
+                    entryX = 1 + Math.floor(Math.random() * 4) * 2;
+                }
+                setCell(entryX, startRow, TILE_EMPTY);
+                setCell(entryX, startRow + 1, TILE_EMPTY);
+
+                // Grid maze dimensions (inner walkable area: COLS 1..9)
+                const innerCols = 5; // odd indices 1, 3, 5, 7, 9
+                const chunkRows = Math.floor(numRows / 2);
+                
+                // Track visited cells in this chunk
+                let visited = Array.from({ length: chunkRows }, () => new Array(innerCols).fill(false));
+                let stack = [];
+
+                // Start from middle cell
+                let startC = 2;
+                let startR = 0;
+                visited[startR][startC] = true;
+                stack.push({ r: startR, c: startC });
+
+                // Map grid cell coords to world row/col
+                const toWorld = (r, c) => ({
+                    wx: c * 2 + 1,
+                    wy: startRow + 1 + r * 2
+                });
+
+                // Clear starting cell
+                let w = toWorld(startR, startC);
+                setCell(w.wx, w.wy, TILE_EMPTY);
+
+                // Recursive backtracker algorithm
+                while (stack.length > 0) {
+                    let current = stack[stack.length - 1];
+                    let neighbors = [];
+
+                    const dirs = [
+                        { dr: 1, dc: 0 },  // Up
+                        { dr: -1, dc: 0 }, // Down
+                        { dr: 0, dc: 1 },  // Right
+                        { dr: 0, dc: -1 }  // Left
+                    ];
+
+                    for (let d of dirs) {
+                        let nr = current.r + d.dr;
+                        let nc = current.c + d.dc;
+                        if (nr >= 0 && nr < chunkRows && nc >= 0 && nc < innerCols && !visited[nr][nc]) {
+                            neighbors.push({ r: nr, c: nc, dr: d.dr, dc: d.dc });
+                        }
+                    }
+
+                    if (neighbors.length > 0) {
+                        let next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                        visited[next.r][next.c] = true;
+
+                        let cw = toWorld(current.r, current.c);
+                        let nw = toWorld(next.r, next.c);
+
+                        // Carve pathway and wall between
+                        setCell(nw.wx, nw.wy, TILE_EMPTY);
+                        setCell(cw.wx + next.dc, cw.wy + next.dr, TILE_EMPTY);
+
+                        stack.push({ r: next.r, c: next.c });
+                    } else {
+                        stack.pop();
+                    }
+                }
+
+                // Exit: the topmost maze row of this chunk. A glowing portal that
+                // leads up into the next chunk (carved when that chunk generates).
+                const exitX = 1 + Math.floor(Math.random() * 4) * 2;
+                const exitRow = startRow + numRows - 1;
+                pendingEntryX = exitX;
+
+                // Guarantee connectivity: entrance -> exit. The spanning-tree maze
+                // is always connected, but verify it anyway and repair on failure so
+                // no level can ever be generated without a reachable exit.
+                if (!bfsReachable(entryX, startRow + 1, exitX, exitRow, startRow, exitRow)) {
+                    // Repair: carve a guaranteed route from entrance to exit row,
+                    // then connect horizontally to the exit column on that row.
+                    for (let r = startRow; r <= exitRow; r++) {
+                        setCell(entryX, r, TILE_EMPTY);
+                    }
+                    const fromX = Math.min(entryX, exitX);
+                    const toX = Math.max(entryX, exitX);
+                    for (let x = fromX; x <= toX; x++) {
+                        setCell(x, exitRow, TILE_EMPTY);
+                    }
+                }
+
+                // Mark the exit portal as a walkable exit tile.
+                setCell(exitX, exitRow, TILE_EXIT);
+
+                // Populate Gems, Traps, & Enemy Spawns in newly carved empty paths
+                for (let r = startRow + 2; r < startRow + numRows - 1; r++) {
+                    for (let x = 1; x < COLS - 1; x++) {
+                        if (getCell(x, r) === TILE_EMPTY && !(x === exitX && r === exitRow)) {
+                            let rand = Math.random();
+                            // Collectible Gems
+                            if (rand < 0.18) {
+                                setCell(x, r, TILE_GEM);
+                            } 
+                            // Spike Pit Traps
+                            else if (rand < 0.23 && r > 10) {
+                                setCell(x, r, TILE_SPIKE);
+                            } 
+                            // Timed Laser Gates across corridors
+                            else if (rand < 0.27 && r > 20 && getCell(x - 1, r) === TILE_WALL && getCell(x + 1, r) === TILE_WALL) {
+                                setCell(x, r, TILE_LASER);
+                            }
+                        }
+                    }
+                }
+
+                highestGeneratedRow = startRow + numRows;
+            }
+
+            // Cleanup old rows behind shredder to free memory
+            function cleanupOldRows() {
+                const cleanupThreshold = Math.floor(shredderY / CELL_SIZE) - 10;
+                for (let r = lowestActiveRow; r < cleanupThreshold; r++) {
+                    delete mapRows[r];
+                }
+                if (cleanupThreshold > lowestActiveRow) {
+                    lowestActiveRow = cleanupThreshold;
+                }
+            }
+
+            // --- GAME INITIATION ---
+            function initGame() {
+                mapRows = {};
+                highestGeneratedRow = 0;
+                lowestActiveRow = 0;
+                pendingEntryX = null;
+                pausedByBackground = false;
+                particles = [];
+                enemies = [];
+
+                // Base floor structure (Row 0 to 4 guaranteed safe)
+                for (let r = 0; r < 6; r++) {
+                    mapRows[r] = new Array(COLS).fill(TILE_WALL);
+                    for (let x = 1; x < COLS - 1; x++) {
+                        mapRows[r][x] = TILE_EMPTY;
+                    }
+                }
+                highestGeneratedRow = 6;
+
+                // Build initial procedural chunk
+                generateChunk(6, 24);
+
+                // Player initialization
+                player.gx = 5;
+                player.gy = 2;
+                player.x = player.gx * CELL_SIZE + CELL_SIZE / 2;
+                player.y = player.gy * CELL_SIZE + CELL_SIZE / 2;
+                player.targetGx = 5;
+                player.targetGy = 2;
+                player.isSliding = false;
+                player.trail = [];
+
+                distanceClimbed = 0;
+                maxRowClimbed = 2;
+                gemsCollected = 0;
+                level = 1;
+
+                shredderY = -150;
+                laserTimer = 0;
+                laserActive = true;
+
+                updateHUD();
+            }
+
+            function updateHUD() {
+                hudDistance.textContent = `${distanceClimbed}m`;
+                hudLevel.textContent = level;
+                hudGems.textContent = gemsCollected;
+            }
+
+            // --- MOVEMENT PHYSICS ---
+            function triggerMove(dirX, dirY) {
+                if (gameState !== 'PLAYING' || player.isSliding) return;
+
+                // One logical grid cell per input: validate the destination
+                // BEFORE moving so the player can never overshoot an opening.
+                let nextGx = player.gx + dirX;
+                let nextGy = player.gy + dirY;
+
+                // Blocked destination (wall or outside the maze) - stay put.
+                if (getCell(nextGx, nextGy) === TILE_WALL) return;
+
+                // Destination walkable - move exactly one cell.
+                player.targetGx = nextGx;
+                player.targetGy = nextGy;
+                player.isSliding = true;
+
+                let dx = (nextGx - player.gx);
+                let dy = (nextGy - player.gy);
+                let dist = Math.hypot(dx, dy);
+
+                player.vx = (dx / dist) * player.speed;
+                player.vy = (dy / dist) * player.speed;
+
+                audio.playDash();
+            }
+
+            // --- CONTROLS BINDING ---
+            window.addEventListener('keydown', (e) => {
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D', ' '].includes(e.key)) {
+                    e.preventDefault();
+                }
+
+                if (gameState === 'PLAYING') {
+                    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') triggerMove(0, 1);
+                    else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') triggerMove(0, -1);
+                    else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') triggerMove(-1, 0);
+                    else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') triggerMove(1, 0);
+                }
+            });
+
+            // Touch Swipe Gestures
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            canvas.addEventListener('touchend', (e) => {
+                if (e.changedTouches.length > 0) {
+                    let diffX = e.changedTouches[0].clientX - touchStartX;
+                    let diffY = e.changedTouches[0].clientY - touchStartY;
+                    let minSwipe = 25;
+
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > minSwipe) {
+                            triggerMove(diffX > 0 ? 1 : -1, 0);
+                        }
+                    } else {
+                        if (Math.abs(diffY) > minSwipe) {
+                            // Touch Y is inverted compared to World Y
+                            triggerMove(0, diffY > 0 ? -1 : 1);
+                        }
+                    }
+                }
+            }, { passive: true });
+
+            // --- PARTICLES & EFFECTS ---
+            function createSparks(x, y, color, count = 8) {
+                for (let i = 0; i < count; i++) {
+                    let angle = Math.random() * Math.PI * 2;
+                    let speed = Math.random() * 120 + 30;
+                    particles.push({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        life: 0.3,
+                        maxLife: 0.3,
+                        color: color
+                    });
+                }
+            }
+
+            // --- DYNAMIC ENEMIES ---
+            function spawnEnemyIfNeeded() {
+                // Enemy spawn probability scales with distance climbed
+                if (distanceClimbed > 30 && Math.random() < 0.008 + (level * 0.003)) {
+                    let spawnRow = player.gy + 10 + Math.floor(Math.random() * 6);
+                    let openCols = [];
+                    for (let x = 1; x < COLS - 1; x++) {
+                        if (getCell(x, spawnRow) === TILE_EMPTY) openCols.push(x);
+                    }
+                    if (openCols.length > 0) {
+                        let spawnX = openCols[Math.floor(Math.random() * openCols.length)];
+                        enemies.push({
+                            gx: spawnX,
+                            gy: spawnRow,
+                            x: spawnX * CELL_SIZE + CELL_SIZE / 2,
+                            y: spawnRow * CELL_SIZE + CELL_SIZE / 2,
+                            targetGx: spawnX,
+                            targetGy: spawnRow,
+                            isSliding: false,
+                            vx: 0,
+                            vy: 0,
+                            speed: 280 + (level * 25)
+                        });
+                        audio.playSpawnHiss();
+                    }
+                }
+            }
+
+            function updateEnemies(dt) {
+                for (let enemy of enemies) {
+                    if (!enemy.isSliding) {
+                        // Enemy AI: Move towards player along primary grid axis
+                        let dx = player.gx - enemy.gx;
+                        let dy = player.gy - enemy.gy;
+                        let dist = Math.hypot(dx, dy);
+
+                        if (dist < 8) { // Proximity alert distance
+                            let stepX = 0;
+                            let stepY = 0;
+                            if (Math.abs(dx) > Math.abs(dy)) {
+                                stepX = Math.sign(dx);
+                            } else {
+                                stepY = Math.sign(dy);
+                            }
+
+                            if (getCell(enemy.gx + stepX, enemy.gy + stepY) !== TILE_WALL) {
+                                enemy.targetGx = enemy.gx + stepX;
+                                enemy.targetGy = enemy.gy + stepY;
+                                enemy.isSliding = true;
+                                enemy.vx = stepX * enemy.speed;
+                                enemy.vy = stepY * enemy.speed;
+                            }
+                        }
+                    } else {
+                        enemy.x += enemy.vx * dt;
+                        enemy.y += enemy.vy * dt;
+
+                        let targetX = enemy.targetGx * CELL_SIZE + CELL_SIZE / 2;
+                        let targetY = enemy.targetGy * CELL_SIZE + CELL_SIZE / 2;
+
+                        if ((enemy.vx > 0 && enemy.x >= targetX) || (enemy.vx < 0 && enemy.x <= targetX) ||
+                            (enemy.vy > 0 && enemy.y >= targetY) || (enemy.vy < 0 && enemy.y <= targetY)) {
+                            enemy.gx = enemy.targetGx;
+                            enemy.gy = enemy.targetGy;
+                            enemy.x = targetX;
+                            enemy.y = targetY;
+                            enemy.isSliding = false;
+                        }
+                    }
+
+                    // Check Enemy Collisions with Player
+                    let distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                    if (distToPlayer < CELL_SIZE * 0.7) {
+                        triggerGameOver();
+                    }
+                }
+
+                // Filter out distant trailing enemies
+                enemies = enemies.filter(e => e.y > shredderY - 100);
+            }
+
+            // --- GAME UPDATE LOOP ---
+            function update(dt) {
+                if (gameState !== 'PLAYING') return;
+
+                // Laser cycle timing
+                laserTimer += dt;
+                if (laserTimer >= 1.4) {
+                    laserTimer = 0;
+                    laserActive = !laserActive;
+                    if (laserActive) audio.playTrapAlert();
+                }
+
+                // Progressive shredder scaling speed
+                let currentShredderSpeed = shredderBaseSpeed + (level * 8);
+                shredderY += currentShredderSpeed * dt;
+
+                // Check shredder death
+                if (player.y - CELL_SIZE / 2 <= shredderY) {
+                    triggerGameOver();
+                    return;
+                }
+
+                // Procedural generation trigger
+                if (player.gy + 20 > highestGeneratedRow) {
+                    generateChunk(highestGeneratedRow, 20);
+                }
+                cleanupOldRows();
+
+                // Player Sliding Movement Logic
+                if (player.isSliding) {
+                    // Record Motion Blur Trail
+                    player.trail.push({ x: player.x, y: player.y, alpha: 0.6 });
+                    if (player.trail.length > 8) player.trail.shift();
+
+                    player.x += player.vx * dt;
+                    player.y += player.vy * dt;
+
+                    let targetX = player.targetGx * CELL_SIZE + CELL_SIZE / 2;
+                    let targetY = player.targetGy * CELL_SIZE + CELL_SIZE / 2;
+
+                    // Intermediate Grid Cell Collection/Collisions
+                    let currentCellX = Math.floor(player.x / CELL_SIZE);
+                    let currentCellY = Math.floor(player.y / CELL_SIZE);
+
+                    // Gem Pickups
+                    if (getCell(currentCellX, currentCellY) === TILE_GEM) {
+                        setCell(currentCellX, currentCellY, TILE_EMPTY);
+                        gemsCollected += 1;
+                        audio.playGem();
+                        createSparks(player.x, player.y, '#fcee0a', 6);
+                        updateHUD();
+                    }
+
+                    // Spike Traps Collision
+                    if (getCell(currentCellX, currentCellY) === TILE_SPIKE) {
+                        triggerGameOver();
+                        return;
+                    }
+
+                    // Laser Gate Collision
+                    if (laserActive && getCell(currentCellX, currentCellY) === TILE_LASER) {
+                        triggerGameOver();
+                        return;
+                    }
+
+                    // Reached Motion Target
+                    if ((player.vx > 0 && player.x >= targetX) || (player.vx < 0 && player.x <= targetX) ||
+                        (player.vy > 0 && player.y >= targetY) || (player.vy < 0 && player.y <= targetY)) {
+                        
+                        player.gx = player.targetGx;
+                        player.gy = player.targetGy;
+                        player.x = targetX;
+                        player.y = targetY;
+                        player.isSliding = false;
+                        player.vx = 0;
+                        player.vy = 0;
+
+                        audio.playHit();
+                        createSparks(player.x, player.y, '#00f3ff', 8);
+
+                        // Final cell landing check
+                        if (getCell(player.gx, player.gy) === TILE_SPIKE) {
+                            triggerGameOver();
+                            return;
+                        }
+
+                        // Reached the sector exit portal
+                        if (getCell(player.gx, player.gy) === TILE_EXIT) {
+                            completeSector();
+                        }
+                    }
+                } else {
+                    player.trail = [];
+                }
+
+                // Fade trail opacity
+                player.trail.forEach(t => t.alpha -= dt * 2);
+
+                // Update Climbing Metrics & Level Scaling
+                if (player.gy > maxRowClimbed) {
+                    maxRowClimbed = player.gy;
+                    distanceClimbed = Math.floor(maxRowClimbed * 1.5);
+                    level = Math.floor(distanceClimbed / 40) + 1;
+                    updateHUD();
+                }
+
+                // Dynamic Enemies & Particles
+                spawnEnemyIfNeeded();
+                updateEnemies(dt);
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let p = particles[i];
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.life -= dt;
+                    if (p.life <= 0) particles.splice(i, 1);
+                }
+
+                // Smooth Camera Tracking (Keep player centered vertically)
+                let targetCamY = player.y - (canvas.height / dpr / gameScale) * 0.45;
+                cameraY += (targetCamY - cameraY) * 0.12;
+            }
+
+            // --- GAME OVER LOGIC ---
+            function triggerGameOver() {
+                if (gameState === 'GAMEOVER') return;
+                gameState = 'GAMEOVER';
+                audio.playDeath();
+                createSparks(player.x, player.y, '#ff2a6d', 25);
+
+                const currentBest = parseInt(localStorage.getItem('neon_tomb_best_dist') || '0', 10);
+                if (distanceClimbed > currentBest) {
+                    localStorage.setItem('neon_tomb_best_dist', distanceClimbed.toString());
+                }
+
+                finalDistance.textContent = `${distanceClimbed}m`;
+                finalGems.textContent = gemsCollected;
+                finalScore.textContent = (distanceClimbed * 10) + (gemsCollected * 50);
+                bestDistance.textContent = `${Math.max(distanceClimbed, currentBest)}m`;
+
+                gameOverModal.classList.remove('hidden');
+            }
+
+            // --- SECTOR EXIT COMPLETION ---
+            let sectorToastTimer = null;
+
+            function showSectorToast(message) {
+                const el = document.getElementById('sectorToast');
+                if (!el) return;
+                el.textContent = message;
+                el.classList.remove('hidden');
+                el.classList.add('show');
+                if (sectorToastTimer) clearTimeout(sectorToastTimer);
+                sectorToastTimer = setTimeout(() => {
+                    el.classList.remove('show');
+                    setTimeout(() => el.classList.add('hidden'), 500);
+                }, 1300);
+            }
+
+            function completeSector() {
+                // The exit opens the route to the next sector - keep climbing.
+                setCell(player.gx, player.gy, TILE_EMPTY);
+                audio.playExit();
+                createSparks(player.x, player.y, '#00f3ff', 20);
+                createSparks(player.x, player.y, '#fcee0a', 10);
+                showSectorToast('SECTOR CLEAR');
+            }
+
+            // --- RENDERING ENGINE ---
+            function render() {
+                ctx.save();
+                ctx.scale(dpr * gameScale, dpr * gameScale);
+
+                const viewportW = canvas.width / dpr / gameScale;
+                const viewportH = canvas.height / dpr / gameScale;
+
+                // Clear Screen
+                ctx.fillStyle = '#050514';
+                ctx.fillRect(0, 0, viewportW, viewportH);
+
+                // Center maze horizontal offset
+                const offsetX = (viewportW - WORLD_WIDTH) / 2;
+
+                ctx.save();
+                ctx.translate(offsetX, 0);
+
+                // Calculate visible world row bounds
+                const startRenderRow = Math.max(0, Math.floor((cameraY - 50) / CELL_SIZE));
+                const endRenderRow = Math.ceil((cameraY + viewportH + 50) / CELL_SIZE);
+
+                // Render Grid Architecture & Traps
+                for (let r = startRenderRow; r <= endRenderRow; r++) {
+                    const rowData = mapRows[r];
+                    if (!rowData) continue;
+
+                    const screenY = viewportH - (r * CELL_SIZE - cameraY);
+
+                    for (let x = 0; x < COLS; x++) {
+                        const tile = rowData[x];
+                        const screenX = x * CELL_SIZE;
+
+                        if (tile === TILE_WALL) {
+                            // Wall Architecture with Cyberpunk Glow
+                            ctx.fillStyle = '#0f0f2d';
+                            ctx.fillRect(screenX, screenY - CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                            
+                            ctx.strokeStyle = '#8b5cf6';
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(screenX + 0.5, screenY - CELL_SIZE + 0.5, CELL_SIZE - 1, CELL_SIZE - 1);
+                        } else {
+                            // Empty Path Floor Grid Lines
+                            ctx.strokeStyle = 'rgba(0, 243, 255, 0.04)';
+                            ctx.strokeRect(screenX, screenY - CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                            // Collectible Gems
+                            if (tile === TILE_GEM) {
+                                ctx.save();
+                                ctx.translate(screenX + CELL_SIZE / 2, screenY - CELL_SIZE / 2);
+                                ctx.fillStyle = '#fcee0a';
+                                ctx.shadowColor = '#fcee0a';
+                                ctx.shadowBlur = 8;
+                                ctx.beginPath();
+                                ctx.moveTo(0, -7);
+                                ctx.lineTo(6, 0);
+                                ctx.lineTo(0, 7);
+                                ctx.lineTo(-6, 0);
+                                ctx.closePath();
+                                ctx.fill();
+                                ctx.restore();
+                            } 
+                            // Spike Pit Traps
+                            else if (tile === TILE_SPIKE) {
+                                ctx.fillStyle = 'rgba(255, 42, 109, 0.8)';
+                                const cx = screenX + CELL_SIZE / 2;
+                                const cy = screenY - CELL_SIZE / 2;
+                                ctx.beginPath();
+                                ctx.moveTo(cx - 10, cy + 10);
+                                ctx.lineTo(cx, cy - 10);
+                                ctx.lineTo(cx + 10, cy + 10);
+                                ctx.closePath();
+                                ctx.fill();
+                            } 
+                            // Timed Laser Gates
+                            else if (tile === TILE_LASER) {
+                                const cy = screenY - CELL_SIZE / 2;
+                                if (laserActive) {
+                                    ctx.strokeStyle = '#ff2a6d';
+                                    ctx.shadowColor = '#ff2a6d';
+                                    ctx.shadowBlur = 12;
+                                    ctx.lineWidth = 4;
+                                    ctx.beginPath();
+                                    ctx.moveTo(screenX, cy);
+                                    ctx.lineTo(screenX + CELL_SIZE, cy);
+                                    ctx.stroke();
+                                } else {
+                                    ctx.strokeStyle = 'rgba(255, 42, 109, 0.2)';
+                                    ctx.lineWidth = 1;
+                                    ctx.beginPath();
+                                    ctx.moveTo(screenX, cy);
+                                    ctx.lineTo(screenX + CELL_SIZE, cy);
+                                    ctx.stroke();
+                                }
+                            }
+                            // Sector Exit Portal (glowing, pulsing, clearly visible)
+                            else if (tile === TILE_EXIT) {
+                                const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 250);
+                                const cx = screenX + CELL_SIZE / 2;
+                                const cy = screenY - CELL_SIZE / 2;
+                                ctx.save();
+                                ctx.shadowColor = '#00f3ff';
+                                ctx.shadowBlur = 18 + pulse * 14;
+                                ctx.strokeStyle = 'rgba(0, 243, 255, 0.9)';
+                                ctx.lineWidth = 2;
+                                ctx.beginPath();
+                                ctx.arc(cx, cy, CELL_SIZE * 0.4 + pulse * 2, 0, Math.PI * 2);
+                                ctx.stroke();
+                                ctx.globalAlpha = 0.5 + pulse * 0.4;
+                                ctx.fillStyle = '#00f3ff';
+                                ctx.beginPath();
+                                ctx.moveTo(cx, cy - CELL_SIZE * 0.28);
+                                ctx.lineTo(cx + CELL_SIZE * 0.28, cy);
+                                ctx.lineTo(cx, cy + CELL_SIZE * 0.28);
+                                ctx.lineTo(cx - CELL_SIZE * 0.28, cy);
+                                ctx.closePath();
+                                ctx.fill();
+                                ctx.globalAlpha = 1;
+                                ctx.strokeStyle = '#fcee0a';
+                                ctx.lineWidth = 2;
+                                ctx.beginPath();
+                                ctx.moveTo(cx - 7, cy + 11);
+                                ctx.lineTo(cx, cy + 4);
+                                ctx.lineTo(cx + 7, cy + 11);
+                                ctx.moveTo(cx - 5, cy + 19);
+                                ctx.lineTo(cx, cy + 12);
+                                ctx.lineTo(cx + 5, cy + 19);
+                                ctx.stroke();
+                                ctx.fillStyle = '#00f3ff';
+                                ctx.font = 'bold 10px Orbitron, sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.fillText('EXIT', cx, cy - CELL_SIZE * 0.6);
+                                ctx.restore();
+                            }
+                        }
+                    }
+                }
+
+                // Render Motion Blur Trail
+                for (let t of player.trail) {
+                    let tsY = viewportH - (t.y - cameraY);
+                    ctx.fillStyle = `rgba(0, 243, 255, ${t.alpha * 0.4})`;
+                    ctx.fillRect(t.x - CELL_SIZE * 0.35, tsY - CELL_SIZE * 0.35, CELL_SIZE * 0.7, CELL_SIZE * 0.7);
+                }
+
+                // Render Dynamic Enemies
+                for (let enemy of enemies) {
+                    let esY = viewportH - (enemy.y - cameraY);
+                    ctx.save();
+                    ctx.translate(enemy.x, esY);
+                    ctx.fillStyle = '#a78bfa';
+                    ctx.shadowColor = '#8b5cf6';
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, CELL_SIZE * 0.38, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Hostile Eye
+                    ctx.fillStyle = '#050514';
+                    ctx.fillRect(-3, -3, 6, 6);
+                    ctx.restore();
+                }
+
+                // Render Player
+                let psY = viewportH - (player.y - cameraY);
+                ctx.save();
+                ctx.translate(player.x, psY);
+                ctx.fillStyle = '#00f3ff';
+                ctx.shadowColor = '#00f3ff';
+                ctx.shadowBlur = 14;
+                ctx.fillRect(-CELL_SIZE * 0.38, -CELL_SIZE * 0.38, CELL_SIZE * 0.76, CELL_SIZE * 0.76);
+                
+                // Core Glyph
+                ctx.fillStyle = '#050514';
+                ctx.fillRect(-CELL_SIZE * 0.15, -CELL_SIZE * 0.15, CELL_SIZE * 0.3, CELL_SIZE * 0.3);
+                ctx.restore();
+
+                // Render Particles
+                for (let p of particles) {
+                    let pscreenY = viewportH - (p.y - cameraY);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life / p.maxLife;
+                    ctx.fillRect(p.x - 2, pscreenY - 2, 4, 4);
+                }
+                ctx.globalAlpha = 1.0;
+
+                // Render Rising Shredder / Firewall
+                let shredderScreenY = viewportH - (shredderY - cameraY);
+                let grad = ctx.createLinearGradient(0, shredderScreenY, 0, shredderScreenY + 120);
+                grad.addColorStop(0, '#ff2a6d');
+                grad.addColorStop(0.3, 'rgba(255, 42, 109, 0.6)');
+                grad.addColorStop(1, 'rgba(255, 42, 109, 0)');
+
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, shredderScreenY, WORLD_WIDTH, 120);
+
+                // Plasma Beam Top Line
+                ctx.strokeStyle = '#fcee0a';
+                ctx.shadowColor = '#ff2a6d';
+                ctx.shadowBlur = 15;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, shredderScreenY);
+                ctx.lineTo(WORLD_WIDTH, shredderScreenY);
+                ctx.stroke();
+
+                ctx.restore(); // Restore centered translation
+                ctx.restore(); // Restore DPR scaling
+            }
+
+            // --- MAIN GAME LOOP ---
+            function gameLoop(timestamp) {
+                if (!lastTime) lastTime = timestamp;
+
+                // Pause the active run whenever the page loses visibility or the
+                // window loses focus, so the shredder and enemies cannot progress
+                // while the player is not looking at the game.
+                if (pausedByBackground) {
+                    lastTime = timestamp;
+                    render();
+                    requestAnimationFrame(gameLoop);
+                    return;
+                }
+
+                let dt = (timestamp - lastTime) / 1000;
+                lastTime = timestamp;
+
+                // Cap maximum delta time to avoid frame skips
+                if (dt > 0.1) dt = 0.1;
+
+                update(dt);
+                render();
+
+                requestAnimationFrame(gameLoop);
+            }
+
+            // --- BACKGROUND PAUSE (same convention as the other EUXODES games) ---
+            function pauseForBackground() {
+                if (gameState === 'PLAYING' && !pausedByBackground) {
+                    pausedByBackground = true;
+                }
+            }
+
+            function resumeFromBackground() {
+                if (pausedByBackground) {
+                    pausedByBackground = false;
+                    lastTime = 0;
+                }
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) pauseForBackground();
+                else resumeFromBackground();
+            });
+            window.addEventListener('blur', pauseForBackground);
+            window.addEventListener('focus', () => {
+                if (!document.hidden) resumeFromBackground();
+            });
+
+            // --- EVENT BINDINGS & START LOGIC ---
+            startBtn.addEventListener('click', () => {
+                audio.init();
+                initGame();
+                gameState = 'PLAYING';
+                startModal.classList.add('hidden');
+            });
+
+            restartBtn.addEventListener('click', () => {
+                audio.init();
+                initGame();
+                gameState = 'PLAYING';
+                gameOverModal.classList.add('hidden');
+            });
+
+            // Start Animation Frame Loop
+            requestAnimationFrame(gameLoop);
+        })();
+    </script>
+    <script src="/js/na-nav.js"></script>
+</body>
+</html>
