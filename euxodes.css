@@ -275,7 +275,8 @@ button, .na-button, .play-btn, .btn {
     box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
 }
 
-#maximize-btn {
+#maximize-btn,
+#mute-btn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -286,6 +287,7 @@ button, .na-button, .play-btn, .btn {
     align-items: center;
     justify-content: center;
     padding: 0;
+    margin: 0;
     background: rgba(5, 5, 16, 0.7);
     border: 2px solid var(--na-cyan);
     border-radius: 4px;
@@ -294,13 +296,17 @@ button, .na-button, .play-btn, .btn {
     transition: all 0.2s;
 }
 
-#maximize-btn:hover {
+#mute-btn { right: 54px; }
+
+#maximize-btn:hover,
+#mute-btn:hover {
     background: var(--na-cyan);
     color: var(--na-bg);
     box-shadow: 0 0 15px var(--na-cyan);
 }
 
-#maximize-btn svg { width: 18px; height: 18px; }
+#maximize-btn svg,
+#mute-btn svg { width: 18px; height: 18px; }
 
 footer {
     color: #718096;

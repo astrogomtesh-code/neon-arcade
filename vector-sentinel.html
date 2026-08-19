@@ -14,10 +14,16 @@
     <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/vector-sentinel">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-vector-sentinel.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Vector Sentinel - Grid Containment Protocol">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-vector-sentinel.png">
     <meta name="twitter:title" content="Vector Sentinel - Grid Containment Protocol | EUXODES">
     <meta name="twitter:description" content="Vector Sentinel is a 360-degree vector survival shooter. Steer with WASD, aim with the mouse, and survive escalating threat waves inside the containment grid.">
-    <link rel="stylesheet" href="/euxodes.css">
+    <link rel="stylesheet" href="/euxodes.css?v=2">
     <style>
         * {
             box-sizing: border-box;
@@ -347,6 +353,11 @@
             50% { opacity: 0.35; }
         }
     </style>
+<!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="crt" data-mode="rush">
     <nav class="brand-nav" aria-label="Primary">
@@ -404,6 +415,13 @@
             <button id="maximize-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen" onclick="toggleFullscreen()">
                 <svg id="max-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                </svg>
+            </button>
+            <button id="mute-btn" aria-label="Mute sound" title="Mute sound" aria-pressed="false">
+                <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+                    <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                    <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
                 </svg>
             </button>
             <div class="scanlines"></div>
@@ -1643,6 +1661,24 @@ window.onload = function () {
     resizeCanvas();
     updateUI();
     requestAnimationFrame(gameLoop);
+
+    // Mute toggle
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = document.getElementById('mute-icon');
+    const updateMuteIcon = () => {
+        const muted = audio.muted;
+        muteIcon.innerHTML = muted
+            ? '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M22 9l-6 6"></path><path d="M16 9l6 6"></path>'
+            : '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path>';
+        muteBtn.setAttribute('aria-pressed', String(muted));
+        muteBtn.setAttribute('aria-label', muted ? 'Unmute sound' : 'Mute sound');
+        muteBtn.title = muted ? 'Unmute sound' : 'Mute sound';
+    };
+    muteBtn.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        updateMuteIcon();
+    });
+    updateMuteIcon();
 
     // Fullscreen handled by shared js/na-fullscreen.js helper
     naInitFullscreen({ onAfterToggle: () => resizeCanvas() });

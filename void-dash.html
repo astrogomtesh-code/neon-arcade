@@ -14,10 +14,16 @@
     <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/void-dash">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-void-dash.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Void Dash - High-Speed Runner">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-void-dash.png">
     <meta name="twitter:title" content="Void Dash - High-Speed Runner | EUXODES">
     <meta name="twitter:description" content="Outrun the collapsing field in Void Dash, an auto-runner survival game. Jump and dash through obstacles as the speed keeps rising - one hit ends the run.">
-    <link rel="stylesheet" href="/euxodes.css">
+    <link rel="stylesheet" href="/euxodes.css?v=2">
     <style>
         * {
             box-sizing: border-box;
@@ -26,11 +32,11 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: var(--na-bg);
+            background-color: var(--na-bg, #05050e);
             overflow-x: hidden;
             overflow-y: auto;
-            font-family: var(--na-font-body);
-            color: var(--na-text);
+            font-family: var(--na-font-body, monospace);
+            color: var(--na-text, #e8eaf0);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -44,14 +50,14 @@
             left: 0;
             width: 100%;
             background: rgba(5, 5, 16, 0.95);
-            border-bottom: 2px solid var(--na-cyan);
+            border-bottom: 2px solid var(--na-cyan, #00f3ff);
             display: flex;
             justify-content: center;
             padding: 15px;
             z-index: 1000;
         }
         nav a {
-            color: var(--na-cyan);
+            color: var(--na-cyan, #00f3ff);
             text-decoration: none;
             margin: 0 15px;
             font-weight: bold;
@@ -60,8 +66,8 @@
             letter-spacing: 2px;
         }
         nav a:hover {
-            color: var(--na-magenta);
-            text-shadow: 0 0 5px var(--na-magenta);
+            color: var(--na-magenta, #8b5cf6);
+            text-shadow: 0 0 5px var(--na-magenta, #8b5cf6);
         }
 
         #game-container {
@@ -70,7 +76,7 @@
             max-width: 1000px;
             height: min(80vh, 600px);
             margin: 40px auto 20px auto;
-            border: 2px solid var(--na-cyan);
+            border: 2px solid var(--na-cyan, #00f3ff);
             box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);
             overflow: hidden;
             touch-action: none;
@@ -88,7 +94,7 @@
             width: 100vw;
             height: 100vh;
             margin: 0;
-            background: var(--na-bg);
+            background: var(--na-bg, #05050e);
         }
 
         canvas {
@@ -117,8 +123,8 @@
             text-shadow: 0 0 10px var(--na-cyan);
         }
 
-        #score { font-size: 2.5rem; font-weight: 900; color: var(--na-cyan); }
-        #high-score { font-size: 1rem; color: var(--na-yellow); opacity: 0.85; }
+        #score { font-size: 2.5rem; font-weight: 900; color: var(--na-cyan, #00f3ff); }
+        #high-score { font-size: 1rem; color: var(--na-yellow, #fcee0a); opacity: 0.85; }
         #streak { font-size: 0.9rem; color: #9be8b0; opacity: 0; transition: opacity 0.2s; margin-top: 4px; }
         #streak.show { opacity: 1; }
 
@@ -158,7 +164,7 @@
             pointer-events: auto;
             background: rgba(5, 5, 16, 0.95);
             padding: 40px;
-            border: 2px solid var(--na-cyan);
+            border: 2px solid var(--na-cyan, #00f3ff);
             box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);
             z-index: 30;
             min-width: 300px;
@@ -170,8 +176,8 @@
         h1 {
             font-size: 2.8rem;
             margin: 0 0 6px 0;
-            color: var(--na-cyan);
-            text-shadow: 0 0 10px var(--na-cyan);
+            color: var(--na-cyan, #00f3ff);
+            text-shadow: 0 0 10px var(--na-cyan, #00f3ff);
             text-transform: uppercase;
             letter-spacing: 4px;
         }
@@ -179,8 +185,8 @@
         .modal-title {
             font-size: 2.8rem;
             margin: 0 0 6px 0;
-            color: var(--na-cyan);
-            text-shadow: 0 0 10px var(--na-cyan);
+            color: var(--na-cyan, #00f3ff);
+            text-shadow: 0 0 10px var(--na-cyan, #00f3ff);
             text-transform: uppercase;
             letter-spacing: 4px;
         }
@@ -201,11 +207,11 @@
 
         button {
             background: transparent;
-            color: var(--na-cyan);
-            font-family: var(--na-font-body);
+            color: var(--na-cyan, #00f3ff);
+            font-family: var(--na-font-body, monospace);
             font-size: 1.1rem;
             padding: 14px 30px;
-            border: 2px solid var(--na-cyan);
+            border: 2px solid var(--na-cyan, #00f3ff);
             margin-top: 16px;
             cursor: pointer;
             text-transform: uppercase;
@@ -215,15 +221,15 @@
         }
 
         button:hover {
-            background: var(--na-cyan);
+            background: var(--na-cyan, #00f3ff);
             color: #000;
             box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
         }
 
-        #game-over-screen button { border-color: var(--na-yellow); color: var(--na-yellow); }
-        #game-over-screen button:hover { background: var(--na-yellow); box-shadow: 0 0 25px rgba(252, 238, 10, 0.7); }
+        #game-over-screen button { border-color: var(--na-yellow, #fcee0a); color: var(--na-yellow, #fcee0a); }
+        #game-over-screen button:hover { background: var(--na-yellow, #fcee0a); box-shadow: 0 0 25px rgba(252, 238, 10, 0.7); }
 
-        #death-line { color: var(--na-magenta); font-size: 0.85rem; margin-top: -4px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        #death-line { color: var(--na-magenta, #8b5cf6); font-size: 0.85rem; margin-top: -4px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
         #best-line { color: #9be8b0; font-size: 0.8rem; margin-top: 6px; height: 1em; }
 
         @media (max-width: 768px) {
@@ -243,6 +249,8 @@
         .flash.active { animation: flashOut 0.35s ease-out; }
         @keyframes flashOut { 0% { opacity: 0.35; } 100% { opacity: 0; } }
 
+        #mute-btn svg { width: 18px; height: 18px; }
+
         footer {
             text-align: center;
             padding: 40px;
@@ -253,6 +261,11 @@
             width: 100%;
         }
     </style>
+<!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="crt" data-mode="classic">
 
@@ -276,6 +289,13 @@
             <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
             <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
             <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+        </svg>
+    </button>
+    <button id="mute-btn" aria-label="Mute sound" title="Mute sound" aria-pressed="false">
+        <svg id="mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+            <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
         </svg>
     </button>
 
@@ -357,6 +377,9 @@
 
 <script src="/js/na-fullscreen.js"></script>
 <script>
+(() => {
+'use strict';
+
 /**
  * CONFIGURATION & TUNING
  */
@@ -378,6 +401,38 @@ const CONFIG = {
     },
     PARTICLES: {
         MAX_COUNT: 110
+    },
+    OBSTACLES: {
+        POOL_SIZE: 12,
+        INITIAL_WAIT: 0.5,
+        SPAWN_TIMER_VARIANCE: 0.45,
+        OFFSCREEN_MARGIN: 100,
+        SPAWN_X_OFFSET: 50,
+        // Difficulty ramp: spawn rate drops from INITIAL_RATE toward
+        // MIN_RATE as speed approaches MAX_SPEED.
+        RATE_SPEED_FACTOR: 1.15,
+        TIER_SCORE_DIVISOR: 4500,
+        TIER_SPIRE_THRESHOLD: 0.15,
+        ROLL_GRID_BASE: 0.42,
+        ROLL_GRID_TIER: 0.14,
+        ROLL_ASTEROID_BASE: 0.72,
+        ROLL_ASTEROID_TIER: 0.06,
+        ROLL_SENTINEL_BASE: 0.93,
+        ROLL_SENTINEL_TIER: 0.02,
+        GRID_MIN_W: 24,
+        GRID_MAX_W: 42,
+        GRID_MIN_H: 46,
+        GRID_MAX_H: 74,
+        ASTEROID_MIN_SIZE: 34,
+        ASTEROID_MAX_SIZE: 54,
+        SENTINEL_MIN_SIZE: 22,
+        SENTINEL_MAX_SIZE: 36,
+        SENTINEL_MIN_ELEV: 65,
+        SENTINEL_MAX_ELEV: 100,
+        SPIRE_MIN_W: 20,
+        SPIRE_MAX_W: 28,
+        SPIRE_MIN_H: 130,
+        SPIRE_MAX_H: 165
     },
     COLORS: {
         PRIMARY: '#00f3ff',
@@ -482,6 +537,7 @@ class InputManager {
  */
 const AudioSys = {
     ctx: null,
+    muted: false,
     init() {
         if (!this.ctx) {
             this.ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -491,6 +547,7 @@ const AudioSys = {
         }
     },
     playTone(freq, type, duration, vol = 0.1) {
+        if (this.muted) return;
         if (!this.ctx) return;
         try {
             const osc = this.ctx.createOscillator();
@@ -516,7 +573,8 @@ const AudioSys = {
  * STARFIELD BACKGROUND
  */
 class Starfield {
-    constructor() {
+    constructor(canvas) {
+        this.canvas = canvas;
         this.layers = [
             { speed: 20, size: 1, color: '#444466', stars: [] },
             { speed: 60, size: 1.5, color: '#666699', stars: [] },
@@ -526,9 +584,8 @@ class Starfield {
     }
 
     populate() {
-        const canvas = document.getElementById('gameCanvas');
-        const w = canvas ? canvas.clientWidth : window.innerWidth;
-        const h = canvas ? canvas.clientHeight : window.innerHeight;
+        const w = this.canvas ? this.canvas.clientWidth : window.innerWidth;
+        const h = this.canvas ? this.canvas.clientHeight : window.innerHeight;
         this.layers.forEach(layer => {
             layer.stars = [];
             const count = Math.floor((w * h) / 9000);
@@ -539,9 +596,8 @@ class Starfield {
     }
 
     update(dt, speedMult) {
-        const canvas = document.getElementById('gameCanvas');
-        const w = canvas ? canvas.clientWidth : window.innerWidth;
-        const h = canvas ? canvas.clientHeight : window.innerHeight;
+        const w = this.canvas ? this.canvas.clientWidth : window.innerWidth;
+        const h = this.canvas ? this.canvas.clientHeight : window.innerHeight;
         this.layers.forEach(layer => {
             layer.stars.forEach(s => {
                 s.x -= layer.speed * speedMult * dt;
@@ -568,51 +624,76 @@ class Starfield {
 class ParticleSystem {
     constructor(ctx) {
         this.ctx = ctx;
-        this.particles = [];
+        // Fixed-size object pool: particles are reused, never created or
+        // destroyed during gameplay.
+        this.particles = Array.from(
+            { length: CONFIG.PARTICLES.MAX_COUNT },
+            () => ({
+                active: false,
+                x: 0,
+                y: 0,
+                vx: 0,
+                vy: 0,
+                life: 0,
+                maxLife: 0.8,
+                color: CONFIG.COLORS.PRIMARY,
+                size: 2
+            })
+        );
     }
 
     spawn(x, y, color, count = 10, speedMax = 180) {
         for (let i = 0; i < count; i++) {
-            if (this.particles.length >= CONFIG.PARTICLES.MAX_COUNT) {
-                this.particles.shift();
-            }
+            const p = this.particles.find(p => !p.active);
+            if (!p) return; // pool exhausted - skip rather than allocate
+            p.active = true;
+            p.x = x;
+            p.y = y;
             const angle = Math.random() * Math.PI * 2;
             const velocity = (0.3 + Math.random() * 0.7) * speedMax;
-            this.particles.push({
-                x,
-                y,
-                vx: Math.cos(angle) * velocity,
-                vy: Math.sin(angle) * velocity,
-                life: 0.4 + Math.random() * 0.4,
-                maxLife: 0.8,
-                color,
-                size: 2 + Math.random() * 3
-            });
+            p.vx = Math.cos(angle) * velocity;
+            p.vy = Math.sin(angle) * velocity;
+            p.life = 0.4 + Math.random() * 0.4;
+            p.maxLife = 0.8;
+            p.color = color;
+            p.size = 2 + Math.random() * 3;
         }
     }
 
     update(dt) {
-        this.particles.forEach((p, idx) => {
+        for (let i = 0; i < this.particles.length; i++) {
+            const p = this.particles[i];
+            if (!p.active) continue;
             p.x += p.vx * dt;
             p.y += p.vy * dt;
             p.life -= dt;
-            if (p.life <= 0) this.particles.splice(idx, 1);
-        });
+            if (p.life <= 0) {
+                p.active = false;
+                p.vx = 0;
+                p.vy = 0;
+            }
+        }
     }
 
     draw() {
         this.ctx.save();
-        this.particles.forEach(p => {
+        for (let i = 0; i < this.particles.length; i++) {
+            const p = this.particles[i];
+            if (!p.active) continue;
             const alpha = Math.max(0, p.life / p.maxLife);
             this.ctx.fillStyle = p.color;
             this.ctx.globalAlpha = alpha;
             this.ctx.fillRect(p.x, p.y, p.size, p.size);
-        });
+        }
         this.ctx.restore();
     }
 
     clear() {
-        this.particles = [];
+        for (let i = 0; i < this.particles.length; i++) {
+            this.particles[i].active = false;
+            this.particles[i].vx = 0;
+            this.particles[i].vy = 0;
+        }
     }
 }
 
@@ -635,7 +716,14 @@ class Player {
         this.dashTimer = 0;
         this.dashCooldown = 0;
         this.color = CONFIG.COLORS.PRIMARY;
-        this.trail = [];
+        // Fixed five-element ring buffer for the motion trail. The array is
+        // never resized; trailCount tracks how many frames have been recorded
+        // so the first few frames render exactly as they did before.
+        this.trail = new Array(5)
+            .fill(null)
+            .map(() => ({ x: 0, y: 0 }));
+        this.trailIdx = 0;
+        this.trailCount = 0;
     }
 
     getHitbox() {
@@ -702,21 +790,28 @@ class Player {
             this.isGrounded = false;
         }
 
-        // Capture motion trail
-        this.trail.push({ x: this.x, y: this.y });
-        if (this.trail.length > 5) this.trail.shift();
+        // Capture motion trail (fixed 5-slot ring buffer)
+        this.trail[this.trailIdx] = {
+            x: this.x,
+            y: this.y
+        };
+        this.trailIdx = (this.trailIdx + 1) % 5;
+        if (this.trailCount < 5) this.trailCount++;
     }
 
     draw(ctx) {
         ctx.save();
-        
-        // Draw motion trail
-        this.trail.forEach((pos, i) => {
-            const alpha = 0.08 * (i + 1);
+
+        // Render trail from oldest to newest so alpha ramps up exactly as
+        // before, even though the ring buffer does not store them in order.
+        for (let j = 0; j < this.trailCount; j++) {
+            const idx = (this.trailIdx - this.trailCount + j + 5) % 5;
+            const pos = this.trail[idx];
+            const alpha = 0.08 * (j + 1);
             ctx.fillStyle = this.dashTimer > 0 ? CONFIG.COLORS.SECONDARY : CONFIG.COLORS.PRIMARY;
             ctx.globalAlpha = alpha;
             ctx.fillRect(pos.x, pos.y, this.w, this.h);
-        });
+        }
 
         // Draw Player with glow
         ctx.globalAlpha = 1.0;
@@ -745,104 +840,126 @@ const DEATH_LABELS = {
 };
 
 class ObstacleManager {
-    constructor() {
+    constructor(canvas) {
+        this.canvas = canvas;
+        // Fixed-size obstacle pool: obstacles are reused, never created or
+        // destroyed during gameplay. Sized to comfortably cover the realistic
+        // maximum number of simultaneous on-screen obstacles.
+        this.pool = Array.from({ length: CONFIG.OBSTACLES.POOL_SIZE }, () => ({
+            active: false,
+            type: 'GRID',
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 0,
+            passed: false,
+            color: CONFIG.COLORS.OBSTACLE
+        }));
         this.reset();
     }
 
     reset() {
-        this.obstacles = [];
-        this.spawnTimer = 0.5; // initial wait
+        for (let i = 0; i < this.pool.length; i++) {
+            this.pool[i].active = false;
+        }
+        this.spawnTimer = CONFIG.OBSTACLES.INITIAL_WAIT; // initial wait
     }
 
     update(dt, speed, groundY, score) {
         // Handle spawning based on difficulty curve
         this.spawnTimer -= dt;
         if (this.spawnTimer <= 0) {
+            const O = CONFIG.OBSTACLES;
             const currentRate = Math.max(
                 CONFIG.SPAWN.MIN_RATE,
-                CONFIG.SPAWN.INITIAL_RATE - (speed / CONFIG.PHYSICS.MAX_SPEED) * 1.15
+                CONFIG.SPAWN.INITIAL_RATE - (speed / CONFIG.PHYSICS.MAX_SPEED) * O.RATE_SPEED_FACTOR
             );
-            this.spawnTimer = currentRate + Math.random() * 0.45;
+            this.spawnTimer = currentRate + Math.random() * O.SPAWN_TIMER_VARIANCE;
 
             // Difficulty tier (0-1) climbs with score, independent of the
             // speed cap, so the obstacle *mix* keeps getting meaner even
             // after top speed is reached, not just the raw scroll rate.
-            const tier = Math.min(1, (score || 0) / 4500);
+            const tier = Math.min(1, (score || 0) / O.TIER_SCORE_DIVISOR);
 
             // Choose obstacle types dynamically, shifting weight away from
             // the easy GRID barrier and toward ASTEROID/SENTINEL/SPIRE as
             // the tier climbs.
             const roll = Math.random();
-            if (roll < 0.42 - tier * 0.14) {
+            if (roll < O.ROLL_GRID_BASE - tier * O.ROLL_GRID_TIER) {
                 this.spawn('GRID', groundY);
-            } else if (roll < 0.72 - tier * 0.06) {
+            } else if (roll < O.ROLL_ASTEROID_BASE - tier * O.ROLL_ASTEROID_TIER) {
                 this.spawn('ASTEROID', groundY);
-            } else if (roll < 0.93 - tier * 0.02) {
+            } else if (roll < O.ROLL_SENTINEL_BASE - tier * O.ROLL_SENTINEL_TIER) {
                 this.spawn('SENTINEL', groundY);
             } else {
                 // SPIRE: too tall to jump, only survivable by dashing
                 // through it (which already shatters obstacles for bonus
                 // score) - rare, and only starts appearing once the tier
                 // has climbed a bit so early runs aren't blindsided.
-                this.spawn(tier > 0.15 ? 'SPIRE' : 'SENTINEL', groundY);
+                this.spawn(tier > O.TIER_SPIRE_THRESHOLD ? 'SPIRE' : 'SENTINEL', groundY);
             }
         }
 
         // Update active obstacles
-        for (let i = this.obstacles.length - 1; i >= 0; i--) {
-            const obs = this.obstacles[i];
+        for (let i = 0; i < this.pool.length; i++) {
+            const obs = this.pool[i];
+            if (!obs.active) continue;
             obs.x -= speed * dt;
-            if (obs.x + obs.w < -100) this.obstacles.splice(i, 1);
+            if (obs.x + obs.w < -CONFIG.OBSTACLES.OFFSCREEN_MARGIN) obs.active = false;
         }
     }
 
     spawn(type, groundY) {
-        const canvas = document.getElementById('gameCanvas');
-        const w = canvas ? canvas.clientWidth : window.innerWidth;
-        let obs = { type, x: w + 50, passed: false };
+        const O = CONFIG.OBSTACLES;
+        const obs = this.pool.find(o => !o.active);
+        if (!obs) return; // pool exhausted - skip rather than allocate
+        obs.active = true;
+        obs.type = type;
+        obs.passed = false;
+
+        const w = this.canvas ? this.canvas.clientWidth : window.innerWidth;
+        obs.x = w + O.SPAWN_X_OFFSET;
 
         if (type === 'ASTEROID') {
             // Randomized chunky rock size, still shatterable by dash
-            const size = 34 + Math.random() * 20; // 34-54
+            const size = O.ASTEROID_MIN_SIZE + Math.random() * (O.ASTEROID_MAX_SIZE - O.ASTEROID_MIN_SIZE); // 34-54
             obs.w = size; obs.h = size;
             obs.y = groundY - obs.h;
             obs.color = CONFIG.COLORS.DANGER;
         } else if (type === 'SENTINEL') {
-            const size = 22 + Math.random() * 14; // 22-36
+            const size = O.SENTINEL_MIN_SIZE + Math.random() * (O.SENTINEL_MAX_SIZE - O.SENTINEL_MIN_SIZE); // 22-36
             obs.w = size; obs.h = size;
             // Spawns elevated, height varies more now so jump timing isn't
             // the same read every time - forces double jump or dash
-            obs.y = groundY - (65 + Math.random() * 100);
+            obs.y = groundY - (O.SENTINEL_MIN_ELEV + Math.random() * O.SENTINEL_MAX_ELEV);
             obs.color = CONFIG.COLORS.SENTINEL;
         } else if (type === 'SPIRE') {
             // Full-height barrier, deliberately too tall for a double jump
             // to clear (max jump apex is well under 130px) - the only way
             // through is dashing, which shatters it for a streak + bonus.
-            obs.w = 20 + Math.random() * 8;   // 20-28, narrow
-            obs.h = 130 + Math.random() * 35; // 130-165, unjumpable
+            obs.w = O.SPIRE_MIN_W + Math.random() * (O.SPIRE_MAX_W - O.SPIRE_MIN_W);   // 20-28, narrow
+            obs.h = O.SPIRE_MIN_H + Math.random() * (O.SPIRE_MAX_H - O.SPIRE_MIN_H); // 130-165, unjumpable
             obs.y = groundY - obs.h;
             obs.color = CONFIG.COLORS.SPIRE;
         } else {
             // GRID BARRIER - randomized width/height within safely
             // single-jump-clearable range, so it stays varied without
             // becoming unfair
-            obs.w = 24 + Math.random() * 18; // 24-42
-            obs.h = 46 + Math.random() * 28; // 46-74
+            obs.w = O.GRID_MIN_W + Math.random() * (O.GRID_MAX_W - O.GRID_MIN_W); // 24-42
+            obs.h = O.GRID_MIN_H + Math.random() * (O.GRID_MAX_H - O.GRID_MIN_H); // 46-74
             obs.y = groundY - obs.h;
             obs.color = CONFIG.COLORS.OBSTACLE;
         }
-
-        this.obstacles.push(obs);
     }
 
     remove(obstacle) {
-        const idx = this.obstacles.indexOf(obstacle);
-        if (idx !== -1) this.obstacles.splice(idx, 1);
+        obstacle.active = false;
     }
 
     checkCollisions(playerBox) {
-        for (let i = 0; i < this.obstacles.length; i++) {
-            const o = this.obstacles[i];
+        for (let i = 0; i < this.pool.length; i++) {
+            const o = this.pool[i];
+            if (!o.active) continue;
             // Standard AABB Collision check
             if (playerBox.x < o.x + o.w &&
                 playerBox.x + playerBox.w > o.x &&
@@ -856,7 +973,9 @@ class ObstacleManager {
 
     draw(ctx) {
         ctx.save();
-        this.obstacles.forEach(o => {
+        for (let i = 0; i < this.pool.length; i++) {
+            const o = this.pool[i];
+            if (!o.active) continue;
             ctx.shadowBlur = 8;
             ctx.shadowColor = o.color;
             ctx.fillStyle = o.color;
@@ -910,9 +1029,41 @@ class ObstacleManager {
                 ctx.lineWidth = 1;
                 ctx.strokeRect(o.x + 3, o.y + 3, o.w - 6, o.h - 6);
             }
-        });
+        }
         ctx.restore();
     }
+}
+
+/**
+ * HIGH SCORE PERSISTENCE
+ * The stored value is casually obfuscated with a salt before being written to
+ * localStorage. This is NOT security - it only stops the score from being a
+ * plain-text value someone can trivially edit. Loading is defensive: any
+ * missing, malformed, corrupted, or tampered-with value falls back to 0.
+ */
+const HS_KEY = 'voidDash_HS';
+const HS_SALT = '_SALT';
+
+function loadHighScore() {
+    try {
+        const saved = localStorage.getItem(HS_KEY);
+        if (!saved) return 0;
+        // Legacy plain-number values from pre-obfuscation builds are accepted as-is.
+        if (/^\d+$/.test(saved)) return Math.min(99999, parseInt(saved, 10));
+        const decoded = atob(saved);
+        if (typeof decoded !== 'string' || !decoded.endsWith(HS_SALT)) return 0;
+        const score = parseInt(decoded.slice(0, -HS_SALT.length), 10);
+        if (!Number.isFinite(score) || score < 0) return 0;
+        return Math.min(99999, score);
+    } catch (e) {
+        return 0;
+    }
+}
+
+function saveHighScore(score) {
+    try {
+        localStorage.setItem(HS_KEY, btoa(String(Math.floor(score)) + HS_SALT));
+    } catch (e) {}
 }
 
 /**
@@ -928,13 +1079,13 @@ class Game {
         this.input = new InputManager();
         this.particles = new ParticleSystem(this.ctx);
         this.player = new Player();
-        this.obstacles = new ObstacleManager();
-        this.stars = new Starfield();
+        this.obstacles = new ObstacleManager(this.canvas);
+        this.stars = new Starfield(this.canvas);
 
         this.state = 'MENU'; // MENU, PLAYING, PAUSED, GAMEOVER
         this.pausedByBackground = false;
         this.score = 0;
-        this.highScore = parseInt(localStorage.getItem('voidDash_HS') || '0', 10);
+        this.highScore = loadHighScore();
 
         this.shake = 0;
         this.lastTime = 0;
@@ -997,6 +1148,7 @@ class Game {
         this.state = 'PLAYING';
         this.score = 0;
         this.streak = 0;
+        this.shake = 0;
         this.gameSpeed = CONFIG.PHYSICS.MOVE_SPEED;
         this.player.reset();
         this.obstacles.reset();
@@ -1053,23 +1205,28 @@ class Game {
         let isNewBest = false;
         if (this.score > this.highScore) {
             this.highScore = Math.floor(this.score);
-            localStorage.setItem('voidDash_HS', this.highScore);
+            saveHighScore(this.highScore);
             this.updateHighScoreUI();
             isNewBest = true;
         }
 
-        document.getElementById('death-line').innerText = `HIT: ${DEATH_LABELS[cause] || cause}`;
-        document.getElementById('final-score').innerText = `SCORE: ${Math.floor(this.score)}`;
-        document.getElementById('best-line').innerText = isNewBest ? 'NEW BEST!' : '';
+        document.getElementById('death-line').textContent = `HIT: ${DEATH_LABELS[cause] || cause}`;
+        document.getElementById('final-score').textContent = `SCORE: ${Math.floor(this.score)}`;
+        document.getElementById('best-line').textContent = isNewBest ? 'NEW BEST!' : '';
         this.elScreens.over.classList.remove('hidden');
     }
 
     updateHighScoreUI() {
-        this.elHigh.innerText = `BEST: ${String(this.highScore).padStart(5, '0')}`;
+        const hs = Number(this.highScore);
+        const n = Number.isFinite(hs) && hs >= 0 ? Math.floor(hs) : 0;
+        this.elHigh.textContent = `BEST: ${String(n).padStart(5, '0')}`;
     }
 
     loop(timestamp) {
-        const dt = (timestamp - this.lastTime) / 1000;
+        // Clamp to non-negative: start()/resume() set lastTime = performance.now(),
+        // and the next rAF timestamp can land a hair earlier, which would produce
+        // a negative dt and briefly drive the score/position backwards.
+        const dt = Math.max(0, (timestamp - this.lastTime) / 1000);
         this.lastTime = timestamp;
 
         if (this.state === 'PAUSED') {
@@ -1124,7 +1281,7 @@ class Game {
 
         const scoreRate = 10 + (this.gameSpeed / CONFIG.PHYSICS.MOVE_SPEED) * 5;
         this.score += scoreRate * dt;
-        this.elScore.innerText = String(Math.floor(this.score)).padStart(5, '0');
+        this.elScore.textContent = String(Math.floor(this.score)).padStart(5, '0');
 
         const groundY = this.canvas.clientHeight - CONFIG.PHYSICS.GROUND_OFFSET;
 
@@ -1141,7 +1298,7 @@ class Game {
                 this.obstacles.remove(hit);
                 this.score += 50;
                 this.streak++;
-                this.elStreak.innerText = `STREAK x${this.streak}`;
+                this.elStreak.textContent = `STREAK x${this.streak}`;
                 this.elStreak.classList.add('show');
                 AudioSys.sfxShatter();
             } else {
@@ -1212,8 +1369,27 @@ window.onload = () => {
     document.addEventListener('fullscreenchange', () => {
         window.dispatchEvent(new Event('resize'));
     });
+
+    // Mute toggle - keeps AudioSys state private to this scope
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = document.getElementById('mute-icon');
+    const updateMuteIcon = () => {
+        const muted = AudioSys.muted;
+        muteIcon.innerHTML = muted
+            ? '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M22 9l-6 6"></path><path d="M16 9l6 6"></path>'
+            : '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path>';
+        muteBtn.setAttribute('aria-pressed', String(muted));
+        muteBtn.setAttribute('aria-label', muted ? 'Unmute sound' : 'Mute sound');
+        muteBtn.title = muted ? 'Unmute sound' : 'Mute sound';
+    };
+    muteBtn.addEventListener('click', () => {
+        AudioSys.muted = !AudioSys.muted;
+        updateMuteIcon();
+    });
+    updateMuteIcon();
 };
 
+})();
 </script>
     <script src="/js/na-nav.js"></script>
 </body>

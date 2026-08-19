@@ -14,10 +14,16 @@
     <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/classic">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-classic.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="EUXODES CLASSIC - Traditional Arcade Games">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-classic.png">
     <meta name="twitter:title" content="EUXODES CLASSIC - Traditional Arcade Games">
     <meta name="twitter:description" content="Play Cyberpunk Tetris, Neon Breakout, Void Dash, and Neon Tomb in EUXODES CLASSIC mode.">
-    <link rel="stylesheet" href="/euxodes.css">
+    <link rel="stylesheet" href="/euxodes.css?v=2">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -99,6 +105,11 @@
         .content-section h2:first-child { margin-top: 0; }
         .content-section p { margin-bottom: 15px; color: var(--na-muted); }
     </style>
+<!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="crt">
 
@@ -177,11 +188,27 @@
 </footer>
 
 <script>
+    function loadVoidDashScore() {
+        try {
+            const saved = localStorage.getItem('voidDash_HS');
+            if (!saved) return 0;
+            // Legacy plain-number value from pre-obfuscation builds.
+            if (/^\d+$/.test(saved)) return Math.min(99999, parseInt(saved, 10));
+            const decoded = atob(saved);
+            if (typeof decoded !== 'string' || !decoded.endsWith('_SALT')) return 0;
+            const score = parseInt(decoded.slice(0, -5), 10);
+            if (!Number.isFinite(score) || score < 0) return 0;
+            return Math.min(99999, score);
+        } catch (e) {
+            return 0;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        const hsTetris = localStorage.getItem('cyber_tetris_hi') || '0';
-        const hsNeonBreakout = localStorage.getItem('neon_breakout_hi') || '0';
-        const hsVoidDash = localStorage.getItem('voidDash_HS') || '0';
-        const hsNeonTomb = localStorage.getItem('neon_tomb_best_dist') || '0';
+        const hsTetris = parseInt(localStorage.getItem('cyber_tetris_hi') || '0', 10) || 0;
+        const hsNeonBreakout = parseInt(localStorage.getItem('neon_breakout_hi') || '0', 10) || 0;
+        const hsVoidDash = loadVoidDashScore();
+        const hsNeonTomb = parseInt(localStorage.getItem('neon_tomb_best_dist') || '0', 10) || 0;
 
         document.getElementById('hs-tetris').textContent = hsTetris;
         document.getElementById('hs-neon-breakout').textContent = hsNeonBreakout;

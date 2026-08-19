@@ -14,10 +14,16 @@
     <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/cyber-snake">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-cyber-snake.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Cyber Snake - Retro Snake Survival Game">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-cyber-snake.png">
     <meta name="twitter:title" content="Cyber Snake - Retro Snake Survival Game | EUXODES">
     <meta name="twitter:description" content="Coil through the digital grid, harvest data nodes, and dodge firewall mines in Cyber Snake. A high-speed snake survival game in your browser.">
-    <link rel="stylesheet" href="/euxodes.css">
+    <link rel="stylesheet" href="/euxodes.css?v=2">
     <style>
         * {
             box-sizing: border-box;
@@ -121,32 +127,6 @@
             background: rgba(5, 5, 16, 0.75);
         }
 
-        /* Audio Toggle Button */
-        #audio-btn {
-            position: absolute;
-            top: 10px;
-            right: 56px;
-            z-index: 20;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            background: rgba(5, 5, 16, 0.75);
-            border: 2px solid var(--na-cyan);
-            border-radius: 4px;
-            color: var(--na-cyan);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        #audio-btn:hover {
-            background: var(--na-cyan);
-            color: var(--na-bg);
-            box-shadow: 0 0 15px var(--na-cyan);
-        }
-
         /* Canvas & Scanlines Effect */
         canvas {
             display: block;
@@ -197,6 +177,11 @@
             color: #ffee00;
         }
     </style>
+<!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body data-mode="rush">
 
@@ -214,10 +199,11 @@
     <!-- Main Game Container -->
     <div id="game-container">
         <!-- Audio Mute Toggle Button -->
-        <button id="audio-btn" aria-label="Toggle Sound" title="Toggle Sound" onclick="toggleAudio()">
-            <svg id="audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <button id="mute-btn" aria-label="Mute sound" title="Mute sound" aria-pressed="false" onclick="toggleAudio()">
+            <svg id="mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
             </svg>
         </button>
 
@@ -352,12 +338,16 @@
         const sound = new CyberAudio();
         function toggleAudio() {
             sound.muted = !sound.muted;
-            const audioIcon = document.getElementById('audio-icon');
+            const audioIcon = document.getElementById('mute-icon');
+            const muteBtn = document.getElementById('mute-btn');
             if (sound.muted) {
-                audioIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>`;
+                audioIcon.innerHTML = '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M22 9l-6 6"></path><path d="M16 9l6 6"></path>';
             } else {
-                audioIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>`;
+                audioIcon.innerHTML = '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path>';
             }
+            muteBtn.setAttribute('aria-pressed', String(sound.muted));
+            muteBtn.setAttribute('aria-label', sound.muted ? 'Unmute sound' : 'Mute sound');
+            muteBtn.title = sound.muted ? 'Unmute sound' : 'Mute sound';
         }
 
         const canvas = document.getElementById('snake-canvas');

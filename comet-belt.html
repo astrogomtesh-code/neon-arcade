@@ -14,10 +14,16 @@
     <meta property="og:url" content="https://neon-arcade-sgkj.vercel.app/comet-belt">
     <meta property="og:site_name" content="EUXODES">
     <meta property="og:locale" content="en_US">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-comet-belt.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Comet Belt - Retro Asteroid Dodge Game">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://neon-arcade-sgkj.vercel.app/assets/og/og-comet-belt.png">
     <meta name="twitter:title" content="Comet Belt - Retro Asteroid Dodge Game | EUXODES">
     <meta name="twitter:description" content="Steer your comet across five lanes and dodge waves of asteroids in Comet Belt. Build near-miss streaks and survive as the game gets faster.">
-    <link rel="stylesheet" href="/euxodes.css">
+    <link rel="stylesheet" href="/euxodes.css?v=2">
     <style>
         /* Base reset and layout */
         * {
@@ -165,6 +171,11 @@
         }
     
 </style>
+<!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="crt" data-mode="rush">
     <nav class="brand-nav" aria-label="Primary">
@@ -193,6 +204,13 @@
                 <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
                 <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
                 <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+            </svg>
+        </button>
+        <button id="mute-btn" aria-label="Mute sound" title="Mute sound" aria-pressed="false">
+            <svg id="mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
             </svg>
         </button>
     </div>
@@ -244,6 +262,7 @@
         class SoundEffects {
             constructor() {
                 this.ctx = null;
+                this.muted = false;
             }
 
             init() {
@@ -257,7 +276,7 @@
 
             playMove() {
                 this.init();
-                if (!this.ctx) return;
+                if (this.muted || !this.ctx) return;
                 
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
@@ -278,7 +297,7 @@
 
             playNearMiss(streak) {
                 this.init();
-                if (!this.ctx) return;
+                if (this.muted || !this.ctx) return;
 
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
@@ -304,7 +323,7 @@
 
             playExplosion() {
                 this.init();
-                if (!this.ctx) return;
+                if (this.muted || !this.ctx) return;
 
                 // Noise Buffer generation for retro crash
                 const bufferSize = this.ctx.sampleRate * 0.4;
@@ -336,7 +355,7 @@
 
             playStart() {
                 this.init();
-                if (!this.ctx) return;
+                if (this.muted || !this.ctx) return;
 
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
@@ -574,6 +593,24 @@
         });
         const maximizeBtn = document.getElementById('maximize-btn');
         maximizeBtn.addEventListener('click', toggleFullscreen);
+
+        // Mute toggle
+        const muteBtn = document.getElementById('mute-btn');
+        const muteIcon = document.getElementById('mute-icon');
+        const updateMuteIcon = () => {
+            const muted = sfx.muted;
+            muteIcon.innerHTML = muted
+                ? '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M22 9l-6 6"></path><path d="M16 9l6 6"></path>'
+                : '<path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path>';
+            muteBtn.setAttribute('aria-pressed', String(muted));
+            muteBtn.setAttribute('aria-label', muted ? 'Unmute sound' : 'Mute sound');
+            muteBtn.title = muted ? 'Unmute sound' : 'Mute sound';
+        };
+        muteBtn.addEventListener('click', () => {
+            sfx.muted = !sfx.muted;
+            updateMuteIcon();
+        });
+        updateMuteIcon();
 
         function changeLane(direction) {
             const oldLane = player.currentLane;
